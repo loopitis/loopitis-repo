@@ -3,6 +3,7 @@ package com.example.demo;
 import com.google.gson.Gson;
 import general.GetNotifierCheckResult;
 import general.GetNotifierRequestChecker;
+import managers.RequestManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -11,11 +12,13 @@ import org.springframework.web.bind.annotation.*;
 import pojos.HttpNotifierRequest;
 import producer.KafkaProducer;
 
+import java.util.UUID;
+
 @RequestMapping("/set")
 @RestController
 public class TestEndpoint {
     private static final Logger log = LoggerFactory.getLogger(TestEndpoint.class);
-    public static final String TOPIC_NAME = "notifier";
+    public static final String TOPIC_NAME = ConfigurationManager.getInstance().getKafkaTopic();
     private static Gson gson = new Gson();
 
     @RequestMapping("/getNotifier")
@@ -27,9 +30,18 @@ public class TestEndpoint {
         if(result != null && result.isError()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.toJson());
         }
+
+        UUID uuid = UUID.randomUUID();
+        String external_id = uuid.toString();
+
+        notif.setExternal_id(external_id);
+        Integer internalId = RequestManager.getInstance().saveRequest(notif);//request a call , internal call id, external call id , call name, call status, type(get\call), interval, occurance,  data:json
+        notif.setInternal_id(internalId);
+
+        log.info("$$$$$$$$$$$$$$$$$$$$$$$ About to send data to kafka for topic "+TOPIC_NAME);
         KafkaProducer.getInstance().send(TOPIC_NAME, "get", gson.toJson(notif));
 
-        return ResponseEntity.ok("{ \"message\":\"ok\"}");
+        return ResponseEntity.ok("{ \"id\":"+external_id+"}");
     }
 
     @RequestMapping("/postNotifier")

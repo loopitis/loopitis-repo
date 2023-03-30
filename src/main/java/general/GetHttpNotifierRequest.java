@@ -1,11 +1,12 @@
 package general;
 
 import interfaces.I_NotifierRequest;
-import managers.RedisManager;
 import pojos.HttpNotifierRequest;
 
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public class GetHttpNotifierRequest implements I_NotifierRequest {
     private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(GetHttpNotifierRequest.class);
@@ -25,6 +26,13 @@ public class GetHttpNotifierRequest implements I_NotifierRequest {
                     .GET()
                     .uri(URI.create(notifierRequest.getReturn_url()))
                     .build();
+
+            HttpClient client = HttpClient.newHttpClient();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            log.info(response.statusCode());
+            log.info(response.body());
+
         }
         catch(Exception ex){
             ex.printStackTrace();
@@ -42,5 +50,10 @@ public class GetHttpNotifierRequest implements I_NotifierRequest {
     @Override
     public Long getInterval() {
        return notifierRequest.getInterval();
+    }
+
+    @Override
+    public Integer getOccurrence() {
+        return notifierRequest.getOccurrence();
     }
 }

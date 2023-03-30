@@ -8,6 +8,10 @@ public class HttpNotifierRequest {
     private Integer id;
     private Integer occurrence;
 
+    private String external_id;
+
+    private Integer internal_id;
+
     public HttpNotifierRequest(){}
 
     public HttpNotifierRequest(String returnUrl, Long delay, Long interval, String payload, Integer id, Integer occurance) {
@@ -65,6 +69,22 @@ public class HttpNotifierRequest {
 
     public void setOccurrence(Integer occurrence) {
         this.occurrence = occurrence;
+    }
+
+    public void setExternal_id(String external_id) {
+        this.external_id = external_id;
+    }
+
+    public void setInternal_id(Integer internal_id) {
+        this.internal_id = internal_id;
+    }
+
+    public String getExternal_id() {
+        return external_id;
+    }
+
+    public Integer getInternal_id() {
+        return internal_id;
     }
 }
 

@@ -6,4 +6,6 @@ public interface I_NotifierRequest {
     public Long getDelay();
 
     public Long getInterval();
+
+    public Integer getOccurrence();
 }

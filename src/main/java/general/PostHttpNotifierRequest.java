@@ -22,4 +22,9 @@ public class PostHttpNotifierRequest implements I_NotifierRequest {
     public Long getInterval() {
         return httpRequest.getInterval();
     }
+
+    @Override
+    public Integer getOccurrence() {
+        return httpRequest.getOccurrence();
+    }
 }

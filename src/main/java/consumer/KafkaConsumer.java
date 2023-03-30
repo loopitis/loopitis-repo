@@ -23,6 +23,12 @@ public class KafkaConsumer {
     private org.apache.kafka.clients.consumer.KafkaConsumer<String, String> kafkaConsumer;
     private Gson gson = new Gson();
 
+    public static void main(String[] args) {
+
+        KafkaConsumer consumer = new KafkaConsumer();
+        consumer.run();
+    }
+
     public KafkaConsumer(){
         properties = new Properties();
 
@@ -33,16 +39,18 @@ public class KafkaConsumer {
         properties.setProperty("sasl.mechanism","PLAIN");
         properties.setProperty("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username='3FCWzHXahINkqWBzARKErZ' password='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY29uZHVrdG9yLmlvIiwic291cmNlQXBwbGljYXRpb24iOiJhZG1pbiIsInVzZXJNYWlsIjpudWxsLCJwYXlsb2FkIjp7InZhbGlkRm9yVXNlcm5hbWUiOiIzRkNXekhYYWhJTmtxV0J6QVJLRXJaIiwib3JnYW5pemF0aW9uSWQiOjcwNTgzLCJ1c2VySWQiOjgxNjg1LCJmb3JFeHBpcmF0aW9uQ2hlY2siOiIxYTFlMTIyOC1iZGFkLTQ3NDktOWNlMi03MjdiYzQ2N2IyNzkifX0.QqMmHKIAFoiUUF536vYIvOIQfkrUUJyl-HtsN4i4i-s';");
 
+        properties.put("group.id", "my-group");
 
-        properties.setProperty("key.serializer", StringSerializer.class.getName());
-        properties.setProperty("value.serializer", StringSerializer.class.getName());
 
+
+        properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
         kafkaConsumer = new org.apache.kafka.clients.consumer.KafkaConsumer<String, String>(properties);
     }
 
 
-
+    
     public boolean shutdown(){
         kafkaConsumer.commitSync();
         kafkaConsumer.close();
@@ -59,11 +67,13 @@ public class KafkaConsumer {
                 if(record.value() == null) continue;
                 HttpNotifierRequest request = gson.fromJson(record.value(), HttpNotifierRequest.class);
                 if(record.key().equals("get")) {
+
                     var getRequest = new GetHttpNotifierRequest(request);
                     NotifierTask task = new NotifierTask(getRequest);
                     task.handle();
                 }
             }
+            kafkaConsumer.commitSync();
         }
     }
 }

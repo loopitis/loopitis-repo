@@ -1,15 +1,13 @@
 package notifiers;
 
+import general.FutureCancel;
 import interfaces.I_NotifierRequest;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class NotifierThreadPool {
     private static NotifierThreadPool instance;
-    private ScheduledExecutorService pool = Executors.newScheduledThreadPool(10);
+    private ScheduledExecutorService pool = Executors.newScheduledThreadPool(1);
     private NotifierThreadPool(){}
 
     public synchronized static NotifierThreadPool getInstance(){
@@ -20,6 +18,24 @@ public class NotifierThreadPool {
     }
 
     public void assignTask(I_NotifierRequest request) {
-        pool.scheduleAtFixedRate(()->request.fire(), request.getDelay(), request.getInterval(), TimeUnit.MILLISECONDS);
+        FutureCancel futureCancel = new FutureCancel();
+
+        ScheduledFuture<?> future = pool.scheduleAtFixedRate(new Runnable() {
+            int num = 0;
+            Integer maxTimes = request.getOccurrence() == null ?  1: request.getOccurrence();
+
+            @Override
+            public void run() {
+
+                if(num > maxTimes){
+                    futureCancel.cancel();
+                    return;
+                }
+                request.fire();
+                num++;
+            }
+        }, request.getDelay(), request.getInterval(), TimeUnit.MILLISECONDS);
+
+        futureCancel.setFuture(future);
     }
 }
