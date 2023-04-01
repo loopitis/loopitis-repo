@@ -6,32 +6,46 @@ import general.DBConfiguration;
 import general.DBConfigurationException;
 import general.DBTestInitManager;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
+import org.hibernate.service.ServiceRegistry;
+import pojos.HttpNotifierRequest;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class DBManager {
     private static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DBManager.class);
+
+    private static SessionFactory sessionFactory;
 
     private static boolean DB_READ_ONLY = false;
 
     private static DBManager dbManager = null;
 
-    private String DB_USER = "";
+    private String DB_USER = "myUser";
 
-    private String DB_PASSWORD = "";
+    private String DB_PASSWORD = "mypassword";
 
     private BasicDataSource _connectionPool;
 
     private static int DB_MAX_CONNECTIONS = -1;
 
-    private static String DB_NAME = "";
+    private static String DB_NAME = "mydb";
 
-    private static int DB_PORT_NUMBER = -1;
+    private static int DB_PORT_NUMBER = 5432;
 
-    private static String DB_SERVER_HOST = "";
-//	private static final String DB_SERVER_NAME = "52.27.211.17";
+    private static String DB_SERVER_HOST = "localhost";
 
+    public static void main(String[] args) {
+        DBManager i = DBManager.getInstance();
+
+    }
 
     private DBManager() {
         try {
@@ -52,11 +66,11 @@ public class DBManager {
             log.error("configuration is null could not init the DB- FATAL");
             return;
         }
-
         DB_SERVER_HOST = dbConfiguration.get_dbHost();
         DB_USER = dbConfiguration.get_dbUser();
         DB_PASSWORD = dbConfiguration.get_dbPassword();
         DB_MAX_CONNECTIONS = dbConfiguration.get_maxPoolSize();
+
 
         initConnection();
     }
@@ -66,14 +80,52 @@ public class DBManager {
         _connectionPool = new BasicDataSource();
 //        _connectionPool.setd("QuantifyAPI");
 //        _connectionPool.setApplicationName(DB_SERVER_NAME);
-        _connectionPool.setUrl(DB_SERVER_HOST);
+        _connectionPool.setUrl("jdbc:postgresql://localhost:5432/mydb");
         _connectionPool.setUsername(DB_USER);
         _connectionPool.setPassword(DB_PASSWORD);
         _connectionPool.setMaxTotal(DB_MAX_CONNECTIONS);
         _connectionPool.setInitialSize(3);
 
 
+
+
     }
+
+
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            org.hibernate.cfg.Configuration configuration = new Configuration();
+
+            // JDBC connection settings
+            Properties properties = new Properties();
+            properties.put(Environment.DRIVER, "org.postgresql.Driver");
+            properties.put(Environment.URL, "jdbc:postgresql://localhost:5432/mydb");
+            properties.put(Environment.USER, "myuser");
+            properties.put(Environment.PASS, "mypassword");
+
+            // Connection pool settings
+            properties.put(Environment.C3P0_MIN_SIZE, "5");
+            properties.put(Environment.C3P0_MAX_SIZE, "20");
+            properties.put(Environment.C3P0_ACQUIRE_INCREMENT, "1");
+            properties.put(Environment.C3P0_TIMEOUT, "1800");
+            properties.put(Environment.C3P0_MAX_STATEMENTS, "50");
+
+            configuration.setProperties(properties);
+
+            // Mapping annotated entities
+            configuration.addAnnotatedClass(MyEntity.class);
+
+            ServiceRegistry serviceRegistry = new org.hibernate.boot.registry.StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties())
+                    .build();
+
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+        }
+
+        return sessionFactory;
+    }
+}
+
 
     public boolean isDBName(String prodDB) {
         return DB_NAME != null && DB_NAME.equals(prodDB);
@@ -128,5 +180,10 @@ public class DBManager {
             }
         }
 
+    }
+
+    public ResultSet saveRequest(HttpNotifierRequest notif) {
+
+        String query = "inert into notifier.requests() values("+generateQuestionMarks()+")";
     }
 }

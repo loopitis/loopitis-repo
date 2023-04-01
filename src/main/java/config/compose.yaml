@@ -1,0 +1,75 @@
+version: "3.9"
+services:
+  postgres:
+    container_name: my_postgres
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      my_network:
+        ipv4_address: 172.16.238.10
+    hostname: postgres
+
+  pgadmin:
+    container_name: my_pgadmin
+    build:
+      context: .
+      dockerfile: Dockerfile.pgAdmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+    networks:
+      my_network:
+        ipv4_address: 172.16.238.11
+    hostname: pgadmin
+
+  portainer:
+    container_name: my_portainer
+    image: portainer/portainer-ce:latest
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      my_network:
+        ipv4_address: 172.16.238.12
+    hostname: portainer
+
+  endpoint:
+    container_name: my_endpoint
+    build:
+      context: .
+      dockerfile: Dockerfile.endpoints
+    environment:
+      isDev: ${isDev}
+      topic_name_tasks: ${topic_name_tasks}
+      timer_threads_in_process: ${timer_threads_in_process}
+      kafka_host: ${kafka_host}
+    ports:
+      - "8080:8080"
+    networks:
+      my_network:
+        ipv4_address: 172.16.238.13
+    hostname: endpoints
+
+networks:
+  my_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24
+
+volumes:
+  postgres_data:
+  portainer_data:

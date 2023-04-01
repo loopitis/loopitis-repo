@@ -31,7 +31,7 @@ public class ConfigurationManager {
     }
 
     public boolean setConfiguration() {
-        HashMap<String, String> map = buildMap();
+        Map<String, String> map = buildMap();
         if (map == null) {
             log.error("Failed building the configuration map. app will shut down");
             return false;
@@ -41,11 +41,10 @@ public class ConfigurationManager {
 
     }
 
-    private HashMap<String, String> buildMap() {
+    private Map<String, String> buildMap() {
         Properties prop = loadProperties();
         if (prop == null) {
-            log.error("Configuration properties could not be loaded - application needs to shutdown");
-            return null;
+            return System.getenv();
         }
         HashMap<String, String> keyValue = new HashMap<>();
         Iterator<Object> propIter = prop.keySet().iterator();
@@ -80,14 +79,13 @@ public class ConfigurationManager {
 
             if (customDir.exists()) {//if  user/conf does not exists create `one
                 log.debug(customDir + " already exists");
-            } else if (customDir.mkdirs()) {
-                System.out.println(customDir + " was created");
-                //get the file from S3
-                S3FileReader reader = new S3FileReader();
-                reader.downloadConfigFromS3(path);
+                File fullPath = new File(path+filename);
+                if(!fullPath.exists()){
+                    return null;
+                }
+            } else{
+                return null;
 
-            } else {
-                System.out.println(customDir + " was not created");
             }
 
             FileInputStream fis = new FileInputStream(path + filename);
@@ -113,6 +111,12 @@ public class ConfigurationManager {
             }
         }
         return null;
+    }
+
+    private static void downloaToS3(String path) {
+        //get the file from S3
+        S3FileReader reader = new S3FileReader();
+        reader.downloadConfigFromS3(path);
     }
 
     public boolean isLoaded() {

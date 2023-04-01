@@ -41,7 +41,8 @@ public class TestEndpoint {
         log.info("$$$$$$$$$$$$$$$$$$$$$$$ About to send data to kafka for topic "+TOPIC_NAME);
         KafkaProducer.getInstance().send(TOPIC_NAME, "get", gson.toJson(notif));
 
-        return ResponseEntity.ok("{ \"id\":"+external_id+"}");
+
+        return ResponseEntity.ok("{ \"id\":\""+external_id+"\"}");
     }
 
     @RequestMapping("/postNotifier")
