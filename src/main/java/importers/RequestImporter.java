@@ -5,10 +5,9 @@ import managers.DBhibernetManager;
 import pojos.HttpNotifierRequest;
 
 public class RequestImporter {
-    public Long saveRequest(HttpNotifierRequest notif) {
-        var entity = new HttpNotifierRequestEntity(notif);
-        DBhibernetManager.getInstance().saveRequest(entity);
-        return entity.getId();
+    public Long saveRequest(HttpNotifierRequestEntity notif) {
+        DBhibernetManager.getInstance().saveRequest(notif);
+        return notif.getId();
 
     }
 }

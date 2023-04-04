@@ -54,6 +54,6 @@ public class GetHttpNotifierRequest implements I_NotifierRequest {
 
     @Override
     public Integer getOccurrence() {
-        return notifierRequest.getOccurrence();
+        return notifierRequest.getOccurrences();
     }
 }

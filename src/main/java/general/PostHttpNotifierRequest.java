@@ -25,6 +25,6 @@ public class PostHttpNotifierRequest implements I_NotifierRequest {
 
     @Override
     public Integer getOccurrence() {
-        return httpRequest.getOccurrence();
+        return httpRequest.getOccurrences();
     }
 }

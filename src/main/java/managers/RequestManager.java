@@ -1,5 +1,6 @@
 package managers;
 
+import ent.HttpNotifierRequestEntity;
 import importers.RequestImporter;
 import pojos.HttpNotifierRequest;
 
@@ -18,7 +19,7 @@ public class RequestManager {
     }
 
 
-    public Long saveRequest(HttpNotifierRequest notif) {
+    public Long saveRequest(HttpNotifierRequestEntity notif) {
         RequestImporter importer = new RequestImporter();
         return importer.saveRequest(notif);
     }

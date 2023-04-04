@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import com.google.gson.Gson;
+import ent.HttpNotifierRequestEntity;
 import general.GetNotifierCheckResult;
 import general.GetNotifierRequestChecker;
 import managers.DBhibernetManager;
@@ -37,7 +38,10 @@ public class TestEndpoint {
         String external_id = uuid.toString();
 
         notif.setExternal_id(external_id);
-        Long internalId = RequestManager.getInstance().saveRequest(notif);//request a call , internal call id, external call id , call name, call status, type(get\call), interval, occurance,  data:json
+        var notifierEntity = new HttpNotifierRequestEntity(notif);
+        notifierEntity.setStatus("PENDING");
+        notifierEntity.setDone(0);
+        Long internalId = RequestManager.getInstance().saveRequest(notifierEntity);//request a call , internal call id, external call id , call name, call status, type(get\call), interval, occurance,  data:json
         notif.setInternal_id(internalId);
 
         log.info("$$$$$$$$$$$$$$$$$$$$$$$ About to send data to kafka for topic "+TOPIC_NAME);
