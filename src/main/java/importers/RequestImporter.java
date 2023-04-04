@@ -1,13 +1,14 @@
 package importers;
 
-import managers.DBManager;
+import ent.HttpNotifierRequestEntity;
+import managers.DBhibernetManager;
 import pojos.HttpNotifierRequest;
 
 public class RequestImporter {
-    public Integer saveRequest(HttpNotifierRequest notif) {
-        ResultSet res = DBManager.getInstance().saveRequest(notif);
-        return res.getInt(1);
-
+    public Long saveRequest(HttpNotifierRequest notif) {
+        var entity = new HttpNotifierRequestEntity(notif);
+        DBhibernetManager.getInstance().saveRequest(entity);
+        return entity.getId();
 
     }
 }

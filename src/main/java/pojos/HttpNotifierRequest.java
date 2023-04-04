@@ -5,16 +5,19 @@ public class HttpNotifierRequest {
     private Long delay;
     private Long interval;
     private String payload;
-    private Integer id;
+    private Long id;
     private Integer occurrence;
 
     private String external_id;
 
-    private Integer internal_id;
+    private Long internal_id;
+
+    private String name;
+
 
     public HttpNotifierRequest(){}
 
-    public HttpNotifierRequest(String returnUrl, Long delay, Long interval, String payload, Integer id, Integer occurance) {
+    public HttpNotifierRequest(String returnUrl, Long delay, Long interval, String payload, Long id, Integer occurance) {
         return_url = returnUrl;
         this.delay = delay;
         this.interval = interval;
@@ -55,11 +58,11 @@ public class HttpNotifierRequest {
         this.payload = payload;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -75,7 +78,7 @@ public class HttpNotifierRequest {
         this.external_id = external_id;
     }
 
-    public void setInternal_id(Integer internal_id) {
+    public void setInternal_id(Long internal_id) {
         this.internal_id = internal_id;
     }
 
@@ -83,8 +86,16 @@ public class HttpNotifierRequest {
         return external_id;
     }
 
-    public Integer getInternal_id() {
+    public Long getInternal_id() {
         return internal_id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
 

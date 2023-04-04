@@ -6,23 +6,19 @@ import general.DBConfiguration;
 import general.DBConfigurationException;
 import general.DBTestInitManager;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
-import org.hibernate.service.ServiceRegistry;
-import pojos.HttpNotifierRequest;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
+import java.sql.Statement;
+import java.util.List;
 
 public class DBManager {
     private static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DBManager.class);
 
-    private static SessionFactory sessionFactory;
 
     private static boolean DB_READ_ONLY = false;
 
@@ -41,11 +37,43 @@ public class DBManager {
     private static int DB_PORT_NUMBER = 5432;
 
     private static String DB_SERVER_HOST = "localhost";
+    private SessionFactory sessionFactory;
 
-    public static void main(String[] args) {
-        DBManager i = DBManager.getInstance();
+    public static void main(String[] args) throws DBConfigurationException {
+//        DBManager i = DBManager.getInstance();
+//        i.call();
 
+        // Create a BasicDataSource with database connection details
+        BasicDataSource dataSource = new BasicDataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/mydb");
+        dataSource.setUsername("myusername");
+        dataSource.setPassword("mypassword");
+
+        // Create a Hibernate configuration with the datasource
+        Configuration configuration = new Configuration()
+                .setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect")
+                .setProperty("hibernate.connection.datasource", "myDataSource");
+
+        // Build the Hibernate SessionFactory
+        SessionFactory sessionFactory = configuration.buildSessionFactory();
+
+        // Open a session from the SessionFactory
+        Session session = sessionFactory.openSession();
+
+        // Run an SQL query using the session
+        String query = "SELECT * FROM my_table";
+        List results = session.createNativeQuery(query).list();
+        for (Object row : results) {
+            System.out.println(row);
+        }
+
+        // Close the session and SessionFactory
+        session.close();
+        sessionFactory.close();
     }
+
+
 
     private DBManager() {
         try {
@@ -78,9 +106,10 @@ public class DBManager {
     private void createDbPoolConnection() {
 
         _connectionPool = new BasicDataSource();
-//        _connectionPool.setd("QuantifyAPI");
+//        _connectionPool.set("QuantifyAPI");
 //        _connectionPool.setApplicationName(DB_SERVER_NAME);
         _connectionPool.setUrl("jdbc:postgresql://localhost:5432/mydb");
+
         _connectionPool.setUsername(DB_USER);
         _connectionPool.setPassword(DB_PASSWORD);
         _connectionPool.setMaxTotal(DB_MAX_CONNECTIONS);
@@ -92,39 +121,7 @@ public class DBManager {
     }
 
 
-    public static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            org.hibernate.cfg.Configuration configuration = new Configuration();
 
-            // JDBC connection settings
-            Properties properties = new Properties();
-            properties.put(Environment.DRIVER, "org.postgresql.Driver");
-            properties.put(Environment.URL, "jdbc:postgresql://localhost:5432/mydb");
-            properties.put(Environment.USER, "myuser");
-            properties.put(Environment.PASS, "mypassword");
-
-            // Connection pool settings
-            properties.put(Environment.C3P0_MIN_SIZE, "5");
-            properties.put(Environment.C3P0_MAX_SIZE, "20");
-            properties.put(Environment.C3P0_ACQUIRE_INCREMENT, "1");
-            properties.put(Environment.C3P0_TIMEOUT, "1800");
-            properties.put(Environment.C3P0_MAX_STATEMENTS, "50");
-
-            configuration.setProperties(properties);
-
-            // Mapping annotated entities
-            configuration.addAnnotatedClass(MyEntity.class);
-
-            ServiceRegistry serviceRegistry = new org.hibernate.boot.registry.StandardServiceRegistryBuilder()
-                    .applySettings(configuration.getProperties())
-                    .build();
-
-            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-        }
-
-        return sessionFactory;
-    }
-}
 
 
     public boolean isDBName(String prodDB) {
@@ -146,6 +143,9 @@ public class DBManager {
         log.debug("******************************************");
 
         createDbPoolConnection();
+//        sessionFactory = new Configuration().configure().buildSessionFactory(new StandardServiceRegistryBuilder()
+//                .applySetting(Environment.DATASOURCE, _connectionPool)
+//                .build());
         testConnection();
     }
 
@@ -182,8 +182,53 @@ public class DBManager {
 
     }
 
-    public ResultSet saveRequest(HttpNotifierRequest notif) {
 
-        String query = "inert into notifier.requests() values("+generateQuestionMarks()+")";
+    private void call() throws DBConfigurationException {
+        Connection onLineDbconnection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            onLineDbconnection = _connectionPool.getConnection();
+            try {
+                statement = onLineDbconnection.createStatement();
+                String sql = "SELECT * FROM myTable"; // Replace with your table name
+                resultSet = statement.executeQuery(sql);
+
+                while (resultSet.next()) {
+                    // Retrieve data from each row and process it
+                    int id = resultSet.getInt("id");
+                    String name = resultSet.getString("name");
+                    System.out.println("ID: " + id + ", Name: " + name );
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (resultSet != null) {
+                        resultSet.close();
+                    }
+
+                    if (statement != null) {
+                        statement.close();
+                    }
+
+                    if (_connectionPool != null) {
+                        _connectionPool.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+
     }
+
+
+
+
+
 }

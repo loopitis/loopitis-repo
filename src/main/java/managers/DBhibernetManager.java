@@ -1,4 +1,234 @@
 package managers;
 
+import com.example.demo.ConfigurationManager;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import ent.HttpNotifierRequestEntity;
+
+import enums.eProcess;
+import general.DBConfiguration;
+import general.DBConfigurationException;
+import general.DBTestInitManager;
+import org.eclipse.persistence.config.PersistenceUnitProperties;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+import java.util.HashMap;
+import java.util.Map;
+
+
 public class DBhibernetManager {
+    private static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DBhibernetManager.class);
+
+    private static boolean DB_READ_ONLY = false;
+
+    private static DBhibernetManager dbManager = null;
+
+    private EntityManagerFactory sessionFactory;
+
+    private String DB_USER = "myUser";
+
+    private String DB_PASSWORD = "mypassword";
+
+
+    private static int DB_MAX_CONNECTIONS = 1;
+
+    private static String DB_NAME = "mydb";
+
+    private static int DB_PORT_NUMBER = 5432;
+
+    private static String DB_SERVER_HOST = "localhost";
+
+    public static void main(String[] args) throws JsonProcessingException {
+        DBhibernetManager manager = DBhibernetManager.getInstance();
+
+        HttpNotifierRequestEntity entity = new HttpNotifierRequestEntity();
+        entity.setExternalId("12345");
+        entity.setName("Sample Request");
+        entity.setStatus("Pending");
+        entity.setReturnUrl("https://example.com/callback");
+        entity.setDelay(3000L);
+        entity.setInterval(10000L);
+        entity.setOccurrences(5);
+        entity.setDone(0);
+        entity.setPayload("{\"key1\":\"value1\",\"key2\":\"value2\"}");
+
+
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        JsonNode jsonData = objectMapper.readTree(json);
+//
+        manager.saveRequest(entity);
+
+//        System.out.println(notifierRequest.getInterval());
+//        Person p = new Person("hey", "Jude");
+//        p.setId(4);
+//        manager.addPerson(p);
+//        System.out.println(p);
+
+    }
+
+    private void testSelect() {
+        String queryString = "SELECT e FROM Employee e WHERE e.department = :dept";
+    }
+
+    private DBhibernetManager() {
+        try {
+            System.out.println("DB manager initted");
+            Class.forName("org.postgresql.Driver");
+            if (sessionFactory == null) {
+                setConfiguration(ConfigurationManager.getInstance().getDBConfiguration(eProcess.ENDPOINTS_PROCESS));
+            }
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void setConfiguration(DBConfiguration dbConfiguration) throws DBConfigurationException {
+        if (dbConfiguration == null) {
+            log.error("configuration is null could not init the DB- FATAL");
+            return;
+        }
+        DB_SERVER_HOST = dbConfiguration.get_dbHost();
+        DB_USER = dbConfiguration.get_dbUser();
+        DB_PASSWORD = dbConfiguration.get_dbPassword();
+        DB_MAX_CONNECTIONS = dbConfiguration.get_maxPoolSize();
+
+
+        initConnection();
+    }
+
+
+
+
+    private void getSessionFactory() {
+            // Add connection pool
+            HikariConfig hikariConfig = new HikariConfig();
+            hikariConfig.setJdbcUrl("jdbc:postgresql://localhost:5432/mydb");
+            hikariConfig.setUsername("myuser");
+            hikariConfig.setPassword("mypassword");
+
+            hikariConfig.setDriverClassName("org.postgresql.Driver");
+
+            hikariConfig.setMaximumPoolSize(10);
+            hikariConfig.setMinimumIdle(5);
+            hikariConfig.setConnectionTimeout(30000);
+            hikariConfig.setIdleTimeout(600000);
+            hikariConfig.setMaxLifetime(1800000);
+            HikariDataSource dataSource = new HikariDataSource(hikariConfig);
+
+            Map<String, Object> properties = new HashMap<>();
+            properties.put(PersistenceUnitProperties.JTA_DATASOURCE, dataSource);
+            properties.put(PersistenceUnitProperties.JDBC_DRIVER, "org.postgresql.Driver");
+            properties.put(PersistenceUnitProperties.JDBC_URL, "jdbc:postgresql://localhost:5432/mydb");
+            properties.put(PersistenceUnitProperties.JDBC_USER, "myuser");
+            properties.put(PersistenceUnitProperties.JDBC_PASSWORD, "mypassword");
+
+            // Configure the EntityManagerFactory to use the HikariCP DataSource
+            sessionFactory = Persistence.createEntityManagerFactory("examplePU", properties);
+
+
+
+
+
+            // Mapping annotated entities
+//            configuration.addAnnotatedClass(HttpNotifierRequestEntity.class);
+//            configuration.addAnnotatedClass(Person.class);
+//            sessionFactory =  configuration.buildSessionFactory();
+
+
+
+    }
+
+//    private static void mapAnnotationClasses(Configuration configuration) {
+//
+//
+//    }
+
+
+
+
+    public boolean isDBName(String prodDB) {
+        return DB_NAME != null && DB_NAME.equals(prodDB);
+    }
+
+
+    public static synchronized DBhibernetManager getInstance() {
+        if (dbManager == null) {
+            dbManager = new DBhibernetManager();
+        }
+        return dbManager;
+    }
+
+    private void initConnection() throws DBConfigurationException {
+        log.debug("******************************************");
+        log.debug("***********  CONNECTING TO DB  ***********");
+        log.debug("*********   " + "DB:" + DB_NAME + " at " + DB_SERVER_HOST + "   ***********");
+        log.debug("******************************************");
+
+        getSessionFactory();
+//        testConnection();
+    }
+
+    public boolean checkDBAndReconnectIfNeeded() {
+        try {
+            testConnection();
+            return true;
+        } catch (DBConfigurationException e) {
+            log.error("DB Connection failed trying to reopen connection");
+            DBTestInitManager.initDB();
+            return true;
+        }
+    }
+
+    private void testConnection() throws DBConfigurationException {
+//        Session session = null;
+//        try {
+//            session = sessionFactory.openSession();
+//            if (session.isConnected()) {
+//                log.debug("DB test connection passed db name " + DB_NAME + " on " + DB_SERVER_HOST);
+//            } else {
+//                log.error("DB test connection has failed");
+//            }
+//        }
+//        catch(Exception ex) {
+//        }
+//        finally {
+//            if(session != null){
+//                session.close();
+//            }
+//        }
+
+    }
+//first chek the get entity and then check insert a simple object
+    public void saveRequest(HttpNotifierRequestEntity request) {
+        // Obtain an EntityManager instance from EntityManagerFactory
+        EntityManager em = sessionFactory.createEntityManager();
+
+
+        EntityTransaction tx = em.getTransaction();
+        try{
+            tx.begin();
+            em.persist(request);
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+
+        System.out.println(request);
+    }
+
+
+
+
 }

@@ -18,7 +18,7 @@ public class RequestManager {
     }
 
 
-    public Integer saveRequest(HttpNotifierRequest notif) {
+    public Long saveRequest(HttpNotifierRequest notif) {
         RequestImporter importer = new RequestImporter();
         return importer.saveRequest(notif);
     }
