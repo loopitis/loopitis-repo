@@ -17,7 +17,7 @@ public class HttpNotifierRequestEntity {
         this.returnUrl = entity.getReturn_url();
         this.delay = entity.getDelay();
         this.interval = entity.getInterval();
-        this.occurrences = entity.getOccurrence();
+        this.occurrences = entity.getOccurrences();
         this.payload = entity.getPayload();
     }
 
