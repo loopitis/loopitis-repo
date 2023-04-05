@@ -9,7 +9,7 @@ public class PostHttpNotifierRequest implements I_NotifierRequest {
     public PostHttpNotifierRequest(){}
 
     @Override
-    public boolean fire() {
+    public boolean fire(String executionId) {
         return false;
     }
 

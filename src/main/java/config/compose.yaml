@@ -7,6 +7,8 @@ services:
     networks:
       my_network:
         ipv4_address: 172.16.238.15
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
   redis:
     container_name: redis
     image: redis
@@ -18,7 +20,6 @@ services:
     networks:
       my_network:
         ipv4_address: 172.16.238.14
-    hostname: redis
   postgres:
     container_name: my_postgres
     build:
@@ -73,9 +74,16 @@ services:
       dockerfile: Dockerfile.endpoints
     environment:
       isDev: ${isDev}
+      db_max_pool_size: ${db_max_pool_size}
       topic_name_tasks: ${topic_name_tasks}
       timer_threads_in_process: ${timer_threads_in_process}
       kafka_host: ${kafka_host}
+      db_port: ${db_port}
+      db_user: ${db_user}
+      db_password: ${db_password}
+      db_host: ${db_host}
+      db_name: ${db_name}
+      minimum_interval_time: ${minimum_interval_time}
     ports:
       - "8080:8080"
     networks:

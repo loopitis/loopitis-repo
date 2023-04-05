@@ -3,6 +3,7 @@ package notifiers;
 import general.FutureCancel;
 import interfaces.I_NotifierRequest;
 
+import java.util.UUID;
 import java.util.concurrent.*;
 
 public class NotifierThreadPool {
@@ -31,7 +32,9 @@ public class NotifierThreadPool {
                     futureCancel.cancel();
                     return;
                 }
-                request.fire();
+                UUID uuid = UUID.randomUUID();
+                String executionId = uuid.toString();
+                request.fire(executionId);
                 num++;
             }
         }, request.getDelay(), request.getInterval(), TimeUnit.MILLISECONDS);

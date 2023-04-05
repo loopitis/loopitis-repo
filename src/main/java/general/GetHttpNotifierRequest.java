@@ -3,10 +3,12 @@ package general;
 import interfaces.I_NotifierRequest;
 import pojos.HttpNotifierRequest;
 
+import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+
 
 public class GetHttpNotifierRequest implements I_NotifierRequest {
     private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(GetHttpNotifierRequest.class);
@@ -19,12 +21,20 @@ public class GetHttpNotifierRequest implements I_NotifierRequest {
 
 
     @Override
-    public boolean fire() {
+    public boolean fire(String executionId) {
         try {
             log.debug("About to fire a GET request ");
+            UriBuilder builder = UriBuilder.fromPath(notifierRequest.getReturn_url());
+            if(notifierRequest.getPayload() != null) {
+                builder.queryParam("payload", notifierRequest.getPayload());
+            }
+
+            builder.queryParam("execution_id", executionId);
+            URI url = builder.build();
+
             HttpRequest request = HttpRequest.newBuilder()
                     .GET()
-                    .uri(URI.create(notifierRequest.getReturn_url()))
+                    .uri(url)
                     .build();
 
             HttpClient client = HttpClient.newHttpClient();
