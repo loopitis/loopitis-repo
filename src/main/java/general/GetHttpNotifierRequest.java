@@ -15,7 +15,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Calendar;
 
 
 public class GetHttpNotifierRequest implements I_NotifierRequest {
@@ -60,12 +60,13 @@ public class GetHttpNotifierRequest implements I_NotifierRequest {
                     .connectTimeout(Duration.ofSeconds(5))
                     .build();
 
-            ExecutionRequest exec = new ExecutionRequest(executionId, LocalDateTime.now());
+            ExecutionRequest exec = new ExecutionRequest(executionId, notifierRequest.getExternal_id(), Calendar.getInstance().getTimeInMillis());
             DBhibernetManager.getInstance().savePreExecution(exec);
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             int statusCode = response == null ? -1 : response.statusCode();
             exec.setStatusCode(statusCode);
             DBhibernetManager.getInstance().savePostExecution(exec);
+            DBhibernetManager.getInstance().countExecutions(notifierRequest.getExternal_id());
 
 
             log.info(statusCode);

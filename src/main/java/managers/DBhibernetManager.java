@@ -238,4 +238,7 @@ public class DBhibernetManager {
 
     public void savePostExecution(ExecutionRequest exec) {
     }
+
+    public void countExecutions(String externalId) {
+    }
 }
