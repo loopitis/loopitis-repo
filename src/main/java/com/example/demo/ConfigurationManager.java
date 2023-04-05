@@ -174,4 +174,8 @@ public class ConfigurationManager {
     public Long getMinimumIntervalTime() {
         return Long.valueOf(_configuration.get(NotifierConstants.CONF_MINIMUM_INTERVAL_TIME_MS));
     }
+
+    public int getHttpVersion() {
+        return Integer.valueOf(_configuration.get(NotifierConstants.CONF_EXECUTION_HTTP_VERSION));
+    }
 }

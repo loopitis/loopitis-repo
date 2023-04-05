@@ -14,4 +14,5 @@ public class NotifierConstants {
     public static final int CONF_DB_DEFAULT_CONNECTION_PULL_MAX_SIZE = 1;
     public static final String CONF_IS_DEVELOPMENT = "isDev";
     public static final String CONF_MINIMUM_INTERVAL_TIME_MS = "minimum_interval_time";
+    public static final String CONF_EXECUTION_HTTP_VERSION = "notifications_http_version";
 }

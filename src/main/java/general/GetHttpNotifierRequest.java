@@ -1,20 +1,32 @@
 package general;
 
+import com.example.demo.ConfigurationManager;
+import consumer.ExecutionRequest;
 import interfaces.I_NotifierRequest;
+import managers.DBhibernetManager;
 import pojos.HttpNotifierRequest;
 
 import javax.ws.rs.core.UriBuilder;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 public class GetHttpNotifierRequest implements I_NotifierRequest {
     private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(GetHttpNotifierRequest.class);
 
+    public static final int httpVersion = ConfigurationManager.getInstance().getHttpVersion();//notifications_http_version=2
+    HttpClient.Version HTTP_VERSION = HttpClient.Version.HTTP_1_1;
+    static{
+        HttpClient.Version HTTP_VERSION = httpVersion == 2 ? HttpClient.Version.HTTP_2 : HttpClient.Version.HTTP_1_1;
+    }
     private HttpNotifierRequest notifierRequest;
-
     public GetHttpNotifierRequest(HttpNotifierRequest notif){
         this.notifierRequest = notif;
     }
@@ -35,13 +47,30 @@ public class GetHttpNotifierRequest implements I_NotifierRequest {
             HttpRequest request = HttpRequest.newBuilder()
                     .GET()
                     .uri(url)
+                    .timeout(Duration.ofSeconds(3))
                     .build();
 
-            HttpClient client = HttpClient.newHttpClient();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            log.info(response.statusCode());
-            log.info(response.body());
+            InetSocketAddress socketAddress = new InetSocketAddress(url.getHost(), url.getPort());
+            Socket socket = new Socket();
+            socket.connect(socketAddress, 5000); // 5 second connection timeout
+
+            HttpClient client = HttpClient.newBuilder()
+                    .version(HTTP_VERSION)
+                    .connectTimeout(Duration.ofSeconds(5))
+                    .build();
+
+            ExecutionRequest exec = new ExecutionRequest(executionId, LocalDateTime.now());
+            DBhibernetManager.getInstance().savePreExecution(exec);
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            int statusCode = response == null ? -1 : response.statusCode();
+            exec.setStatusCode(statusCode);
+            DBhibernetManager.getInstance().savePostExecution(exec);
+
+
+            log.info(statusCode);
+            if(response != null)
+                log.info(response.body());
 
         }
         catch(Exception ex){

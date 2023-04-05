@@ -4,6 +4,7 @@ import com.example.demo.ConfigurationManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import consumer.ExecutionRequest;
 import ent.HttpNotifierRequestEntity;
 
 import enums.eProcess;
@@ -232,6 +233,9 @@ public class DBhibernetManager {
     }
 
 
+    public void savePreExecution(ExecutionRequest exec) {
+    }
 
-
+    public void savePostExecution(ExecutionRequest exec) {
+    }
 }
