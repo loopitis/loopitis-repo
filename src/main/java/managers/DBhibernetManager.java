@@ -13,10 +13,7 @@ import general.DBConfigurationException;
 import general.DBTestInitManager;
 import org.eclipse.persistence.config.PersistenceUnitProperties;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,50 +105,35 @@ public class DBhibernetManager {
 
 
     private void getSessionFactory() {
-            // Add connection pool
-            String jdbc_full_url = "jdbc:postgresql://"+DB_SERVER_HOST+":"+DB_PORT_NUMBER+"/"+DB_NAME;
-            log.debug("Setting db host to ******** : "+jdbc_full_url);
-            HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setJdbcUrl(jdbc_full_url);
-            hikariConfig.setUsername(DB_USER);
-            hikariConfig.setPassword(DB_PASSWORD);
+        // Add connection pool
+        String jdbc_full_url = "jdbc:postgresql://" + DB_SERVER_HOST + ":" + DB_PORT_NUMBER + "/" + DB_NAME;
+        log.debug("Setting db host to ******** : " + jdbc_full_url);
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(jdbc_full_url);
+        hikariConfig.setUsername(DB_USER);
+        hikariConfig.setPassword(DB_PASSWORD);
 
-            hikariConfig.setDriverClassName("org.postgresql.Driver");
+        hikariConfig.setDriverClassName("org.postgresql.Driver");
 
-            hikariConfig.setMaximumPoolSize(10);
-            hikariConfig.setMinimumIdle(5);
-            hikariConfig.setConnectionTimeout(30000);
-            hikariConfig.setIdleTimeout(600000);
-            hikariConfig.setMaxLifetime(1800000);
-            HikariDataSource dataSource = new HikariDataSource(hikariConfig);
+        hikariConfig.setMaximumPoolSize(10);
+        hikariConfig.setMinimumIdle(5);
+        hikariConfig.setConnectionTimeout(30000);
+        hikariConfig.setIdleTimeout(600000);
+        hikariConfig.setMaxLifetime(1800000);
+        HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 
-            Map<String, Object> properties = new HashMap<>();
-            properties.put(PersistenceUnitProperties.JTA_DATASOURCE, dataSource);
-            properties.put(PersistenceUnitProperties.JDBC_DRIVER, "org.postgresql.Driver");
-            properties.put(PersistenceUnitProperties.JDBC_URL, jdbc_full_url);
-            properties.put(PersistenceUnitProperties.JDBC_USER, DB_USER);
-            properties.put(PersistenceUnitProperties.JDBC_PASSWORD, DB_PASSWORD);
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(PersistenceUnitProperties.JTA_DATASOURCE, dataSource);
+        properties.put(PersistenceUnitProperties.JDBC_DRIVER, "org.postgresql.Driver");
+        properties.put(PersistenceUnitProperties.JDBC_URL, jdbc_full_url);
+        properties.put(PersistenceUnitProperties.JDBC_USER, DB_USER);
+        properties.put(PersistenceUnitProperties.JDBC_PASSWORD, DB_PASSWORD);
 
-            // Configure the EntityManagerFactory to use the HikariCP DataSource
-            sessionFactory = Persistence.createEntityManagerFactory("examplePU", properties);
-
-
-
-
-
-            // Mapping annotated entities
-//            configuration.addAnnotatedClass(HttpNotifierRequestEntity.class);
-//            configuration.addAnnotatedClass(Person.class);
-//            sessionFactory =  configuration.buildSessionFactory();
-
+        // Configure the EntityManagerFactory to use the HikariCP DataSource
+        sessionFactory = Persistence.createEntityManagerFactory("examplePU", properties);
 
 
     }
-
-//    private static void mapAnnotationClasses(Configuration configuration) {
-//
-//
-//    }
 
 
 
@@ -190,25 +172,8 @@ public class DBhibernetManager {
     }
 
     private void testConnection() throws DBConfigurationException {
-//        Session session = null;
-//        try {
-//            session = sessionFactory.openSession();
-//            if (session.isConnected()) {
-//                log.debug("DB test connection passed db name " + DB_NAME + " on " + DB_SERVER_HOST);
-//            } else {
-//                log.error("DB test connection has failed");
-//            }
-//        }
-//        catch(Exception ex) {
-//        }
-//        finally {
-//            if(session != null){
-//                session.close();
-//            }
-//        }
-
     }
-//first chek the get entity and then check insert a simple object
+
     public void saveRequest(HttpNotifierRequestEntity request) {
         // Obtain an EntityManager instance from EntityManagerFactory
         EntityManager em = sessionFactory.createEntityManager();
@@ -233,12 +198,49 @@ public class DBhibernetManager {
     }
 
 
-    public void savePreExecution(ExecutionRequest exec) {
+    public void savePreExecution(ExecutionRequest request) {
+        EntityManager em = sessionFactory.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try{
+            tx.begin();
+            em.persist(request);
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+
+        System.out.println(request);
     }
 
     public void savePostExecution(ExecutionRequest exec) {
     }
 
     public void countExecutions(String externalId) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        EntityTransaction tx = entityManager.getTransaction();
+        try{
+            tx.begin();
+            String nativeQuery = "UPDATE notifier.requests set done = done+1 where e_id = ?";
+
+            Query query = entityManager.createNativeQuery(nativeQuery);
+            query.setParameter(1, externalId);
+            int numUpdated = query.executeUpdate();
+
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 }
