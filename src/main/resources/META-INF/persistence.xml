@@ -9,6 +9,7 @@
 
         <class>ent.Person2</class>
         <class>ent.Person</class>
+        <class>consumer.ExecutionRequest</class>
         <class>ent.HttpNotifierRequestEntity</class>
 
         <properties>

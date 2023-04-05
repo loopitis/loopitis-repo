@@ -219,6 +219,27 @@ public class DBhibernetManager {
     }
 
     public void savePostExecution(ExecutionRequest exec) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        EntityTransaction tx = entityManager.getTransaction();
+        try{
+            tx.begin();
+            String nativeQuery = "UPDATE notifier.executions set status_code = ? where i_id = ?";
+
+            Query query = entityManager.createNativeQuery(nativeQuery);
+            query.setParameter(1, exec.getStatusCode());
+            query.setParameter(2, exec.getId());
+            int numUpdated = query.executeUpdate();
+
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void countExecutions(String externalId) {

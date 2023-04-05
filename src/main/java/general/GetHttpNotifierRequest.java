@@ -36,13 +36,14 @@ public class GetHttpNotifierRequest implements I_NotifierRequest {
     public boolean fire(String executionId) {
         try {
             log.debug("About to fire a GET request ");
-            UriBuilder builder = UriBuilder.fromPath(notifierRequest.getReturn_url());
-            if(notifierRequest.getPayload() != null) {
-                builder.queryParam("payload", notifierRequest.getPayload());
+
+            StringBuilder uriBuilder = new StringBuilder(notifierRequest.getReturn_url());
+            uriBuilder.append("?execution_id=").append(executionId);
+            if (notifierRequest.getPayload() != null) {
+                uriBuilder.append("&payload=").append(notifierRequest.getPayload());
             }
 
-            builder.queryParam("execution_id", executionId);
-            URI url = builder.build();
+            URI url = URI.create(uriBuilder.toString());
 
             HttpRequest request = HttpRequest.newBuilder()
                     .GET()
