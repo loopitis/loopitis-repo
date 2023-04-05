@@ -40,7 +40,7 @@ public class DBhibernetManager {
 
     private static int DB_PORT_NUMBER = 5432;
 
-    private static String DB_SERVER_HOST = "localhost";
+    private static String DB_SERVER_HOST = "redis";
 
     public static void main(String[] args) throws JsonProcessingException {
         DBhibernetManager manager = DBhibernetManager.getInstance();
@@ -97,7 +97,8 @@ public class DBhibernetManager {
         DB_USER = dbConfiguration.get_dbUser();
         DB_PASSWORD = dbConfiguration.get_dbPassword();
         DB_MAX_CONNECTIONS = dbConfiguration.get_maxPoolSize();
-
+        DB_PORT_NUMBER = dbConfiguration.get_dbPort();
+        DB_NAME = dbConfiguration.get_dbName();
 
         initConnection();
     }
@@ -107,10 +108,12 @@ public class DBhibernetManager {
 
     private void getSessionFactory() {
             // Add connection pool
+            String jdbc_full_url = "jdbc:postgresql://"+DB_SERVER_HOST+":"+DB_PORT_NUMBER+"/"+DB_NAME;
+            log.debug("Setting db host to ******** : "+jdbc_full_url);
             HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setJdbcUrl("jdbc:postgresql://localhost:5432/mydb");
-            hikariConfig.setUsername("myuser");
-            hikariConfig.setPassword("mypassword");
+            hikariConfig.setJdbcUrl(jdbc_full_url);
+            hikariConfig.setUsername(DB_USER);
+            hikariConfig.setPassword(DB_PASSWORD);
 
             hikariConfig.setDriverClassName("org.postgresql.Driver");
 
@@ -124,9 +127,9 @@ public class DBhibernetManager {
             Map<String, Object> properties = new HashMap<>();
             properties.put(PersistenceUnitProperties.JTA_DATASOURCE, dataSource);
             properties.put(PersistenceUnitProperties.JDBC_DRIVER, "org.postgresql.Driver");
-            properties.put(PersistenceUnitProperties.JDBC_URL, "jdbc:postgresql://localhost:5432/mydb");
-            properties.put(PersistenceUnitProperties.JDBC_USER, "myuser");
-            properties.put(PersistenceUnitProperties.JDBC_PASSWORD, "mypassword");
+            properties.put(PersistenceUnitProperties.JDBC_URL, jdbc_full_url);
+            properties.put(PersistenceUnitProperties.JDBC_USER, DB_USER);
+            properties.put(PersistenceUnitProperties.JDBC_PASSWORD, DB_PASSWORD);
 
             // Configure the EntityManagerFactory to use the HikariCP DataSource
             sessionFactory = Persistence.createEntityManagerFactory("examplePU", properties);

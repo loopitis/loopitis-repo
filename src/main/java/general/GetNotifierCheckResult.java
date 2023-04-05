@@ -1,13 +1,17 @@
 package general;
 
 public class GetNotifierCheckResult {
+    private ErrorDetails error;
+    private boolean isError;
+
     public boolean isError() {
-        return false;
+        return isError;
     }
 
-    public String toJson() {
-        return """
-                {"message": "to be implemented"}
-                """;
+
+
+    public void setError(ErrorDetails details) {
+        isError = true;
+        error = details;
     }
 }

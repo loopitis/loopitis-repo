@@ -1,5 +1,24 @@
 version: "3.9"
 services:
+  redis-ui:
+    image: rediscommander/redis-commander
+    ports:
+      - "8081:8081"
+    networks:
+      my_network:
+        ipv4_address: 172.16.238.15
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    hostname: redis
+    networks:
+      my_network:
+        ipv4_address: 172.16.238.14
+    hostname: redis
   postgres:
     container_name: my_postgres
     build:
@@ -17,7 +36,8 @@ services:
       my_network:
         ipv4_address: 172.16.238.10
     hostname: postgres
-
+    command: >
+      postgres -c listen_addresses=*
   pgadmin:
     container_name: my_pgadmin
     build:
@@ -73,3 +93,4 @@ networks:
 volumes:
   postgres_data:
   portainer_data:
+  redis_data:

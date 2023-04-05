@@ -37,13 +37,22 @@ public class ConfigurationManager {
             return false;
         }
         _configuration = Collections.unmodifiableMap(map);
+        //to delete later - this never should be logged
+        print(map);
         return true;
 
+    }
+
+    private void print(Map<String, String> map) {
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            log.debug("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+        }
     }
 
     private Map<String, String> buildMap() {
         Properties prop = loadProperties();
         if (prop == null) {
+            log.debug("config properties NOT in file ! taking from System variables");
             return System.getenv();
         }
         HashMap<String, String> keyValue = new HashMap<>();
@@ -87,7 +96,7 @@ public class ConfigurationManager {
                 return null;
 
             }
-
+            log.debug("Found config properties in file !");
             FileInputStream fis = new FileInputStream(path + filename);
             input = new BufferedReader(new InputStreamReader(fis));
 
@@ -124,6 +133,7 @@ public class ConfigurationManager {
     }
 
     public String getKafkaTopic() {
+
         return _configuration.get(NotifierConstants.KAFKA_TASKS_TOPIC_NAME);
     }
 
@@ -159,5 +169,9 @@ public class ConfigurationManager {
 
     public boolean isDevelpmentEnv() {
         return Boolean.valueOf(_configuration.get(NotifierConstants.CONF_IS_DEVELOPMENT));
+    }
+
+    public Long getMinimumIntervalTime() {
+        return Long.valueOf(_configuration.get(NotifierConstants.CONF_MINIMUM_INTERVAL_TIME_MS));
     }
 }

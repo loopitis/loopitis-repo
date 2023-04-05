@@ -27,11 +27,13 @@ public class TestEndpoint {
     @RequestMapping("/getNotifier")
     @PostMapping
     public ResponseEntity<String> createGetNotifier(@RequestBody HttpNotifierRequest notif){
-        log.debug("I am here");
+        log.debug("I am here 222222");
+        //to delete later
+        ConfigurationManager.getInstance();
 
         GetNotifierCheckResult result = GetNotifierRequestChecker.check(notif);
         if(result != null && result.isError()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.toJson());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(result));
         }
 
         UUID uuid = UUID.randomUUID();

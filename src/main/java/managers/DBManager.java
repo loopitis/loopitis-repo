@@ -98,6 +98,8 @@ public class DBManager {
         DB_USER = dbConfiguration.get_dbUser();
         DB_PASSWORD = dbConfiguration.get_dbPassword();
         DB_MAX_CONNECTIONS = dbConfiguration.get_maxPoolSize();
+        DB_PORT_NUMBER = dbConfiguration.get_dbPort();
+        DB_NAME = dbConfiguration.get_dbName();
 
 
         initConnection();
@@ -108,7 +110,7 @@ public class DBManager {
         _connectionPool = new BasicDataSource();
 //        _connectionPool.set("QuantifyAPI");
 //        _connectionPool.setApplicationName(DB_SERVER_NAME);
-        _connectionPool.setUrl("jdbc:postgresql://localhost:5432/mydb");
+        _connectionPool.setUrl("jdbc:postgresql://"+DB_SERVER_HOST+":"+DB_PORT_NUMBER+"/"+DB_NAME);
 
         _connectionPool.setUsername(DB_USER);
         _connectionPool.setPassword(DB_PASSWORD);
