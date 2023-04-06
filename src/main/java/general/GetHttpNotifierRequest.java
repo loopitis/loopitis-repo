@@ -52,14 +52,11 @@ public class GetHttpNotifierRequest implements I_NotifierRequest {
                     .build();
 
 
-            InetSocketAddress socketAddress = new InetSocketAddress(url.getHost(), url.getPort());
-            Socket socket = new Socket();
-            socket.connect(socketAddress, 5000); // 5 second connection timeout
-
             HttpClient client = HttpClient.newBuilder()
                     .version(HTTP_VERSION)
                     .connectTimeout(Duration.ofSeconds(5))
                     .build();
+
 
             ExecutionRequest exec = new ExecutionRequest(executionId, notifierRequest.getExternal_id(), Calendar.getInstance().getTimeInMillis());
             DBhibernetManager.getInstance().savePreExecution(exec);

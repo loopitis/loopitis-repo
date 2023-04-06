@@ -1,5 +1,26 @@
 version: "3.9"
 services:
+  consumer:
+    container_name: consumer_container
+    build:
+      context: .
+      dockerfile: Dockerfile.consumer
+    environment:
+      isDev: ${isDev}
+      db_max_pool_size: ${db_max_pool_size}
+      topic_name_tasks: ${topic_name_tasks}
+      timer_threads_in_process: ${timer_threads_in_process}
+      kafka_host: ${kafka_host}
+      db_port: ${db_port}
+      db_user: ${db_user}
+      db_password: ${db_password}
+      db_host: ${db_host}
+      db_name: ${db_name}
+      notifications_http_version: ${notifications_http_version}
+    hostname: consumer
+    networks:
+      my_network:
+        ipv4_address: 172.16.238.16
   redis-ui:
     image: rediscommander/redis-commander
     ports:
