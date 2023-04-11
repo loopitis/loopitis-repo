@@ -1,9 +1,12 @@
 package general;
 
 import com.example.demo.ConfigurationManager;
+import com.google.gson.Gson;
 import consumer.ExecutionRequest;
+import enums.eEvent;
 import interfaces.I_NotifierRequest;
 import managers.DBhibernetManager;
+import managers.EventManager;
 import pojos.HttpNotifierRequest;
 
 import javax.ws.rs.core.UriBuilder;
@@ -22,10 +25,13 @@ public class GetHttpNotifierRequest implements I_NotifierRequest {
     private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(GetHttpNotifierRequest.class);
 
     public static final int httpVersion = ConfigurationManager.getInstance().getHttpVersion();//notifications_http_version=2
-    HttpClient.Version HTTP_VERSION = HttpClient.Version.HTTP_1_1;
+    public static HttpClient.Version HTTP_VERSION = HttpClient.Version.HTTP_1_1;
     static{
-        HttpClient.Version HTTP_VERSION = httpVersion == 2 ? HttpClient.Version.HTTP_2 : HttpClient.Version.HTTP_1_1;
+        HTTP_VERSION = httpVersion == 2 ? HttpClient.Version.HTTP_2 : HttpClient.Version.HTTP_1_1;
     }
+
+    private static final Gson g = new Gson();
+
     private HttpNotifierRequest notifierRequest;
     public GetHttpNotifierRequest(HttpNotifierRequest notif){
         this.notifierRequest = notif;
@@ -66,6 +72,8 @@ public class GetHttpNotifierRequest implements I_NotifierRequest {
             DBhibernetManager.getInstance().savePostExecution(exec);
             DBhibernetManager.getInstance().countExecutions(notifierRequest.getExternal_id());
 
+            //get all client listeners and let them know
+            EventManager.getInstance().fire(eEvent.EXECUTION_FIRED, g.toJson(exec));
 
             log.info(statusCode);
             if(response != null)

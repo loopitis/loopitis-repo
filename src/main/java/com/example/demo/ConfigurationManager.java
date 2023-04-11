@@ -148,6 +148,7 @@ public class ConfigurationManager {
                 dbConf.set_maxPoolSize(NotifierConstants.CONF_DB_DEFAULT_CONNECTION_PULL_MAX_SIZE);
                 return dbConf;
         }
+
     }
 
     public DBConfiguration getBasicDBConfiguration() {
@@ -177,5 +178,25 @@ public class ConfigurationManager {
 
     public int getHttpVersion() {
         return Integer.valueOf(_configuration.get(NotifierConstants.CONF_EXECUTION_HTTP_VERSION));
+    }
+
+    public int getNumberOfThreadsForProcess() {
+        return Integer.valueOf(_configuration.get(NotifierConstants.CONF_NUMBER_OF_THREADS_CONSUMER));
+    }
+
+    public String getRedisHost() {
+        return _configuration.get(NotifierConstants.CONF_REDIS_HOST);
+    }
+
+    public Integer getRedisPort() {
+        return Integer.valueOf(_configuration.get(NotifierConstants.CONF_REDIS_PORT));
+    }
+
+    public String getRedisListenersKey() {
+        return _configuration.get(NotifierConstants.CONF_REDIS_LISTENERS_KEY);
+    }
+
+    public String getKafkaHost() {
+        return _configuration.get(NotifierConstants.CONF_KAFKA_HOST);
     }
 }

@@ -2,26 +2,29 @@ package com.example.demo;
 
 import com.google.gson.Gson;
 import ent.HttpNotifierRequestEntity;
-import general.GetNotifierCheckResult;
-import general.GetNotifierRequestChecker;
-import managers.DBhibernetManager;
+import enums.eEvent;
+import general.*;
+import managers.ConnectionNotifierManager;
+import managers.EventManager;
 import managers.RequestManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pojos.HttpNotifierRequest;
 import producer.KafkaProducer;
+import services.Services;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @RequestMapping("/set")
 @RestController
 public class TestEndpoint {
     private static final Logger log = LoggerFactory.getLogger(TestEndpoint.class);
-    public static final String TOPIC_NAME = ConfigurationManager.getInstance().getKafkaTopic();
+    public static final String REQUEST_TASKS_TOPIC = ConfigurationManager.getInstance().getKafkaTopic();
     private static Gson gson = new Gson();
 
     @RequestMapping("/getNotifier")
@@ -46,9 +49,12 @@ public class TestEndpoint {
         Long internalId = RequestManager.getInstance().saveRequest(notifierEntity);//request a call , internal call id, external call id , call name, call status, type(get\call), interval, occurance,  data:json
         notif.setInternal_id(internalId);
 
-        log.info("$$$$$$$$$$$$$$$$$$$$$$$ About to send data to kafka for topic "+TOPIC_NAME);
-        KafkaProducer.getInstance().send(TOPIC_NAME, "get", gson.toJson(notif));
-
+        log.info("$$$$$$$$$$$$$$$$$$$$$$$ About to send data to kafka for topic "+ REQUEST_TASKS_TOPIC);
+        var future = KafkaProducer.getInstance().send(REQUEST_TASKS_TOPIC, "get", gson.toJson(notif));
+        if(future != null){
+            log.debug("Request task Added successfully to Kafka ");
+        }
+        EventManager.getInstance().fire(eEvent.REQUEST_ADDED, gson.toJson(notif));
 
         return ResponseEntity.ok("{ \"id\":\""+external_id+"\",\"internal_id\":"+internalId+"}");
 
@@ -58,5 +64,36 @@ public class TestEndpoint {
     @PostMapping
     public ResponseEntity<String> createPostNotifier(@RequestBody HttpNotifierRequest notif){
         return ResponseEntity.ok("ok");
+    }
+
+    @RequestMapping("/connection")
+    @PostMapping
+    public ResponseEntity<String> connect(@RequestBody ConnectRequest connectRequest){
+        log.debug("Received Request to connect "+connectRequest);
+        if(connectRequest == null || connectRequest.getUrl() == null || connectRequest.getUrl().isEmpty()) {
+            ErrorDetails details = new ErrorDetails();
+            details.withCode(400)
+                    .withField("url")
+                    .withDetails("url not provided")
+                    .withMessage("Bad input parameters");
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
+
+        }
+        if(!Services.isValidURL(connectRequest.getUrl())){
+            ErrorDetails details = new ErrorDetails();
+            details.withCode(400)
+                    .withField("url")
+                    .withDetails("url not valid")
+                    .withMessage("Bad input parameters");
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
+        }
+        log.debug("Receievd request to "+connectRequest);
+
+
+        //save the url to redis
+        ConnectionNotifierManager.getInstance().saveConnectionRequest(connectRequest, Arrays.stream(eEvent.values()).toList()/*listen on all events*/);
+        String response = "{\"connected\": \"true\", \"url\": \""+connectRequest.getUrl()+"\"}";
+        return ResponseEntity.ok().body(response);
+
     }
 }

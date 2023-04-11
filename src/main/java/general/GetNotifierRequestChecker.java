@@ -3,9 +3,7 @@ package general;
 import com.example.demo.ConfigurationManager;
 import pojos.HttpNotifierRequest;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import static services.Services.isValidURL;
 
 public class GetNotifierRequestChecker {
 
@@ -70,13 +68,6 @@ public class GetNotifierRequestChecker {
         return res;
     }
 
-    private static boolean isValidURL(String returnUrl) {
-        try {
-            new URL(returnUrl).toURI();
-            return true;
-        } catch (MalformedURLException | URISyntaxException e) {
-            return false;
-        }
-    }
+
 
 }

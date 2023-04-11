@@ -1,5 +1,6 @@
 package producer;
 
+import com.example.demo.ConfigurationManager;
 import general.KafkaTopicCreator;
 import org.apache.kafka.clients.admin.Admin;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -20,15 +21,18 @@ public class KafkaProducer {
     private final Properties properties;
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> kafkaProducer;
 
+    private final static String KAFKA_HOST = ConfigurationManager.getInstance().getKafkaHost();
+
     private KafkaProducer(){
         properties = new Properties();
-
-        String boostrapServers = "cluster.playground.cdkt.io:9092";
-
+        String boostrapServers = KAFKA_HOST+":9092";
         properties.setProperty("bootstrap.servers", boostrapServers);
-        properties.setProperty("security.protocol","SASL_SSL");
-        properties.setProperty("sasl.mechanism","PLAIN");
-        properties.setProperty("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username='3FCWzHXahINkqWBzARKErZ' password='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY29uZHVrdG9yLmlvIiwic291cmNlQXBwbGljYXRpb24iOiJhZG1pbiIsInVzZXJNYWlsIjpudWxsLCJwYXlsb2FkIjp7InZhbGlkRm9yVXNlcm5hbWUiOiIzRkNXekhYYWhJTmtxV0J6QVJLRXJaIiwib3JnYW5pemF0aW9uSWQiOjcwNTgzLCJ1c2VySWQiOjgxNjg1LCJmb3JFeHBpcmF0aW9uQ2hlY2siOiIxYTFlMTIyOC1iZGFkLTQ3NDktOWNlMi03MjdiYzQ2N2IyNzkifX0.QqMmHKIAFoiUUF536vYIvOIQfkrUUJyl-HtsN4i4i-s';");
+//        String boostrapServers = "cluster.playground.cdkt.io:9092";
+//
+//        properties.setProperty("bootstrap.servers", boostrapServers);
+//        properties.setProperty("security.protocol","SASL_SSL");
+//        properties.setProperty("sasl.mechanism","PLAIN");
+//        properties.setProperty("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username='3FCWzHXahINkqWBzARKErZ' password='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY29uZHVrdG9yLmlvIiwic291cmNlQXBwbGljYXRpb24iOiJhZG1pbiIsInVzZXJNYWlsIjpudWxsLCJwYXlsb2FkIjp7InZhbGlkRm9yVXNlcm5hbWUiOiIzRkNXekhYYWhJTmtxV0J6QVJLRXJaIiwib3JnYW5pemF0aW9uSWQiOjcwNTgzLCJ1c2VySWQiOjgxNjg1LCJmb3JFeHBpcmF0aW9uQ2hlY2siOiIxYTFlMTIyOC1iZGFkLTQ3NDktOWNlMi03MjdiYzQ2N2IyNzkifX0.QqMmHKIAFoiUUF536vYIvOIQfkrUUJyl-HtsN4i4i-s';");
 
 
         properties.setProperty("key.serializer", StringSerializer.class.getName());

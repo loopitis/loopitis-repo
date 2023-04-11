@@ -15,4 +15,9 @@ public class NotifierConstants {
     public static final String CONF_IS_DEVELOPMENT = "isDev";
     public static final String CONF_MINIMUM_INTERVAL_TIME_MS = "minimum_interval_time";
     public static final String CONF_EXECUTION_HTTP_VERSION = "notifications_http_version";
+    public static final String CONF_NUMBER_OF_THREADS_CONSUMER = "timer_threads_in_process";
+    public static final String CONF_REDIS_HOST = "redis_host";
+    public static final String CONF_REDIS_PORT = "redis_port";
+    public static final String CONF_REDIS_LISTENERS_KEY = "redis_listeners_key";
+    public static final String CONF_KAFKA_HOST = "kafka_host";
 }

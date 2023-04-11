@@ -1,14 +1,19 @@
 package notifiers;
 
+import com.example.demo.ConfigurationManager;
+import enums.eEvent;
 import general.FutureCancel;
 import interfaces.I_NotifierRequest;
+import managers.EventManager;
 
 import java.util.UUID;
 import java.util.concurrent.*;
 
 public class NotifierThreadPool {
     private static NotifierThreadPool instance;
-    private ScheduledExecutorService pool = Executors.newScheduledThreadPool(1);
+
+    private final static int NUMBER_OF_THREADS_FOR_PROCESS = ConfigurationManager.getInstance().getNumberOfThreadsForProcess();
+    private ScheduledExecutorService pool = Executors.newScheduledThreadPool(NUMBER_OF_THREADS_FOR_PROCESS);
     private NotifierThreadPool(){}
 
     public synchronized static NotifierThreadPool getInstance(){
