@@ -1,5 +1,71 @@
 version: "3.9"
 services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+    hostname: zookeeper
+    networks:
+      - my_network
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    hostname: kafka
+    environment:
+      - KAFKA_KERBEROS_MODE=none
+      - KAFKA_SASL_MECHANISM_PLAIN_REQUIRED=false
+      - KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND=true
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_HEAP_OPTS=-Xmx512M -Xms512M
+      - KAFKA_LOG_DIRS=/var/lib/kafka/data
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_LOG_DIRS_RETENTION_HOURS=168
+      - KAFKA_LOG_DIRS_SEGMENT_MS=604800000
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_AUTO_CREATE_TOPICS_REPLICATION_FACTOR=1
+      - KAFKA_REPLICATION_FACTOR=1
+      - KAFKA_KAFKACONFIG_CONFLUENT.BALANCER.TOPIC.REPLICATION.FACTOR=1
+      - KAFKA_KAFKACONFIG_CONFLUENT.DURABILITY.TOPIC.REPLICATION.FACTOR=1
+      - KAFKA_KAFKACONFIG_CONFLUENT.LICENSE.TOPIC.REPLICATION.FACTOR=1
+      - KAFKA_KAFKACONFIG_CONFLUENT.TIER.METADATA.REPLICATION.FACTOR=1
+      - KAFKA_KAFKACONFIG_TRANSACTION.STATE.LOG.REPLICATION.FACTOR=1
+      - KAFKA_KAFKACONFIG_OFFSETS.TOPIC.REPLICATION.FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1 # Set the transaction state log replication factor
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1 # Set the transaction state log minimum in-sync replicas
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 # Set the offsets topic replication factor
+    networks:
+      - my_network
+  client:
+    container_name: client_container
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    environment:
+      isDev: ${isDev}
+      db_max_pool_size: ${db_max_pool_size}
+      topic_name_tasks: ${topic_name_tasks}
+      timer_threads_in_process: ${timer_threads_in_process}
+      kafka_host: ${kafka_host}
+      db_port: ${db_port}
+      db_user: ${db_user}
+      db_password: ${db_password}
+      db_host: ${db_host}
+      db_name: ${db_name}
+      notifications_http_version: ${notifications_http_version}
+    hostname: client
+    ports:
+      - "8090:8090"
+    networks:
+      my_network:
+        ipv4_address: 172.16.238.17
   consumer:
     container_name: consumer_container
     build:
@@ -16,8 +82,13 @@ services:
       db_password: ${db_password}
       db_host: ${db_host}
       db_name: ${db_name}
+      redis_host: ${redis_host}
+      redis_port: ${redis_port}
+      redis_listeners_key: ${redis_listeners_key}
       notifications_http_version: ${notifications_http_version}
     hostname: consumer
+    depends_on:
+      - kafka
     networks:
       my_network:
         ipv4_address: 172.16.238.16
@@ -104,14 +175,17 @@ services:
       db_password: ${db_password}
       db_host: ${db_host}
       db_name: ${db_name}
+      redis_host: ${redis_host}
+      redis_port: ${redis_port}
+      redis_listeners_key: ${redis_listeners_key}
       minimum_interval_time: ${minimum_interval_time}
+      notifications_http_version: ${notifications_http_version}
     ports:
       - "8080:8080"
     networks:
       my_network:
         ipv4_address: 172.16.238.13
     hostname: endpoints
-
 networks:
   my_network:
     ipam:

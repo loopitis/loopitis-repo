@@ -1,0 +1,11 @@
+FROM openjdk:17-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy the JAR file into the container
+COPY client.jar /app
+
+# Run the JAR file
+CMD ["java", "-jar", "client.jar"]
+

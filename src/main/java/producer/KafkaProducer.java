@@ -19,6 +19,7 @@ public class KafkaProducer {
 
     private static KafkaProducer instance;
     private final Properties properties;
+
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> kafkaProducer;
 
     private final static String KAFKA_HOST = ConfigurationManager.getInstance().getKafkaHost();
@@ -26,8 +27,9 @@ public class KafkaProducer {
     private KafkaProducer(){
         properties = new Properties();
         String boostrapServers = KAFKA_HOST+":9092";
-        properties.setProperty("bootstrap.servers", boostrapServers);
 //        String boostrapServers = "cluster.playground.cdkt.io:9092";
+        properties.setProperty("bootstrap.servers", boostrapServers);
+//
 //
 //        properties.setProperty("bootstrap.servers", boostrapServers);
 //        properties.setProperty("security.protocol","SASL_SSL");
@@ -55,6 +57,7 @@ public class KafkaProducer {
 
 
     public Future<RecordMetadata> send(String topic, String key, String value){
+        log.debug("Sending data to "+properties.get("bootstrap.servers"));
         var producerRecord = new ProducerRecord<String, String>(topic, key, value);
         return kafkaProducer.send(producerRecord);
     }

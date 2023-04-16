@@ -1,0 +1,4 @@
+# Use the official PostgreSQL image as the base image
+FROM postgres:latest
+COPY init.sql /docker-entrypoint-initdb.d/
+

@@ -1,5 +1,7 @@
 package general;
 
+import com.example.demo.ConfigurationManager;
+import com.example.demo.TestEndpoint;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -12,20 +14,20 @@ public class KafkaTopicCreator {
     public static void main(String[] args) {
         var properties = new Properties();
 
-        String boostrapServers = "localhost:9092";
+        String kafkaHost = ConfigurationManager.getInstance().getKafkaHost();
+        String boostrapServers = kafkaHost+":9092";
 
         properties.setProperty("bootstrap.servers", boostrapServers);
 //        properties.setProperty("security.protocol","SASL_SSL");
 //        properties.setProperty("sasl.mechanism","PLAIN");
 //        properties.setProperty("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username='3FCWzHXahINkqWBzARKErZ' password='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY29uZHVrdG9yLmlvIiwic291cmNlQXBwbGljYXRpb24iOiJhZG1pbiIsInVzZXJNYWlsIjpudWxsLCJwYXlsb2FkIjp7InZhbGlkRm9yVXNlcm5hbWUiOiIzRkNXekhYYWhJTmtxV0J6QVJLRXJaIiwib3JnYW5pemF0aW9uSWQiOjcwNTgzLCJ1c2VySWQiOjgxNjg1LCJmb3JFeHBpcmF0aW9uQ2hlY2siOiIxYTFlMTIyOC1iZGFkLTQ3NDktOWNlMi03MjdiYzQ2N2IyNzkifX0.QqMmHKIAFoiUUF536vYIvOIQfkrUUJyl-HtsN4i4i-s';");
-
+//
         properties.put("group.id", "my-group");
-
-
-
         properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        createTopicIfNotExists("my_topic", 3, (short)1, properties);
+        properties.setProperty(AdminClientConfig.CLIENT_ID_CONFIG, "KafkaTopicCreator");
+
+        createTopicIfNotExists(TestEndpoint.REQUEST_TASKS_TOPIC, 2, (short)1, properties);
     }
     public static void createTopicIfNotExists(String topicName, int numPartitions, short replicationFactor, Properties props) {
 

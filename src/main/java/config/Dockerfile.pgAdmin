@@ -1,0 +1,2 @@
+# Use the official PGAdmin image as the base image
+FROM dpage/pgadmin4:latest
