@@ -3,6 +3,8 @@ package ent;
 import pojos.HttpNotifierRequest;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.Calendar;
 
 @Entity
 @Table(name = "notifier.requests")
@@ -19,6 +21,9 @@ public class HttpNotifierRequestEntity {
         this.interval = entity.getInterval();
         this.occurrences = entity.getOccurrences();
         this.payload = entity.getPayload();
+        long currentMillis = Calendar.getInstance().getTimeInMillis();
+        this.requestTime = new Timestamp(currentMillis);
+        this.firstExecTime = new Timestamp(currentMillis+this.delay);
     }
 
     @Id
@@ -54,6 +59,31 @@ public class HttpNotifierRequestEntity {
     @Lob
     @Column(name = "payload")
     private String payload;
+
+    @Column(name = "request_time")
+    private Timestamp requestTime;
+
+    @Column(name = "first_exec_time")
+    private Timestamp firstExecTime;
+
+    // getters and setters
+
+    public Timestamp getRequestTime() {
+        return requestTime;
+    }
+
+    public void setRequestTime(Timestamp requestTime) {
+        this.requestTime = requestTime;
+    }
+
+    public Timestamp getFirstExecTime() {
+        return firstExecTime;
+    }
+
+    public void setFirstExecTime(Timestamp firstExecTime) {
+        this.firstExecTime = firstExecTime;
+    }
+
 
     public Long getId() {
         return id;

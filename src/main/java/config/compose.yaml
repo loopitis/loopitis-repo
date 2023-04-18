@@ -67,12 +67,12 @@ services:
       my_network:
         ipv4_address: 172.16.238.17
   consumer:
-    container_name: consumer_container
     build:
       context: .
       dockerfile: Dockerfile.consumer
     environment:
       isDev: ${isDev}
+      cancel_request_channel: ${cancel_request_channel}
       db_max_pool_size: ${db_max_pool_size}
       topic_name_tasks: ${topic_name_tasks}
       timer_threads_in_process: ${timer_threads_in_process}
@@ -90,8 +90,7 @@ services:
     depends_on:
       - kafka
     networks:
-      my_network:
-        ipv4_address: 172.16.238.16
+      - my_network
   redis-ui:
     image: rediscommander/redis-commander
     ports:
@@ -166,6 +165,7 @@ services:
       dockerfile: Dockerfile.endpoints
     environment:
       isDev: ${isDev}
+      cancel_request_channel: ${cancel_request_channel}
       db_max_pool_size: ${db_max_pool_size}
       topic_name_tasks: ${topic_name_tasks}
       timer_threads_in_process: ${timer_threads_in_process}
