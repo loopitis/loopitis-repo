@@ -1,13 +1,11 @@
 package com.example.demo;
 
 import com.google.gson.Gson;
+import consumer.ExecutionRequest;
 import ent.HttpNotifierRequestEntity;
 import enums.eEvent;
 import general.*;
-import managers.ConnectionNotifierManager;
-import managers.EventManager;
-import managers.RedisManager;
-import managers.RequestManager;
+import managers.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -118,4 +116,44 @@ public class TestEndpoint {
         return ResponseEntity.ok().body("{\"result\":\"request sent\"}");
 
     }
+
+    @RequestMapping("/execution/comment")
+    @PostMapping
+    public ResponseEntity<String> addCommentToSpecificExecution(@RequestBody CommentRequest commentRequest){
+        log.debug("Received Request to comment execution "+commentRequest);
+        if(commentRequest == null || commentRequest.getExecutionId() == null || commentRequest.getExecutionId().isEmpty()) {
+            ErrorDetails details = new ErrorDetails();
+            details.withCode(400)
+                    .withField("executionId")
+                    .withDetails("executionId not provided")
+                    .withMessage("Bad input parameters");
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
+
+        }
+
+        if(commentRequest == null || commentRequest.getComment() == null || commentRequest.getComment().isEmpty()) {
+            ErrorDetails details = new ErrorDetails();
+            details.withCode(400)
+                    .withField("comment")
+                    .withDetails("comment not provided")
+                    .withMessage("Bad input parameters");
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
+
+        }
+
+        //save the url to redis
+        boolean added = DBhibernetManager.getInstance().updateCommentOnExecution(commentRequest);
+        if(!added){
+            ErrorDetails details = new ErrorDetails();
+            details.withCode(500)
+                    .withField("executionId")
+                    .withDetails("Failed adding comment")
+                    .withMessage("Execution id was not found");
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
+
+        }
+        return ResponseEntity.ok().body("{\"result\":\"comment added\"}");
+
+    }
+
 }

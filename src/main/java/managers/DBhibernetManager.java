@@ -9,6 +9,7 @@ import ent.HttpNotifierRequestEntity;
 
 import enums.eProcess;
 import enums.eRequestStatus;
+import general.CommentRequest;
 import general.DBConfiguration;
 import general.DBConfigurationException;
 import general.DBTestInitManager;
@@ -271,13 +272,42 @@ public class DBhibernetManager {
         EntityTransaction tx = entityManager.getTransaction();
         try{
             tx.begin();
-            String nativeQuery = "UPDATE notifier.requests set status = '"+status.getDbName()+"' where e_id = ?";
+            String nativeQuery = "UPDATE notifier.requests set status =? where e_id = ?";
 
             Query query = entityManager.createNativeQuery(nativeQuery);
-            query.setParameter(1, requestId);
+            query.setParameter(1, status.getDbName());
             int numUpdated = query.executeUpdate();
 
             tx.commit();
+        }
+        catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    public boolean updateCommentOnExecution(CommentRequest commentRequest) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        EntityTransaction tx = entityManager.getTransaction();
+        try{
+            tx.begin();
+            String nativeQuery = "UPDATE notifier.executions set comment = ? where e_id = ?";
+
+            Query query = entityManager.createNativeQuery(nativeQuery);
+            query.setParameter(1, commentRequest.getComment());
+            query.setParameter(2, commentRequest.getExecutionId());
+
+            int numUpdated = query.executeUpdate();
+
+            tx.commit();
+            if(numUpdated == 0){
+                return false;
+            }
+            return true;
         }
         catch (Exception e) {
             if (tx.isActive()) {
