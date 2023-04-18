@@ -39,6 +39,12 @@ public class GetHttpNotifierRequest implements I_NotifierRequest {
 
 
     @Override
+    public String getRequestId() {
+        if(notifierRequest != null) return notifierRequest.getExternal_id();
+        return null;
+    }
+
+    @Override
     public boolean fire(String executionId) {
         try {
             log.debug("About to fire a GET request ");

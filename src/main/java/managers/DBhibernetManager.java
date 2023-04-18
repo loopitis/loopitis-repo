@@ -8,6 +8,7 @@ import consumer.ExecutionRequest;
 import ent.HttpNotifierRequestEntity;
 
 import enums.eProcess;
+import enums.eRequestStatus;
 import general.DBConfiguration;
 import general.DBConfigurationException;
 import general.DBTestInitManager;
@@ -251,6 +252,29 @@ public class DBhibernetManager {
 
             Query query = entityManager.createNativeQuery(nativeQuery);
             query.setParameter(1, externalId);
+            int numUpdated = query.executeUpdate();
+
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    public void updateStatus(String requestId, eRequestStatus status) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        EntityTransaction tx = entityManager.getTransaction();
+        try{
+            tx.begin();
+            String nativeQuery = "UPDATE notifier.requests set status = "+status.getDbName()+" where e_id = ?";
+
+            Query query = entityManager.createNativeQuery(nativeQuery);
+            query.setParameter(1, requestId);
             int numUpdated = query.executeUpdate();
 
             tx.commit();

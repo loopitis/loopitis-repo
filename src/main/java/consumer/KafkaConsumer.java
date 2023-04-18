@@ -3,19 +3,26 @@ package consumer;
 import com.example.demo.ConfigurationManager;
 import com.example.demo.TestEndpoint;
 import com.google.gson.Gson;
+import enums.eRequestStatus;
+import general.CancelTaskRequest;
+import general.FutureCancel;
 import general.GetHttpNotifierRequest;
+import managers.DBhibernetManager;
+import managers.RedisManager;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pojos.HttpNotifierRequest;
+import redis.clients.jedis.JedisPubSub;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Properties;
 
 
-public class KafkaConsumer {
+public class KafkaConsumer extends JedisPubSub {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaConsumer.class.getSimpleName());
 
@@ -25,6 +32,9 @@ public class KafkaConsumer {
 
     private final static String KAFKA_HOST = ConfigurationManager.getInstance().getKafkaHost();
 
+    private HashMap<String, FutureCancel> taskIdToFuture = new HashMap<>();
+
+    private Gson g = new Gson();
 
     public static void main(String[] args) {
 
@@ -64,28 +74,65 @@ public class KafkaConsumer {
 
 
     public void run(){
-//        kafkaConsumer.subscribe(Collections.singletonList(TestEndpoint.REQUEST_TASKS_TOPIC));
+
+        //add a listener to channel in case anyone wants to cancel a task
+        RedisManager.getInstance().subscribeToChannel(TestEndpoint.REDIS_CANCEL_CHANNEL, this);
+
+        //subscribe to topic in kafka to get more requests
         kafkaConsumer.subscribe(Collections.singletonList(TestEndpoint.REQUEST_TASKS_TOPIC));
+
         while (true) {
             log.debug("About to poll from kafka");
             ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(2000));
             if(records.isEmpty()){
                 log.debug("nothing found");
-
             }
             for (ConsumerRecord<String, String> record : records) {
                 System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
                 if(record.value() == null) continue;
                 if(record.topic().equals(TestEndpoint.REQUEST_TASKS_TOPIC)) {
                     HttpNotifierRequest request = gson.fromJson(record.value(), HttpNotifierRequest.class);
-                    if (record.key().equals("get")) {
                         var getRequest = new GetHttpNotifierRequest(request);
                         NotifierTask task = new NotifierTask(getRequest);
-                        task.handle();
-                    }
+
+                        //update DB that the task is in progress
+                        DBhibernetManager.getInstance().updateStatus(request.getExternal_id(), eRequestStatus.IN_PROGRESS);
+
+                        var future = task.handle();
+                        taskIdToFuture.put(request.getExternal_id(), future);
+
                 }
             }
             kafkaConsumer.commitSync();
         }
+    }
+
+    @Override
+    public void onMessage(String channel, String message) {
+        System.out.println("$$$$$$$$$$$$$$$$$$$$ Msg from channel: "+channel +" Message: "+message+"$$$$$$$$$$$$$$$$$$$$$$$");
+        if(channel.equals(TestEndpoint.REDIS_CANCEL_CHANNEL)) {
+            CancelTaskRequest cancelTaskRequest = g.fromJson(message, CancelTaskRequest.class);
+            FutureCancel future = taskIdToFuture.get(cancelTaskRequest.getRequestId());
+            if (future == null){
+                log.debug("This consumer is not fmailiar with task "+cancelTaskRequest.getRequestId());
+                log.debug("Ignoring message");
+                return;
+            }
+            log.debug("This consumer is found the requested task "+cancelTaskRequest.getRequestId());
+            log.debug("Canceling the task...");
+            boolean canceledResult = future.cancel();
+            if(!canceledResult){
+                log.debug("FAILED cancelling task "+cancelTaskRequest.getRequestId());
+                return;
+            }
+            log.debug("Task canceled successfully "+cancelTaskRequest.getRequestId());
+            taskIdToFuture.remove(cancelTaskRequest.getRequestId());
+            DBhibernetManager.getInstance().updateStatus(cancelTaskRequest.getRequestId(), eRequestStatus.CANCELED);
+        }
+        else{
+            log.error("This consumer is not fmailiar with the request type "+message);
+            log.error("Ignoring message");
+        }
+
     }
 }

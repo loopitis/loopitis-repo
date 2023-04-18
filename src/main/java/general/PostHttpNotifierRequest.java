@@ -9,6 +9,11 @@ public class PostHttpNotifierRequest implements I_NotifierRequest {
     public PostHttpNotifierRequest(){}
 
     @Override
+    public String getRequestId() {
+        return httpRequest.getExternal_id();
+    }
+
+    @Override
     public boolean fire(String executionId) {
         return false;
     }

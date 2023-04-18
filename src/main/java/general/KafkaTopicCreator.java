@@ -27,7 +27,7 @@ public class KafkaTopicCreator {
         properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         properties.setProperty(AdminClientConfig.CLIENT_ID_CONFIG, "KafkaTopicCreator");
 
-        createTopicIfNotExists(TestEndpoint.REQUEST_TASKS_TOPIC, 2, (short)1, properties);
+        createTopicIfNotExists(TestEndpoint.REQUEST_TASKS_TOPIC, 5, (short)1, properties);
     }
     public static void createTopicIfNotExists(String topicName, int numPartitions, short replicationFactor, Properties props) {
 

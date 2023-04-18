@@ -1,10 +1,10 @@
 package notifiers;
 
 import com.example.demo.ConfigurationManager;
-import enums.eEvent;
+import enums.eRequestStatus;
 import general.FutureCancel;
 import interfaces.I_NotifierRequest;
-import managers.EventManager;
+import managers.DBhibernetManager;
 
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -23,7 +23,7 @@ public class NotifierThreadPool {
         return instance;
     }
 
-    public void assignTask(I_NotifierRequest request) {
+    public FutureCancel assignTask(I_NotifierRequest request) {
         FutureCancel futureCancel = new FutureCancel();
 
         ScheduledFuture<?> future = pool.scheduleAtFixedRate(new Runnable() {
@@ -35,6 +35,7 @@ public class NotifierThreadPool {
 
                 if(num >= maxTimes){
                     futureCancel.cancel();
+                    DBhibernetManager.getInstance().updateStatus(request.getRequestId(), eRequestStatus.FINISHED);
                     return;
                 }
                 UUID uuid = UUID.randomUUID();
@@ -43,7 +44,8 @@ public class NotifierThreadPool {
                 num++;
             }
         }, request.getDelay(), request.getInterval(), TimeUnit.MILLISECONDS);
-
+        if(future == null) return null;
         futureCancel.setFuture(future);
+        return futureCancel;
     }
 }

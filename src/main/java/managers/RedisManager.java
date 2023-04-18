@@ -4,6 +4,7 @@ import com.example.demo.ConfigurationManager;
 import enums.eRedisDB;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPubSub;
 
 import java.util.Map;
 import java.util.Set;
@@ -84,6 +85,39 @@ public class RedisManager {
     public boolean removeAllListeners(){
         try {
             jedis.del(LISTENERS_KEY);
+            return true;
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+        finally {
+            // Close the Redis connection
+            jedis.close();
+        }
+    }
+
+
+    public boolean subscribeToChannel(String channel, JedisPubSub listener){
+        try{
+            new Thread(()->
+                jedis.subscribe(listener, channel)).start();
+            return true;
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+        finally {
+            // Close the Redis connection
+            jedis.close();
+        }
+
+    }
+
+    public boolean publishMessageToChannel(String channel, String message){
+        try{
+            jedis.publish(channel, message);
             return true;
         }
         catch (Exception ex){

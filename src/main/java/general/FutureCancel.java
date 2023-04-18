@@ -7,12 +7,13 @@ public class FutureCancel {
     Future<?>  future;
     private boolean canceled = false;
 
-    public void cancel() {
+    public boolean cancel() {
         canceled = true;
 
         if (future != null){
-            future.cancel(true);
+            return future.cancel(true);
         }
+        return false;
     }
 
     public void setFuture(ScheduledFuture<?> future) {

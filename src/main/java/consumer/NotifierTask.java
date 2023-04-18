@@ -1,11 +1,8 @@
 package consumer;
 
+import general.FutureCancel;
 import interfaces.I_NotifierRequest;
 import notifiers.NotifierThreadPool;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class NotifierTask {
 
@@ -16,7 +13,7 @@ public class NotifierTask {
     }
 
 
-    public void handle(){
-        NotifierThreadPool.getInstance().assignTask(request);
+    public FutureCancel handle(){
+        return NotifierThreadPool.getInstance().assignTask(request);
     }
 }

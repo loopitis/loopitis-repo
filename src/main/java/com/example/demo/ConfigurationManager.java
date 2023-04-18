@@ -199,4 +199,8 @@ public class ConfigurationManager {
     public String getKafkaHost() {
         return _configuration.get(NotifierConstants.CONF_KAFKA_HOST);
     }
+
+    public String getRedisCancelChannel() {
+        return _configuration.get(NotifierConstants.CONF_REDIS_CANCEL_CHANNEL);
+    }
 }

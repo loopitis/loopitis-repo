@@ -56,9 +56,9 @@ public class KafkaProducer {
     }
 
 
-    public Future<RecordMetadata> send(String topic, String key, String value){
+    public Future<RecordMetadata> send(String topic, String value){
         log.debug("Sending data to "+properties.get("bootstrap.servers"));
-        var producerRecord = new ProducerRecord<String, String>(topic, key, value);
+            var producerRecord = new ProducerRecord<String, String>(topic, value);
         return kafkaProducer.send(producerRecord);
     }
 

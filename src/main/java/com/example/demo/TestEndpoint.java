@@ -6,6 +6,7 @@ import enums.eEvent;
 import general.*;
 import managers.ConnectionNotifierManager;
 import managers.EventManager;
+import managers.RedisManager;
 import managers.RequestManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import java.util.UUID;
 public class TestEndpoint {
     private static final Logger log = LoggerFactory.getLogger(TestEndpoint.class);
     public static final String REQUEST_TASKS_TOPIC = ConfigurationManager.getInstance().getKafkaTopic();
+    public static final String REDIS_CANCEL_CHANNEL = ConfigurationManager.getInstance().getRedisCancelChannel();
     private static Gson gson = new Gson();
 
     @RequestMapping("/getNotifier")
@@ -50,7 +52,7 @@ public class TestEndpoint {
         notif.setInternal_id(internalId);
 
         log.info("$$$$$$$$$$$$$$$$$$$$$$$ About to send data to kafka for topic "+ REQUEST_TASKS_TOPIC);
-        var future = KafkaProducer.getInstance().send(REQUEST_TASKS_TOPIC, "get", gson.toJson(notif));
+        var future = KafkaProducer.getInstance().send(REQUEST_TASKS_TOPIC, gson.toJson(notif));
         if(future != null){
             log.debug("Request task Added successfully to Kafka ");
         }
@@ -94,6 +96,26 @@ public class TestEndpoint {
         ConnectionNotifierManager.getInstance().saveConnectionRequest(connectRequest, Arrays.stream(eEvent.values()).toList()/*listen on all events*/);
         String response = "{\"connected\": \"true\", \"url\": \""+connectRequest.getUrl()+"\"}";
         return ResponseEntity.ok().body(response);
+
+    }
+
+    @RequestMapping("/cancel_task")
+    @PostMapping
+    public ResponseEntity<String> connect(@RequestBody CancelTaskRequest cancelRequest){
+        log.debug("Received Request to cancel "+cancelRequest);
+        if(cancelRequest == null || cancelRequest.getRequestId() == null || cancelRequest.getRequestId().isEmpty()) {
+            ErrorDetails details = new ErrorDetails();
+            details.withCode(400)
+                    .withField("requestId")
+                    .withDetails("requestId not provided")
+                    .withMessage("Bad input parameters");
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
+
+        }
+
+        //save the url to redis
+        RedisManager.getInstance().publishMessageToChannel(REDIS_CANCEL_CHANNEL, gson.toJson(cancelRequest));
+        return ResponseEntity.ok().body("{\"result\":\"request sent\"}");
 
     }
 }
