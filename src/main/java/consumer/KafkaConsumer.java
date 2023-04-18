@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 
-public class KafkaConsumer extends JedisPubSub {
+public class KafkaConsumer{
 
     private static final Logger log = LoggerFactory.getLogger(KafkaConsumer.class.getSimpleName());
 
@@ -74,9 +74,9 @@ public class KafkaConsumer extends JedisPubSub {
 
 
     public void run(){
-
-        //add a listener to channel in case anyone wants to cancel a task
-        RedisManager.getInstance().subscribeToChannel(TestEndpoint.REDIS_CANCEL_CHANNEL, this);
+        //subscribe to channel so it could cancel requests
+        Thread channelSubscriber = getThreadSubscriber();
+        channelSubscriber.start();
 
         //subscribe to topic in kafka to get more requests
         kafkaConsumer.subscribe(Collections.singletonList(TestEndpoint.REQUEST_TASKS_TOPIC));
@@ -107,8 +107,21 @@ public class KafkaConsumer extends JedisPubSub {
         }
     }
 
-    @Override
-    public void onMessage(String channel, String message) {
+    private Thread getThreadSubscriber() {
+        return new Thread(new Runnable() {
+            @Override
+            public void run() {
+                RedisManager.getInstance().subscribeToChannel(TestEndpoint.REDIS_CANCEL_CHANNEL, new JedisPubSub() {
+                    @Override
+                    public void onMessage(String channel, String message) {
+                        cancelRequest(channel, message);
+                    }
+                });
+            }
+        });
+    }
+
+    public void cancelRequest(String channel, String message) {
         System.out.println("$$$$$$$$$$$$$$$$$$$$ Msg from channel: "+channel +" Message: "+message+"$$$$$$$$$$$$$$$$$$$$$$$");
         if(channel.equals(TestEndpoint.REDIS_CANCEL_CHANNEL)) {
             CancelTaskRequest cancelTaskRequest = g.fromJson(message, CancelTaskRequest.class);

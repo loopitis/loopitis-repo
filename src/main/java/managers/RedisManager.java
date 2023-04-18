@@ -2,15 +2,13 @@ package managers;
 
 import com.example.demo.ConfigurationManager;
 import enums.eRedisDB;
-import redis.clients.jedis.HostAndPort;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPubSub;
+import redis.clients.jedis.*;
 
 import java.util.Map;
 import java.util.Set;
 
 public class RedisManager {
-    private Jedis jedis;
+    private JedisPool pool;
     private static RedisManager instance;
 
     private static final String LISTENERS_KEY = ConfigurationManager.getInstance().getRedisListenersKey();
@@ -19,9 +17,13 @@ public class RedisManager {
     private RedisManager(){
         String redisHost = ConfigurationManager.getInstance().getRedisHost();
         int redisPort = ConfigurationManager.getInstance().getRedisPort();
-         jedis = new Jedis(new HostAndPort(redisHost, redisPort));
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxTotal(10);
+        config.setMaxIdle(5);
+        config.setMinIdle(2);
+        pool = new JedisPool(config, redisHost, redisPort);
 
-         jedis.select(eRedisDB.DB_0.getDB());
+
     }
 
     public static synchronized RedisManager getInstance(){
@@ -32,7 +34,7 @@ public class RedisManager {
     }
 
     public Set<Map.Entry<String, String>> readAllListeners(){
-        try {
+        try (Jedis jedis = pool.getResource()) {
             // Read data from Redis key "listeners"
             Map<String, String> listeners = jedis.hgetAll(LISTENERS_KEY);
 
@@ -42,33 +44,21 @@ public class RedisManager {
             ex.printStackTrace();
             return null;
         }
-        finally {
-            jedis.close();
-        }
-
     }
 
     public boolean addListener(String url, String json){
-       try{
+       try (Jedis jedis = pool.getResource()) {
            jedis.hset(LISTENERS_KEY, url, json);
+           return true;
        }
        catch (Exception ex){
            ex.printStackTrace();
            return false;
        }
-       finally {
-           // Close the Redis connection
-           jedis.close();
-       }
-
-
-        // Close the Redis connection
-        jedis.close();
-        return true;
     }
 
     public boolean removeListener(String url){
-        try{
+        try (Jedis jedis = pool.getResource()) {
             jedis.hdel(LISTENERS_KEY, url);
             return true;
         }
@@ -76,14 +66,11 @@ public class RedisManager {
             ex.printStackTrace();
             return false;
         }
-        finally {
-            // Close the Redis connection
-            jedis.close();
-        }
+
     }
 
     public boolean removeAllListeners(){
-        try {
+        try (Jedis jedis = pool.getResource()) {
             jedis.del(LISTENERS_KEY);
             return true;
         }
@@ -91,32 +78,24 @@ public class RedisManager {
             ex.printStackTrace();
             return false;
         }
-        finally {
-            // Close the Redis connection
-            jedis.close();
-        }
+
     }
 
 
     public boolean subscribeToChannel(String channel, JedisPubSub listener){
-        try{
-            new Thread(()->
-                jedis.subscribe(listener, channel)).start();
+        try (Jedis jedis = pool.getResource()) {
+            jedis.subscribe(listener, channel);
             return true;
         }
         catch (Exception ex){
             ex.printStackTrace();
             return false;
         }
-        finally {
-            // Close the Redis connection
-            jedis.close();
-        }
 
     }
 
     public boolean publishMessageToChannel(String channel, String message){
-        try{
+        try (Jedis jedis = pool.getResource()) {
             jedis.publish(channel, message);
             return true;
         }
@@ -124,11 +103,6 @@ public class RedisManager {
             ex.printStackTrace();
             return false;
         }
-        finally {
-            // Close the Redis connection
-            jedis.close();
-        }
-
     }
 
 }

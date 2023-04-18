@@ -271,7 +271,7 @@ public class DBhibernetManager {
         EntityTransaction tx = entityManager.getTransaction();
         try{
             tx.begin();
-            String nativeQuery = "UPDATE notifier.requests set status = "+status.getDbName()+" where e_id = ?";
+            String nativeQuery = "UPDATE notifier.requests set status = '"+status.getDbName()+"' where e_id = ?";
 
             Query query = entityManager.createNativeQuery(nativeQuery);
             query.setParameter(1, requestId);
