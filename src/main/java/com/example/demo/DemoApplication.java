@@ -1,16 +1,23 @@
 package com.example.demo;
 
+import cli_server.CLIServer;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-public class DemoApplication {
+public class DemoApplication implements ApplicationRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
 
+	}
+
+	@Override
+	public void run(ApplicationArguments args){
+		CLIServer server = new CLIServer();
+		server.startCLIServer();
 	}
 
 }

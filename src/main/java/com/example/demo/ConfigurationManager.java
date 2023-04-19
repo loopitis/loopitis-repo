@@ -26,9 +26,6 @@ public class ConfigurationManager {
         return _instance;
     }
 
-    public static void main(String[] args) {
-        System.out.println(ConfigurationManager.getInstance().getKafkaTopic());
-    }
 
     public boolean setConfiguration() {
         Map<String, String> map = buildMap();
@@ -37,8 +34,6 @@ public class ConfigurationManager {
             return false;
         }
         _configuration = Collections.unmodifiableMap(map);
-        //to delete later - this never should be logged
-        print(map);
         return true;
 
     }
@@ -202,5 +197,9 @@ public class ConfigurationManager {
 
     public String getRedisCancelChannel() {
         return _configuration.get(NotifierConstants.CONF_REDIS_CANCEL_CHANNEL);
+    }
+
+    public int getCliPort() {
+        return Integer.valueOf(_configuration.get(NotifierConstants.CONF_CLI_PORT));
     }
 }
