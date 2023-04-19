@@ -1,11 +1,20 @@
 package cli_server;
 
+import com.google.gson.Gson;
+import ent.HttpNotifierRequestEntity;
+import filters.RequestsFilter;
+import managers.DBhibernetManager;
 import org.apache.commons.cli.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
+
+import enums.eRequestStatus;
 
 public class CLI_MessageProcessor {
+
+    private static Gson g = new Gson();
 
     public static String process(Options options, String[] args) {
         if(args == null || (args.length ==1 && args[0].isEmpty()))
@@ -25,15 +34,10 @@ public class CLI_MessageProcessor {
             // check if version flag is set
             if (cmd.hasOption("v")) {
                 // show version
-                System.out.println("Version 1.0.0");
-                System.exit(0);
+                return "Version 1.0.0";
             }
 
-            // check if debug flag is set
-            if (cmd.hasOption("d")) {
-                // enable debug mode
-                // ...
-            }
+
 
             // handle commands
             if (cmd.hasOption("add-request")) {
@@ -61,13 +65,16 @@ public class CLI_MessageProcessor {
             } else if (cmd.hasOption("show-requests")) {
                 // handle show-requests command
                 String status = cmd.getOptionValue("s");
-
-                // Process the value obtained from command line option
-                // ...
-
                 System.out.println("Show requests command executed.");
                 System.out.println("Status: " + status);
-
+                eRequestStatus eStatus =eRequestStatus.tryGetValueOf(status);
+                if(eStatus == null){
+                    return "No such status ...Status can be "+eRequestStatus.values();
+                }
+                RequestsFilter filter = new RequestsFilter();
+                filter.withStatus(eStatus);
+                List<HttpNotifierRequestEntity>  result = DBhibernetManager.getInstance().getRequests(filter);
+                return g.toJson(result);
             } else if (cmd.hasOption("show-executions")) {
                 // handle show-executions command
                 String requestId = cmd.getOptionValue("r");

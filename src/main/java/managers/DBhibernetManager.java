@@ -9,6 +9,7 @@ import ent.HttpNotifierRequestEntity;
 
 import enums.eProcess;
 import enums.eRequestStatus;
+import filters.RequestsFilter;
 import general.CommentRequest;
 import general.DBConfiguration;
 import general.DBConfigurationException;
@@ -17,6 +18,7 @@ import org.eclipse.persistence.config.PersistenceUnitProperties;
 
 import javax.persistence.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -314,6 +316,27 @@ public class DBhibernetManager {
                 tx.rollback();
             }
             throw e;
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    public List<HttpNotifierRequestEntity> getRequests(RequestsFilter filter) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        try {
+            String jpql = "SELECT req FROM HttpNotifierRequestEntity req ";
+            if(filter != null){
+                if(filter.getStatus() != null){
+                    jpql+=" WHERE req.status= :status";
+                }
+            }
+            TypedQuery<HttpNotifierRequestEntity> query = entityManager.createQuery(jpql, HttpNotifierRequestEntity.class);
+            if(filter != null){
+                if(filter.getStatus() != null){
+                    query.setParameter("status", filter.getStatus().getDbName());
+                }
+            }
+            return query.getResultList();
         } finally {
             entityManager.close();
         }

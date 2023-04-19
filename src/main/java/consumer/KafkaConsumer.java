@@ -96,7 +96,7 @@ public class KafkaConsumer{
                         NotifierTask task = new NotifierTask(getRequest);
 
                         //update DB that the task is in progress
-                        DBhibernetManager.getInstance().updateStatus(request.getExternal_id(), eRequestStatus.IN_PROGRESS);
+                        DBhibernetManager.getInstance().updateStatus(request.getExternal_id(), eRequestStatus.ON_GOING);
 
                         var future = task.handle();
                         taskIdToFuture.put(request.getExternal_id(), future);

@@ -4,12 +4,21 @@ public enum eRequestStatus {
     PENDING("PENDING"),
     CANCELED("CANCELED"),
     FINISHED("FINISHED"),
-    IN_PROGRESS("ON_GOING");
+    ON_GOING("ON_GOING");
 
     private final String dbName;
 
     private eRequestStatus(String dbName){
         this.dbName = dbName;
+    }
+
+    public static eRequestStatus tryGetValueOf(String status) {
+        try{
+            return valueOf(status);
+        }
+        catch (Exception ex){
+            return null;
+        }
     }
 
     public String getDbName(){
