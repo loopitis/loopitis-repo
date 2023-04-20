@@ -2,6 +2,7 @@ package managers;
 
 import com.example.demo.ConfigurationManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import consumer.ExecutionRequest;
@@ -9,6 +10,7 @@ import ent.HttpNotifierRequestEntity;
 
 import enums.eProcess;
 import enums.eRequestStatus;
+import filters.ExecutionsFilter;
 import filters.RequestsFilter;
 import general.CommentRequest;
 import general.DBConfiguration;
@@ -45,24 +47,20 @@ public class DBhibernetManager {
     private static String DB_SERVER_HOST = "redis";
 
     public static void main(String[] args) throws JsonProcessingException {
+        Gson g = new Gson();
         DBhibernetManager manager = DBhibernetManager.getInstance();
+        ExecutionsFilter filter = new ExecutionsFilter();
+        filter.withRequestId("247b28ae-9a51-4127-b616-025321152ea6");
+        var res = manager.getExecutions(filter);
+        System.out.println(g.toJson(res));
 
-        HttpNotifierRequestEntity entity = new HttpNotifierRequestEntity();
-        entity.setExternalId("12345");
-        entity.setName("Sample Request");
-        entity.setStatus("Pending");
-        entity.setReturnUrl("https://example.com/callback");
-        entity.setDelay(3000L);
-        entity.setInterval(10000L);
-        entity.setOccurrences(5);
-        entity.setDone(0);
-        entity.setPayload("{\"key1\":\"value1\",\"key2\":\"value2\"}");
+
 
 
 //        ObjectMapper objectMapper = new ObjectMapper();
 //        JsonNode jsonData = objectMapper.readTree(json);
 //
-        manager.saveRequest(entity);
+
 
 //        System.out.println(notifierRequest.getInterval());
 //        Person p = new Person("hey", "Jude");
@@ -337,6 +335,34 @@ public class DBhibernetManager {
                 }
             }
             return query.getResultList();
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    public List<ExecutionRequest> getExecutions(ExecutionsFilter filter) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        try {
+            String jpql = "SELECT req FROM ExecutionRequest req ";
+            if(filter != null){
+                if(filter.getRequestId() != null){
+                    jpql+=" WHERE req.requestId= :req ";
+                }
+//                if(filter.getLimit() != null){
+//                    jpql+=" limit= :limit";
+//                }
+            }
+            TypedQuery<ExecutionRequest> query = entityManager.createQuery(jpql, ExecutionRequest.class);
+            if(filter != null){
+                if(filter.getRequestId() != null){
+                    query.setParameter("req", filter.getRequestId());
+                }
+//                if(filter.getLimit() != null){
+//                    query.setParameter("limit", filter.getLimit());
+//                }
+            }
+            return query.getResultList();
+
         } finally {
             entityManager.close();
         }
