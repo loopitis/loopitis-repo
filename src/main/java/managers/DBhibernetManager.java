@@ -51,6 +51,7 @@ public class DBhibernetManager {
         DBhibernetManager manager = DBhibernetManager.getInstance();
         ExecutionsFilter filter = new ExecutionsFilter();
         filter.withRequestId("247b28ae-9a51-4127-b616-025321152ea6");
+        filter.withLimit(1);
         var res = manager.getExecutions(filter);
         System.out.println(g.toJson(res));
 
@@ -348,18 +349,18 @@ public class DBhibernetManager {
                 if(filter.getRequestId() != null){
                     jpql+=" WHERE req.requestId= :req ";
                 }
-//                if(filter.getLimit() != null){
-//                    jpql+=" limit= :limit";
-//                }
+
+                jpql+="order by req.timeExecuted " ;
+
             }
             TypedQuery<ExecutionRequest> query = entityManager.createQuery(jpql, ExecutionRequest.class);
             if(filter != null){
                 if(filter.getRequestId() != null){
                     query.setParameter("req", filter.getRequestId());
                 }
-//                if(filter.getLimit() != null){
-//                    query.setParameter("limit", filter.getLimit());
-//                }
+                if(filter.getLimit() != null){
+                    query.setMaxResults(filter.getLimit());
+                }
             }
             return query.getResultList();
 
