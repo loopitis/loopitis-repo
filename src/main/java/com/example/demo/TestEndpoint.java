@@ -1,7 +1,6 @@
 package com.example.demo;
 
 import com.google.gson.Gson;
-import consumer.ExecutionRequest;
 import ent.HttpNotifierRequestEntity;
 import enums.eEvent;
 import general.*;
@@ -16,7 +15,6 @@ import producer.KafkaProducer;
 import services.Services;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 @RequestMapping("/set")
@@ -32,11 +30,11 @@ public class TestEndpoint {
     public ResponseEntity<String> createGetNotifier(@RequestBody HttpNotifierRequest notif){
         log.debug("I am here 222222");
 
-        GetNotifierCheckResult result = GetNotifierRequestChecker.check(notif);
+        NotifierCheckResult result = NotifierRequestChecker.check(notif);
         if(result != null && result.isError()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(result));
         }
-
+        NotifierRequestChecker.setDefaultsForMissingValues(notif);
         UUID uuid = UUID.randomUUID();
         String external_id = uuid.toString();
 
@@ -58,11 +56,7 @@ public class TestEndpoint {
 
     }
 
-    @RequestMapping("/postNotifier")
-    @PostMapping
-    public ResponseEntity<String> createPostNotifier(@RequestBody HttpNotifierRequest notif){
-        return ResponseEntity.ok("ok");
-    }
+
 
     @RequestMapping("/connection")
     @PostMapping

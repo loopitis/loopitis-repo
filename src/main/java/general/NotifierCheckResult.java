@@ -1,6 +1,6 @@
 package general;
 
-public class GetNotifierCheckResult {
+public class NotifierCheckResult {
     private ErrorDetails error;
     private boolean isError;
 

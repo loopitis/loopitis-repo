@@ -8,6 +8,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import consumer.ExecutionRequest;
 import ent.HttpNotifierRequestEntity;
 
+import enums.eCallbackType;
 import enums.eProcess;
 import enums.eRequestStatus;
 import filters.ExecutionsFilter;
@@ -50,12 +51,13 @@ public class DBhibernetManager {
         Gson g = new Gson();
         DBhibernetManager manager = DBhibernetManager.getInstance();
         RequestsFilter filter = new RequestsFilter();
-        filter.withStatus(eRequestStatus.FINISHED);
+        filter.withStatus(eRequestStatus.CANCELED);
         filter.withLimit(20);
-        var res = manager.getRequests(filter);
-        System.out.println(g.toJson(res));
 
+        HttpNotifierRequestEntity res = manager.getRequests(filter).get(0);
 
+        res.setCallbackType(eCallbackType.GET);
+        manager.saveRequest(res);
 
 
 //        ObjectMapper objectMapper = new ObjectMapper();

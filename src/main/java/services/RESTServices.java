@@ -1,6 +1,6 @@
 package services;
 
-import general.GetHttpNotifierRequest;
+import general.HttpNotifier;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -29,7 +29,7 @@ public class RESTServices {
 
 
             HttpClient client = HttpClient.newBuilder()
-                    .version(GetHttpNotifierRequest.HTTP_VERSION)
+                    .version(HttpNotifier.HTTP_VERSION)
                     .connectTimeout(Duration.ofSeconds(5))
                     .build();
 
@@ -62,7 +62,7 @@ public class RESTServices {
                     .build();
 
             HttpClient client = HttpClient.newBuilder()
-                    .version(GetHttpNotifierRequest.HTTP_VERSION)
+                    .version(HttpNotifier.HTTP_VERSION)
                     .connectTimeout(Duration.ofSeconds(5))
                     .build();
 

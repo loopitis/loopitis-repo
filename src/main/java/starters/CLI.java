@@ -40,6 +40,7 @@ public class CLI implements Runnable {
     }
 
 
+
     @Command(name = "add-request", description = "Add a new request")
     static class AddRequest implements Runnable {
         @Option(names = {"-o", "--occurrences"}, required = true, description = "The number of times the request should be executed")

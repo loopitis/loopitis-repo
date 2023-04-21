@@ -1,20 +1,18 @@
-package starters;
+package consumer;
 
 import com.example.demo.ConfigurationManager;
 import com.example.demo.TestEndpoint;
 import com.google.gson.Gson;
-import consumer.NotifierTask;
 import enums.eRequestStatus;
 import general.CancelTaskRequest;
 import general.FutureCancel;
-import general.GetHttpNotifierRequest;
+import general.HttpNotifier;
 import managers.DBhibernetManager;
 import managers.RedisManager;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pojos.HttpNotifierRequest;
 import redis.clients.jedis.JedisPubSub;
 
 import java.time.Duration;
@@ -23,7 +21,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 
-public class KafkaConsumer{
+public class KafkaConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaConsumer.class.getSimpleName());
 
@@ -38,7 +36,6 @@ public class KafkaConsumer{
     private Gson g = new Gson();
 
     public static void main(String[] args) {
-
         KafkaConsumer consumer = new KafkaConsumer();
         consumer.run();
     }
@@ -92,10 +89,11 @@ public class KafkaConsumer{
                 System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
                 if(record.value() == null) continue;
                 if(record.topic().equals(TestEndpoint.REQUEST_TASKS_TOPIC)) {
-                    HttpNotifierRequest request = gson.fromJson(record.value(), HttpNotifierRequest.class);
-                        var getRequest = new GetHttpNotifierRequest(request);
+                    pojos.HttpNotifierRequest request = gson.fromJson(record.value(), pojos.HttpNotifierRequest.class);
+                        var getRequest = new HttpNotifier(request);
                         NotifierTask task = new NotifierTask(getRequest);
 
+                        log.debug("Updating DB task ongoing "+request.getExternal_id());
                         //update DB that the task is in progress
                         DBhibernetManager.getInstance().updateStatus(request.getExternal_id(), eRequestStatus.ON_GOING);
 

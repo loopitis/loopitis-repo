@@ -1,17 +1,18 @@
 package general;
 
 import com.example.demo.ConfigurationManager;
+import enums.eCallbackType;
 import pojos.HttpNotifierRequest;
 
 import static services.Services.isValidURL;
 
-public class GetNotifierRequestChecker {
+public class NotifierRequestChecker {
 
 
     private static final Long MINIMUM_INTERVAL_TIME = ConfigurationManager.getInstance().getMinimumIntervalTime();
 
-    public static GetNotifierCheckResult check(HttpNotifierRequest g) {
-        var res = new GetNotifierCheckResult();
+    public static NotifierCheckResult check(HttpNotifierRequest g) {
+        var res = new NotifierCheckResult();
         if(g.getInterval() == null){
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
@@ -69,5 +70,9 @@ public class GetNotifierRequestChecker {
     }
 
 
-
+    public static void setDefaultsForMissingValues(HttpNotifierRequest notif) {
+        if(notif.getCallback_type() == null){
+            notif.setCallback_type(eCallbackType.POST);
+        }
+    }
 }

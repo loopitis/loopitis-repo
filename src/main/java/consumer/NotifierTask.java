@@ -1,14 +1,14 @@
 package consumer;
 
 import general.FutureCancel;
-import interfaces.I_NotifierRequest;
+import general.HttpNotifier;
 import notifiers.NotifierThreadPool;
 
 public class NotifierTask {
 
-    private I_NotifierRequest request;
+    private HttpNotifier request;
 
-    public NotifierTask(I_NotifierRequest req){
+    public NotifierTask(HttpNotifier req){
         this.request = req;
     }
 

@@ -1,5 +1,6 @@
 package ent;
 
+import enums.eCallbackType;
 import pojos.HttpNotifierRequest;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.Calendar;
 @Entity
 @Table(name = "notifier.requests")
 public class HttpNotifierRequestEntity {
+
 
     public HttpNotifierRequestEntity(){}
 
@@ -24,12 +26,19 @@ public class HttpNotifierRequestEntity {
         long currentMillis = Calendar.getInstance().getTimeInMillis();
         this.requestTime = new Timestamp(currentMillis);
         this.firstExecTime = new Timestamp(currentMillis+this.delay);
+        this.callbackType = entity.getCallback_type();
+
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "i_id")
     private Long id;
+
+    @Column(name = "callbackType")
+    @Enumerated(EnumType.STRING)
+    private eCallbackType callbackType;
+
 
     @Column(name = "e_id")
     private String externalId;
@@ -163,6 +172,14 @@ public class HttpNotifierRequestEntity {
 
     public void setPayload(String payload) {
         this.payload = payload;
+    }
+
+    public eCallbackType getCallbackType() {
+        return callbackType;
+    }
+
+    public void setCallbackType(eCallbackType callbackType) {
+        this.callbackType = callbackType;
     }
 }
 

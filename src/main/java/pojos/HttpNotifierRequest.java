@@ -1,5 +1,7 @@
 package pojos;
 
+import enums.eCallbackType;
+
 public class HttpNotifierRequest {
     private String return_url;
     private Long delay;
@@ -14,16 +16,19 @@ public class HttpNotifierRequest {
 
     private String name;
 
+    private eCallbackType callback_type;
+
 
     public HttpNotifierRequest(){}
 
-    public HttpNotifierRequest(String returnUrl, Long delay, Long interval, String payload, Long id, Integer occurance) {
+    public HttpNotifierRequest(String returnUrl, Long delay, Long interval, String payload, Long id, Integer occurance, eCallbackType callbackType) {
         return_url = returnUrl;
         this.delay = delay;
         this.interval = interval;
         this.payload = payload;
         this.id = id;
         this.occurrences = occurance;
+        this.callback_type = callbackType;
     }
 
     public String getReturn_url() {
@@ -92,6 +97,14 @@ public class HttpNotifierRequest {
 
     public Integer getOccurrences() {
         return occurrences;
+    }
+
+    public eCallbackType getCallback_type() {
+        return callback_type;
+    }
+
+    public void setCallback_type(eCallbackType callback_type) {
+        this.callback_type = callback_type;
     }
 
     public void setOccurrences(Integer occurrences) {

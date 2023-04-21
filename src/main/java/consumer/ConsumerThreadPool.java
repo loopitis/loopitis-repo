@@ -1,7 +1,5 @@
 package consumer;
 
-import starters.KafkaConsumer;
-
 import java.util.ArrayList;
 
 public class ConsumerThreadPool {

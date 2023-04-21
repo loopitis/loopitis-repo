@@ -3,7 +3,7 @@ package notifiers;
 import com.example.demo.ConfigurationManager;
 import enums.eRequestStatus;
 import general.FutureCancel;
-import interfaces.I_NotifierRequest;
+import general.HttpNotifier;
 import managers.DBhibernetManager;
 
 import java.util.UUID;
@@ -23,7 +23,7 @@ public class NotifierThreadPool {
         return instance;
     }
 
-    public FutureCancel assignTask(I_NotifierRequest request) {
+    public FutureCancel assignTask(HttpNotifier request) {
         FutureCancel futureCancel = new FutureCancel();
 
         ScheduledFuture<?> future = pool.scheduleAtFixedRate(new Runnable() {
@@ -32,16 +32,21 @@ public class NotifierThreadPool {
 
             @Override
             public void run() {
-
-                if(num >= maxTimes){
-                    futureCancel.cancel();
-                    DBhibernetManager.getInstance().updateStatus(request.getRequestId(), eRequestStatus.FINISHED);
-                    return;
+                try {
+                    if (num >= maxTimes) {
+                        futureCancel.cancel();
+                        DBhibernetManager.getInstance().updateStatus(request.getRequestId(), eRequestStatus.FINISHED);
+                        return;
+                    }
+                    UUID uuid = UUID.randomUUID();
+                    String executionId = uuid.toString();
+                    request.fire(executionId);
+                    num++;
                 }
-                UUID uuid = UUID.randomUUID();
-                String executionId = uuid.toString();
-                request.fire(executionId);
-                num++;
+                catch(Exception ex){
+                    ex.printStackTrace();
+                    num++;//so it won't be stuck forever
+                }
             }
         }, request.getDelay(), request.getInterval(), TimeUnit.MILLISECONDS);
         if(future == null) return null;
