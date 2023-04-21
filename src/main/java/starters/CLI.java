@@ -1,10 +1,10 @@
-package cli_client;
+package starters;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import ent.HttpNotifierRequestEntity;
+import enums.eRequestStatus;
 import general.ShowExecutionsRequest;
 import general.ShowRequestsRequest;
 import picocli.CommandLine;
@@ -14,19 +14,15 @@ import picocli.CommandLine.Parameters;
 import pojos.HttpNotifierRequest;
 import services.FileUtils;
 import services.RESTServices;
-import enums.eRequestStatus;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.Scanner;
 
 
-@Command(name = "MyApp", mixinStandardHelpOptions = true, version = "1.0",
-        subcommands = {MyApp.AddRequest.class, MyApp.ShowExecutions.class, MyApp.ShowRequests.class})
-public class MyApp implements Runnable {
+@Command(name = "CLI", mixinStandardHelpOptions = true, version = "1.0",
+        subcommands = {CLI.AddRequest.class, CLI.ShowExecutions.class, CLI.ShowRequests.class})
+public class CLI implements Runnable {
 
     private static Gson g = new GsonBuilder().setPrettyPrinting().create();
     private static final String HOST = "http://localhost";
@@ -37,8 +33,10 @@ public class MyApp implements Runnable {
 
 
     public void run() {
-        CommandLine commandLine = new CommandLine(this);
-        commandLine.usage(System.out, CommandLine.Help.Ansi.ON);
+//        CommandLine commandLine = new CommandLine(this);
+//        commandLine.usage(System.out, CommandLine.Help.Ansi.ON);
+
+//        CommandLine.usage(new MyApp(), System.out, CommandLine.Help.Ansi.ON, new MyCustomColorScheme());
     }
 
 
@@ -185,8 +183,11 @@ public class MyApp implements Runnable {
 //        String test = "add-request -o 12 -u https://google.com -n cliTest -i 10000 -l 7000 -m GET";
 //        String test = "show-executions 2823e775-488d-4243-9850-8f8965f2d80f";
 //            String test = "show-requests -s FINISHED";
+
             args = command.split("\\s");
-            CommandLine.run(new MyApp(), args);
+            CommandLine.run(new CLI(), args);
+
+
         }
     }
 }

@@ -1,8 +1,9 @@
-package consumer;
+package starters;
 
 import com.example.demo.ConfigurationManager;
 import com.example.demo.TestEndpoint;
 import com.google.gson.Gson;
+import consumer.NotifierTask;
 import enums.eRequestStatus;
 import general.CancelTaskRequest;
 import general.FutureCancel;

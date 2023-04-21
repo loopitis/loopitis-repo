@@ -5,6 +5,7 @@ WORKDIR /app
 
 # Copy the JAR file into the container
 COPY endpoints.jar /app
+COPY cli.jar .
 
 # Run the JAR file
 CMD ["java", "-jar", "endpoints.jar"]

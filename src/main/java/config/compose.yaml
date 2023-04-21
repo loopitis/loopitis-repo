@@ -165,6 +165,7 @@ services:
       dockerfile: Dockerfile.endpoints
     environment:
       isDev: ${isDev}
+      cli_port: ${cli_port}
       cancel_request_channel: ${cancel_request_channel}
       db_max_pool_size: ${db_max_pool_size}
       topic_name_tasks: ${topic_name_tasks}
