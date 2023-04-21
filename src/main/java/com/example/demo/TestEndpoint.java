@@ -31,8 +31,6 @@ public class TestEndpoint {
     @PostMapping
     public ResponseEntity<String> createGetNotifier(@RequestBody HttpNotifierRequest notif){
         log.debug("I am here 222222");
-        //to delete later
-        ConfigurationManager.getInstance();
 
         GetNotifierCheckResult result = GetNotifierRequestChecker.check(notif);
         if(result != null && result.isError()){

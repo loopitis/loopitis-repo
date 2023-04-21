@@ -49,10 +49,10 @@ public class DBhibernetManager {
     public static void main(String[] args) throws JsonProcessingException {
         Gson g = new Gson();
         DBhibernetManager manager = DBhibernetManager.getInstance();
-        ExecutionsFilter filter = new ExecutionsFilter();
-        filter.withRequestId("247b28ae-9a51-4127-b616-025321152ea6");
-        filter.withLimit(1);
-        var res = manager.getExecutions(filter);
+        RequestsFilter filter = new RequestsFilter();
+        filter.withStatus(eRequestStatus.FINISHED);
+        filter.withLimit(20);
+        var res = manager.getRequests(filter);
         System.out.println(g.toJson(res));
 
 
@@ -334,6 +334,9 @@ public class DBhibernetManager {
                 if(filter.getStatus() != null){
                     query.setParameter("status", filter.getStatus().getDbName());
                 }
+                if(filter.getLimit() != null){
+                    query.setMaxResults(filter.getLimit());
+                }
             }
             return query.getResultList();
         } finally {
@@ -349,6 +352,9 @@ public class DBhibernetManager {
                 if(filter.getRequestId() != null){
                     jpql+=" WHERE req.requestId= :req ";
                 }
+                if(filter.getComment() != null){
+                    jpql+= "and req.comment= :comment ";
+                }
 
                 jpql+="order by req.timeExecuted " ;
 
@@ -357,6 +363,9 @@ public class DBhibernetManager {
             if(filter != null){
                 if(filter.getRequestId() != null){
                     query.setParameter("req", filter.getRequestId());
+                }
+                if(filter.getComment() != null){
+                    query.setParameter("comment", filter.getComment());
                 }
                 if(filter.getLimit() != null){
                     query.setMaxResults(filter.getLimit());

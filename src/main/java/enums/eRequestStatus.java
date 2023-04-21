@@ -14,7 +14,7 @@ public enum eRequestStatus {
 
     public static eRequestStatus tryGetValueOf(String status) {
         try{
-            return valueOf(status);
+            return valueOf(status.toUpperCase());
         }
         catch (Exception ex){
             return null;

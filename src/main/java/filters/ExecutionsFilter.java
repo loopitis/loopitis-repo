@@ -3,6 +3,7 @@ package filters;
 public class ExecutionsFilter {
     private String requestId;
     private Integer limit;
+    private String comment;
 
     public ExecutionsFilter withRequestId(String requestId) {
         this.requestId = requestId;
@@ -20,5 +21,13 @@ public class ExecutionsFilter {
 
     public Integer getLimit(){
         return this.limit;
+    }
+
+    public void withComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Object getComment() {
+        return this.comment;
     }
 }
