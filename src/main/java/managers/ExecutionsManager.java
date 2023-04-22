@@ -1,5 +1,6 @@
 package managers;
 
+import com.example.demo.DemoApplication;
 import com.google.gson.Gson;
 import consumer.ExecutionRequest;
 import filters.ExecutionsFilter;
@@ -7,7 +8,7 @@ import filters.ExecutionsFilter;
 import java.util.List;
 
 public class ExecutionsManager {
-    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(ExecutionsManager.class);
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
 
     private static ExecutionsManager _instance;
 

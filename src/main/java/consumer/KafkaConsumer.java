@@ -1,6 +1,7 @@
 package consumer;
 
 import com.example.demo.ConfigurationManager;
+import com.example.demo.DemoApplication;
 import com.example.demo.TestEndpoint;
 import com.google.gson.Gson;
 import enums.eRequestStatus;
@@ -23,7 +24,7 @@ import java.util.Properties;
 
 public class KafkaConsumer {
 
-    private static final Logger log = LoggerFactory.getLogger(KafkaConsumer.class.getSimpleName());
+    private static final Logger log = LoggerFactory.getLogger(DemoApplication.MY_LOGGER);
 
     private final Properties properties;
     private org.apache.kafka.clients.consumer.KafkaConsumer<String, String> kafkaConsumer;

@@ -1,6 +1,7 @@
 package general;
 
 import com.example.demo.ConfigurationManager;
+import com.example.demo.DemoApplication;
 import com.google.gson.Gson;
 import consumer.ExecutionRequest;
 import enums.eCallbackType;
@@ -18,7 +19,7 @@ import java.util.Calendar;
 
 
 public class HttpNotifier {
-    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(HttpNotifier.class);
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
 
     public static final int httpVersion = ConfigurationManager.getInstance().getHttpVersion();//notifications_http_version=2
     public static HttpClient.Version HTTP_VERSION = HttpClient.Version.HTTP_1_1;

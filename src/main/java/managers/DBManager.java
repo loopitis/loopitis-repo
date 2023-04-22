@@ -1,6 +1,7 @@
 package managers;
 
 import com.example.demo.ConfigurationManager;
+import com.example.demo.DemoApplication;
 import enums.eProcess;
 import general.DBConfiguration;
 import general.DBConfigurationException;
@@ -17,7 +18,7 @@ import java.sql.Statement;
 import java.util.List;
 
 public class DBManager {
-    private static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DBManager.class);
+    private static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
 
 
     private static boolean DB_READ_ONLY = false;

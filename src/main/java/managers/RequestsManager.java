@@ -1,5 +1,6 @@
 package managers;
 
+import com.example.demo.DemoApplication;
 import consumer.ExecutionRequest;
 import ent.HttpNotifierRequestEntity;
 import filters.ExecutionsFilter;
@@ -8,7 +9,7 @@ import filters.RequestsFilter;
 import java.util.List;
 
 public class RequestsManager {
-    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(RequestsManager.class);
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
 
     private static RequestsManager _instance;
 

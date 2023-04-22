@@ -1,5 +1,6 @@
 package managers;
 
+import com.example.demo.DemoApplication;
 import com.google.gson.Gson;
 import enums.eEvent;
 import general.EventNoticiationData;
@@ -8,7 +9,7 @@ import services.RESTServices;
 import java.util.Map;
 
 public class EventManager {
-    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(EventManager.class);
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
 
     private static EventManager _instance;
 

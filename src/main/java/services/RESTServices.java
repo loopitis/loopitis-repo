@@ -1,5 +1,6 @@
 package services;
 
+import com.example.demo.DemoApplication;
 import general.HttpNotifier;
 
 import java.net.URI;
@@ -9,7 +10,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 public class RESTServices {
-    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(RESTServices.class);
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
 
     public static HttpResponse<String> GET(String url){
         try {

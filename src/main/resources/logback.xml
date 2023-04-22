@@ -2,18 +2,16 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0}:%L - %msg%n</pattern>
+            <!--                      ^^^^^^^ -->
         </encoder>
     </appender>
 
-    <logger name="org.apache.kafka" level="WARN" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
-    <logger name="com.zaxxer.hikari" level="WARN" additivity="false">
+    <logger name="my.logger" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 
-    <root level="DEBUG">
+    <root level="ERROR">
         <appender-ref ref="STDOUT" />
     </root>
 

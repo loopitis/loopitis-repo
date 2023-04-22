@@ -1,6 +1,7 @@
 package managers;
 
 import com.example.demo.ConfigurationManager;
+import com.example.demo.DemoApplication;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariConfig;
@@ -26,7 +27,7 @@ import java.util.Map;
 
 
 public class DBhibernetManager {
-    private static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DBhibernetManager.class);
+    private static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
 
     private static boolean DB_READ_ONLY = false;
 

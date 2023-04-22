@@ -1,12 +1,13 @@
 package managers;
 
+import com.example.demo.DemoApplication;
 import ent.HttpNotifierRequestEntity;
 import importers.RequestImporter;
 import pojos.HttpNotifierRequest;
 
 public class RequestManager {
 
-    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(RequestManager.class);
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
 
     private static RequestManager _instance;
 

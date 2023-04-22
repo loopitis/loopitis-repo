@@ -1,5 +1,6 @@
 package managers;
 
+import com.example.demo.DemoApplication;
 import com.google.gson.Gson;
 import enums.eEvent;
 import general.ClientConnectionDetails;
@@ -11,7 +12,7 @@ import services.RESTServices;
 import java.util.List;
 
 public class ConnectionNotifierManager {
-    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(ConnectionNotifierManager.class);
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
     private Gson g = new Gson();
 
     private static ConnectionNotifierManager _instance;
