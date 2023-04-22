@@ -79,6 +79,12 @@ public class KafkaConsumer {
 
         //subscribe to topic in kafka to get more requests
         kafkaConsumer.subscribe(Collections.singletonList(TestEndpoint.REQUEST_TASKS_TOPIC));
+        ConsumerRecords<String, String> recordss = kafkaConsumer.poll(0);
+        if (recordss.count() == 0) {
+            log.error("Consumer is not connected to Kafka brokers");
+        } else {
+            log.debug("Consumer is connected to Kafka brokers");
+        }
 
         while (true) {
             log.debug("About to poll from kafka");

@@ -271,7 +271,7 @@ public class DBhibernetManager {
         }
     }
 
-    public void updateStatus(String requestId, eRequestStatus status) {
+    public int updateStatus(String requestId, eRequestStatus status) {
         EntityManager entityManager = sessionFactory.createEntityManager();
         EntityTransaction tx = entityManager.getTransaction();
         try{
@@ -280,15 +280,17 @@ public class DBhibernetManager {
 
             Query query = entityManager.createNativeQuery(nativeQuery);
             query.setParameter(1, status.getDbName());
+            query.setParameter(2, requestId);
             int numUpdated = query.executeUpdate();
 
             tx.commit();
+            return numUpdated;
         }
         catch (Exception e) {
             if (tx.isActive()) {
                 tx.rollback();
             }
-            throw e;
+            return -1;
         } finally {
             entityManager.close();
         }

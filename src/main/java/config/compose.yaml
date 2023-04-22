@@ -3,33 +3,34 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
+    hostname: zookeeper
     ports:
       - "2181:2181"
     environment:
       - ZOOKEEPER_CLIENT_PORT=2181
-    hostname: zookeeper
     networks:
       - my_network
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
+#    hostname: kafka
     depends_on:
       - zookeeper
     ports:
       - "9092:9092"
-    hostname: kafka
     environment:
+      - KAFKA_LISTENERS= PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS= ${kafka_listener}
+      - KAFKA_INTER_BROKER_LISTENER_NAME= PLAINTEXT
       - KAFKA_KERBEROS_MODE=none
       - KAFKA_SASL_MECHANISM_PLAIN_REQUIRED=false
       - KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND=true
       - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
       - KAFKA_HEAP_OPTS=-Xmx512M -Xms512M
       - KAFKA_LOG_DIRS=/var/lib/kafka/data
-      - KAFKA_LISTENERS=PLAINTEXT://:9092
       - KAFKA_LOG_DIRS_RETENTION_HOURS=168
       - KAFKA_LOG_DIRS_SEGMENT_MS=604800000
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - KAFKA_AUTO_CREATE_TOPICS_REPLICATION_FACTOR=1
       - KAFKA_REPLICATION_FACTOR=1
       - KAFKA_KAFKACONFIG_CONFLUENT.BALANCER.TOPIC.REPLICATION.FACTOR=1

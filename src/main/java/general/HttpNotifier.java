@@ -79,9 +79,9 @@ public class HttpNotifier {
             //get all client listeners and let them know
             EventManager.getInstance().fire(eEvent.EXECUTION_FIRED, g.toJson(exec));
 
-            log.info(statusCode);
+            log.info("Execution finished with status "+statusCode);
             if(response != null)
-                log.info(response.body());
+                log.info("response (first 100 chars) from client: "+response.body().substring(0, 100)+"...");
 
         }
         catch(Exception ex){
