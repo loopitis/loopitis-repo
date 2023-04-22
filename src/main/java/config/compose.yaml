@@ -13,14 +13,14 @@ services:
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
-#    hostname: kafka
+    hostname: kafka
     depends_on:
       - zookeeper
     ports:
       - "9092:9092"
     environment:
       - KAFKA_LISTENERS= PLAINTEXT://:9092
-      - KAFKA_ADVERTISED_LISTENERS= ${kafka_listener}
+      - KAFKA_ADVERTISED_LISTENERS= PLAINTEXT://kafka:9092
       - KAFKA_INTER_BROKER_LISTENER_NAME= PLAINTEXT
       - KAFKA_KERBEROS_MODE=none
       - KAFKA_SASL_MECHANISM_PLAIN_REQUIRED=false

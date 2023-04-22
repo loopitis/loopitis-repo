@@ -14,6 +14,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pojos.HttpNotifierRequest;
 import redis.clients.jedis.JedisPubSub;
 
 import java.time.Duration;
@@ -79,12 +80,7 @@ public class KafkaConsumer {
 
         //subscribe to topic in kafka to get more requests
         kafkaConsumer.subscribe(Collections.singletonList(TestEndpoint.REQUEST_TASKS_TOPIC));
-        ConsumerRecords<String, String> recordss = kafkaConsumer.poll(0);
-        if (recordss.count() == 0) {
-            log.error("Consumer is not connected to Kafka brokers");
-        } else {
-            log.debug("Consumer is connected to Kafka brokers");
-        }
+
 
         while (true) {
             log.debug("About to poll from kafka");
@@ -96,16 +92,16 @@ public class KafkaConsumer {
                 System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
                 if(record.value() == null) continue;
                 if(record.topic().equals(TestEndpoint.REQUEST_TASKS_TOPIC)) {
-                    pojos.HttpNotifierRequest request = gson.fromJson(record.value(), pojos.HttpNotifierRequest.class);
-                        var getRequest = new HttpNotifier(request);
-                        NotifierTask task = new NotifierTask(getRequest);
+                    pojos.HttpNotifierRequest request = gson.fromJson(record.value(), HttpNotifierRequest.class);
+                    var getRequest = new HttpNotifier(request);
+                    NotifierTask task = new NotifierTask(getRequest);
 
-                        log.debug("Updating DB task ongoing "+request.getExternal_id());
-                        //update DB that the task is in progress
-                        DBhibernetManager.getInstance().updateStatus(request.getExternal_id(), eRequestStatus.ON_GOING);
+                    log.debug("Updating DB task ongoing "+request.getExternal_id());
+                    //update DB that the task is in progress
+                    DBhibernetManager.getInstance().updateStatus(request.getExternal_id(), eRequestStatus.ON_GOING);
 
-                        var future = task.handle();
-                        taskIdToFuture.put(request.getExternal_id(), future);
+                    var future = task.handle();
+                    taskIdToFuture.put(request.getExternal_id(), future);
 
                 }
             }
