@@ -6,6 +6,8 @@ public class ShowRequestsRequest {
 
     private eRequestStatus status;
 
+    private String requestId;
+
     public ShowRequestsRequest(){}
 
 
@@ -15,5 +17,13 @@ public class ShowRequestsRequest {
 
     public void setStatus(eRequestStatus status) {
         this.status = status;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
     }
 }

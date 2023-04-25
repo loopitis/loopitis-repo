@@ -25,8 +25,7 @@ import java.util.Scanner;
 public class CLI implements Runnable {
 
     private static Gson g = new GsonBuilder().setPrettyPrinting().create();
-    private static final String HOST = "http://localhost";
-    private static final int PORT = 8080;
+    private static final String HOST = "https://call.loopitis.com";
 
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help message")
     boolean helpRequested;
@@ -76,7 +75,7 @@ public class CLI implements Runnable {
             req.setDelay(delay);
             req.setPayload(payload);
 
-            var result = RESTServices.POST(HOST+":"+PORT+"/set/getNotifier", g.toJson(req));
+            var result = RESTServices.POST(HOST+"/set/getNotifier", g.toJson(req));
             if(result != null){
                 JsonParser parser = new JsonParser();
                 JsonElement jsonElement = parser.parse(result.body());
@@ -107,7 +106,7 @@ public class CLI implements Runnable {
         public void run() {
             ShowExecutionsRequest req = new ShowExecutionsRequest();
             req.setRequestId(requestId);
-            HttpResponse<String> result = RESTServices.POST(HOST + ":" + PORT + "/executions/list", g.toJson(req));
+            HttpResponse<String> result = RESTServices.POST(HOST + "/executions/list", g.toJson(req));
             if (result != null){
                 JsonParser parser = new JsonParser();
                 JsonElement jsonElement = parser.parse(result.body());
@@ -145,7 +144,7 @@ public class CLI implements Runnable {
                 return;
             }
             req.setStatus(estatus);
-            HttpResponse<String> result = RESTServices.POST(HOST+":"+PORT+"/requests/list", g.toJson(req));
+            HttpResponse<String> result = RESTServices.POST(HOST+"/requests/list", g.toJson(req));
 
 
             if(result != null) {

@@ -330,14 +330,33 @@ public class DBhibernetManager {
         try {
             String jpql = "SELECT req FROM HttpNotifierRequestEntity req ";
             if(filter != null){
+                boolean isFirstCondition = true;
                 if(filter.getStatus() != null){
-                    jpql+=" WHERE req.status= :status";
+                    if(isFirstCondition){
+                        jpql+="WHERE ";
+                        isFirstCondition = false;
+                    }
+                    jpql+="req.status= :status ";
                 }
+                if(filter.getRequestId() != null){
+                    if(isFirstCondition){
+                        jpql+="WHERE ";
+                        isFirstCondition = false;
+                    }
+                    else{
+                        jpql+=" and ";
+                    }
+                    jpql+="req.requestId= :req ";
+                }
+
             }
             TypedQuery<HttpNotifierRequestEntity> query = entityManager.createQuery(jpql, HttpNotifierRequestEntity.class);
             if(filter != null){
                 if(filter.getStatus() != null){
                     query.setParameter("status", filter.getStatus().getDbName());
+                }
+                if(filter.getRequestId() != null){
+                    query.setParameter("requestI", filter.getRequestId());
                 }
                 if(filter.getLimit() != null){
                     query.setMaxResults(filter.getLimit());

@@ -44,7 +44,7 @@ public class NotifierThreadPool {
                     }
                     UUID uuid = UUID.randomUUID();
                     String executionId = uuid.toString();
-                    request.fire(executionId);
+                    request.fire(executionId, num+1);
                     num++;
                 }
                 catch(Exception ex){

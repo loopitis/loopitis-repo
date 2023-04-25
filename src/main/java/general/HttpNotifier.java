@@ -2,6 +2,7 @@ package general;
 
 import com.example.demo.ConfigurationManager;
 import com.example.demo.DemoApplication;
+import com.example.demo.RequestsEndpoint;
 import com.google.gson.Gson;
 import consumer.ExecutionRequest;
 import enums.eCallbackType;
@@ -10,6 +11,7 @@ import managers.DBhibernetManager;
 import managers.EventManager;
 import pojos.HttpNotifierRequest;
 
+import java.io.File;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -31,13 +33,6 @@ public class HttpNotifier {
 
     private HttpNotifierRequest notifierRequest;
 
-    public static void main(String[] args) {
-        HttpNotifierRequest req = new HttpNotifierRequest("https://google.com", 5000L, 10000L,"payload123",1L, 20, eCallbackType.POST);
-        HttpNotifier n = new HttpNotifier(req);
-        n.fire("execid123");
-    }
-
-
     public HttpNotifier(pojos.HttpNotifierRequest notif){
         this.notifierRequest = notif;
     }
@@ -50,11 +45,11 @@ public class HttpNotifier {
     }
 
 
-    public boolean fire(String executionId) {
+    public boolean fire(String executionId, int executionNumber) {
         try {
             log.debug("About to fire a "+notifierRequest.getCallback_type()+" request ");
 
-            HttpRequest request = getHttpRequest(executionId);
+            HttpRequest request = getHttpRequest(executionId, executionNumber);
 
 
             HttpClient client = HttpClient.newBuilder()
@@ -80,8 +75,16 @@ public class HttpNotifier {
             EventManager.getInstance().fire(eEvent.EXECUTION_FIRED, g.toJson(exec));
 
             log.info("Execution finished with status "+statusCode);
-            if(response != null)
-                log.info("response (first 100 chars) from client: "+response.body().substring(0, 100)+"...");
+            if(response != null) {
+                String responseBody = response.body();
+                if(responseBody.length() > 1) {
+                    int length = Math.min(response.body().length() - 1, 100);
+                    log.info("response (first 100 chars) from client: " + response.body().substring(0, length) + "...");
+                }
+                else{
+                    log.info("Got empty response from client ");
+                }
+            }
 
         }
         catch(Exception ex){
@@ -92,23 +95,22 @@ public class HttpNotifier {
         return true;
     }
 
-    private HttpRequest getHttpRequest(String executionId) {
+    private HttpRequest getHttpRequest(String executionId, int executionNumber) {
         if(notifierRequest.getCallback_type() == eCallbackType.GET){
             log.debug("Building a GET request for "+executionId);
-            return generateGEThttpRequest(executionId);
+            return generateGEThttpRequest(executionId, executionNumber);
         }
         else if(notifierRequest.getCallback_type() == eCallbackType.POST){
             log.debug("Building a POST request for "+executionId);
-            return generatePOSThttpRequest(executionId);
+            return generatePOSThttpRequest(executionId, executionNumber);
         }
         return null;
 
     }
 
-    private HttpRequest generatePOSThttpRequest(String executionId) {
+    private HttpRequest generatePOSThttpRequest(String executionId, int executionNumber) {
 
-        var requestBody = new ExecutionResponse(executionId, notifierRequest.getPayload());
-        String jsonBody = g.toJson(requestBody);
+        var jsonBody = getContent(executionId, executionNumber, eCallbackType.POST);
         URI url = URI.create(notifierRequest.getReturn_url());
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -120,12 +122,58 @@ public class HttpNotifier {
         return request;
     }
 
-    private HttpRequest generateGEThttpRequest(String executionId) {
-        StringBuilder uriBuilder = new StringBuilder(notifierRequest.getReturn_url());
-        uriBuilder.append("?execution_id=").append(executionId);
-        if (notifierRequest.getPayload() != null) {
-            uriBuilder.append("&payload=").append(notifierRequest.getPayload());
+    private String getContent(String executionId, int executionNumber, eCallbackType type) {
+        String cancellationLink = generateCancelLink(notifierRequest.getExternal_id());
+        String showRequest = generateShowRequest(notifierRequest.getExternal_id());
+        if(type == eCallbackType.POST) {
+            var res = new ExecutionResponse(
+                    executionId,
+                    executionNumber,
+                    notifierRequest.getPayload(),
+                    notifierRequest.getOccurrences(),
+                    notifierRequest.getExternal_id(),
+                    notifierRequest.getName(),
+                    cancellationLink,
+                    showRequest);
+            return g.toJson(res);
         }
+
+
+        if(type == eCallbackType.GET) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("?executionId=").append(executionId);
+            builder.append("&executionNumber=").append(executionNumber);
+            builder.append("&parentRequestId=").append(notifierRequest.getExternal_id());
+            builder.append("&cancelink=").append(cancellationLink);
+            builder.append("&showRequest=").append(showRequest);
+            if(notifierRequest.getName() != null){
+                builder.append("&parentRequestName=").append(notifierRequest.getName());
+            }
+            if (notifierRequest.getPayload() != null) {
+                builder.append("&payload=").append(notifierRequest.getPayload());
+            }
+            if(notifierRequest.getOccurrences() > 0){
+                builder.append("&occurrences=").append(notifierRequest.getOccurrences());
+            }
+
+            return builder.toString();
+        }
+        log.debug("Unknown callback type ! "+type);
+        return null;
+    }
+
+    private String generateShowRequest(String externalId) {
+        return ConfigurationManager.getInstance().getEndpointHost()+"/"+RequestsEndpoint.REQUEST_LIST_EP+"?requestId="+externalId;
+    }
+
+    private String generateCancelLink(String externalId) {
+        return ConfigurationManager.getInstance().getEndpointHost()+ "/"+ RequestsEndpoint.CANCEL_PATH+"?requestId="+externalId;
+    }
+
+    private HttpRequest generateGEThttpRequest(String executionId, int executionNumber) {
+        StringBuilder uriBuilder = new StringBuilder(notifierRequest.getReturn_url());
+        uriBuilder.append(getContent(executionId, executionNumber, eCallbackType.GET));
+
 
         URI url = URI.create(uriBuilder.toString());
 

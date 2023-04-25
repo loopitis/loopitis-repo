@@ -6,6 +6,7 @@ public class RequestsFilter {
 
     private eRequestStatus status;
     private Integer limit;
+    private String requestId;
 
     public RequestsFilter withStatus(eRequestStatus status){
         this.status = status;
@@ -23,5 +24,14 @@ public class RequestsFilter {
 
     public Integer getLimit() {
         return this.limit;
+    }
+
+    public RequestsFilter withRequestId(String requestId) {
+        this.requestId = requestId;
+        return this;
+    }
+
+    public String getRequestId() {
+        return this.requestId;
     }
 }

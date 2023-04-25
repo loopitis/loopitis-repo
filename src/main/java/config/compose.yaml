@@ -87,6 +87,7 @@ services:
       redis_port: ${redis_port}
       redis_listeners_key: ${redis_listeners_key}
       notifications_http_version: ${notifications_http_version}
+      endpoint_host: ${endpoint_host}
     hostname: consumer
     depends_on:
       - kafka

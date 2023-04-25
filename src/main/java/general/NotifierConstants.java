@@ -20,6 +20,9 @@ public class NotifierConstants {
     public static final String CONF_REDIS_PORT = "redis_port";
     public static final String CONF_REDIS_LISTENERS_KEY = "redis_listeners_key";
     public static final String CONF_KAFKA_HOST = "kafka_host";
+    public static final String CONF_KAFKA_PORT = "kafka_port";
+
     public static final String CONF_REDIS_CANCEL_CHANNEL = "cancel_request_channel";
     public static final String CONF_CLI_PORT = "cli_port";
+    public static final String CONF_ENDPOINT_HOST = "endpoint_host";
 }

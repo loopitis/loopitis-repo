@@ -5,6 +5,10 @@ public class CancelTaskRequest {
 
     public CancelTaskRequest(){}
 
+    public CancelTaskRequest(String requestId){
+        this.requestId = requestId;
+    }
+
     public String getRequestId() {
         return requestId;
     }

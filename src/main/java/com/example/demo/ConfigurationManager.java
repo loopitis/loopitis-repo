@@ -202,4 +202,8 @@ public class ConfigurationManager {
     public int getCliPort() {
         return Integer.valueOf(_configuration.get(NotifierConstants.CONF_CLI_PORT));
     }
+
+    public String getEndpointHost() {
+        return _configuration.get(NotifierConstants.CONF_ENDPOINT_HOST);
+    }
 }

@@ -16,12 +16,18 @@ public class RedisManager {
 
     private RedisManager(){
         String redisHost = ConfigurationManager.getInstance().getRedisHost();
-        int redisPort = ConfigurationManager.getInstance().getRedisPort();
+        Integer redisPort = ConfigurationManager.getInstance().getRedisPort();
+
+        if(redisPort == null || redisPort < 1){
+            redisPort = 443;
+        }
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxTotal(10);
         config.setMaxIdle(5);
         config.setMinIdle(2);
-        pool = new JedisPool(config, redisHost, redisPort);
+        if(redisPort == null)
+            pool = new JedisPool(config, redisHost);
+        else pool = new JedisPool(config, redisHost, redisPort);
 
 
     }

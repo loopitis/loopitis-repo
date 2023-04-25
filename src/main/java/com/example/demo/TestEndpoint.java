@@ -57,7 +57,6 @@ public class TestEndpoint {
     }
 
 
-
     @RequestMapping("/connection")
     @PostMapping
     public ResponseEntity<String> connect(@RequestBody ConnectRequest connectRequest){
@@ -89,25 +88,29 @@ public class TestEndpoint {
 
     }
 
-    @RequestMapping("/cancel_task")
-    @PostMapping
-    public ResponseEntity<String> connect(@RequestBody CancelTaskRequest cancelRequest){
-        log.debug("Received Request to cancel "+cancelRequest);
-        if(cancelRequest == null || cancelRequest.getRequestId() == null || cancelRequest.getRequestId().isEmpty()) {
-            ErrorDetails details = new ErrorDetails();
-            details.withCode(400)
-                    .withField("requestId")
-                    .withDetails("requestId not provided")
-                    .withMessage("Bad input parameters");
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
+//    @RequestMapping("/cancel_task")
+//    @PostMapping
+//    public ResponseEntity<String> cancelTask(@RequestBody CancelTaskRequest cancelRequest){
+//        log.debug("Received Request to cancel "+cancelRequest);
+//        if(cancelRequest == null || cancelRequest.getRequestId() == null || cancelRequest.getRequestId().isEmpty()) {
+//            ErrorDetails details = new ErrorDetails();
+//            details.withCode(400)
+//                    .withField("requestId")
+//                    .withDetails("requestId not provided")
+//                    .withMessage("Bad input parameters");
+//            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
+//
+//        }
+//
+//        //save the url to redis
+//        RedisManager.getInstance().publishMessageToChannel(REDIS_CANCEL_CHANNEL, gson.toJson(cancelRequest));
+//        return ResponseEntity.ok().body("{\"result\":\"request sent\"}");
+//
+//    }
 
-        }
 
-        //save the url to redis
-        RedisManager.getInstance().publishMessageToChannel(REDIS_CANCEL_CHANNEL, gson.toJson(cancelRequest));
-        return ResponseEntity.ok().body("{\"result\":\"request sent\"}");
 
-    }
+
 
     @RequestMapping("/execution/comment")
     @PostMapping
