@@ -183,6 +183,7 @@ services:
       redis_listeners_key: ${redis_listeners_key}
       minimum_interval_time: ${minimum_interval_time}
       notifications_http_version: ${notifications_http_version}
+      endpoint_host: ${endpoint_host}
     ports:
       - "8080:8080"
     networks:

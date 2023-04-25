@@ -13,9 +13,11 @@ import pojos.HttpNotifierRequest;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.Calendar;
 
@@ -143,17 +145,18 @@ public class HttpNotifier {
 
 
         if(type == eCallbackType.GET) {
+
             StringBuilder builder = new StringBuilder();
-            builder.append("?executionId=").append(executionId);
+            builder.append("?executionId=").append(URLEncoder.encode(executionId, Charset.forName("UTF-8")));
             builder.append("&executionNumber=").append(executionNumber);
-            builder.append("&parentRequestId=").append(notifierRequest.getExternal_id());
-            builder.append("&cancelink=").append(cancellationLink);
-            builder.append("&showRequest=").append(showRequest);
+            builder.append("&parentRequestId=").append(URLEncoder.encode(notifierRequest.getExternal_id(), Charset.forName("UTF-8")));
+            builder.append("&cancelink=").append(URLEncoder.encode(cancellationLink, Charset.forName("UTF-8")));
+            builder.append("&showRequest=").append(URLEncoder.encode(showRequest, Charset.forName("UTF-8")));
             if(notifierRequest.getName() != null){
-                builder.append("&parentRequestName=").append(notifierRequest.getName());
+                builder.append("&parentRequestName=").append(URLEncoder.encode(notifierRequest.getName(), Charset.forName("UTF-8")));
             }
             if (notifierRequest.getPayload() != null) {
-                builder.append("&payload=").append(notifierRequest.getPayload());
+                builder.append("&payload=").append(URLEncoder.encode(notifierRequest.getPayload(), Charset.forName("UTF-8")));
             }
             if(notifierRequest.getOccurrences() > 0){
                 builder.append("&occurrences=").append(notifierRequest.getOccurrences());
