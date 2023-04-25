@@ -346,7 +346,7 @@ public class DBhibernetManager {
                     else{
                         jpql+=" and ";
                     }
-                    jpql+="req.requestId= :req ";
+                    jpql+="req.externalId= :requestId ";
                 }
 
             }
@@ -356,7 +356,7 @@ public class DBhibernetManager {
                     query.setParameter("status", filter.getStatus().getDbName());
                 }
                 if(filter.getRequestId() != null){
-                    query.setParameter("requestI", filter.getRequestId());
+                    query.setParameter("requestId", filter.getRequestId());
                 }
                 if(filter.getLimit() != null){
                     query.setMaxResults(filter.getLimit());

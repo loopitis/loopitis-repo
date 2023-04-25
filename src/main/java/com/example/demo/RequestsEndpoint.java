@@ -50,7 +50,7 @@ public class RequestsEndpoint {
 
     @RequestMapping("/get_list")
     @GetMapping
-    public ResponseEntity<String> getRequests(@RequestParam("requestId") String requestId, @RequestParam("status") eRequestStatus status){
+    public ResponseEntity<String> getRequests(@RequestParam(value = "requestId", required = false) String requestId, @RequestParam(value = "status", required = false) eRequestStatus status){
         log.debug("Received get request  ");
 
         if(requestId == null && status == null){
@@ -85,11 +85,18 @@ public class RequestsEndpoint {
         CancelTaskRequest request = new CancelTaskRequest(requestId);
         //save the url to redis
         RedisManager.getInstance().publishMessageToChannel(REDIS_CANCEL_CHANNEL, g.toJson(request));
-        return ResponseEntity.ok().body("{\"result\":\"request sent\"}");
+        String showRequestLink = generateShowRequest(requestId);
+        return ResponseEntity.ok().body("{\"result\":\"request sent\", \"show-request\":"+showRequestLink+"}");
 
     }
 
 
+    public static String generateShowRequest(String externalId) {
+        return ConfigurationManager.getInstance().getEndpointHost()+"/"+RequestsEndpoint.REQUEST_LIST_EP+"?requestId="+externalId;
+    }
 
+    public static String generateCancelLink(String externalId) {
+        return ConfigurationManager.getInstance().getEndpointHost()+ "/"+ RequestsEndpoint.CANCEL_PATH+"?requestId="+externalId;
+    }
 
 }

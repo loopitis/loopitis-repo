@@ -19,6 +19,9 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Calendar;
 
+import static com.example.demo.RequestsEndpoint.generateCancelLink;
+import static com.example.demo.RequestsEndpoint.generateShowRequest;
+
 
 public class HttpNotifier {
     private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
@@ -162,13 +165,7 @@ public class HttpNotifier {
         return null;
     }
 
-    private String generateShowRequest(String externalId) {
-        return ConfigurationManager.getInstance().getEndpointHost()+"/"+RequestsEndpoint.REQUEST_LIST_EP+"?requestId="+externalId;
-    }
 
-    private String generateCancelLink(String externalId) {
-        return ConfigurationManager.getInstance().getEndpointHost()+ "/"+ RequestsEndpoint.CANCEL_PATH+"?requestId="+externalId;
-    }
 
     private HttpRequest generateGEThttpRequest(String executionId, int executionNumber) {
         StringBuilder uriBuilder = new StringBuilder(notifierRequest.getReturn_url());
