@@ -1,6 +1,7 @@
 package managers;
 
 import com.example.demo.ConfigurationManager;
+import com.example.demo.TestEndpoint;
 import enums.eRedisDB;
 import redis.clients.jedis.*;
 
@@ -13,6 +14,15 @@ public class RedisManager {
 
     private static final String LISTENERS_KEY = ConfigurationManager.getInstance().getRedisListenersKey();
 
+    public static void main(String[] args) {
+        var res= RedisManager.getInstance().subscribeToChannel(TestEndpoint.REDIS_CANCEL_CHANNEL, new JedisPubSub() {
+            @Override
+            public void onMessage(String channel, String message) {
+                System.out.println("koko");
+            }
+        });
+        System.out.println(res);
+    }
 
     private RedisManager(){
         String redisHost = ConfigurationManager.getInstance().getRedisHost();
@@ -25,6 +35,7 @@ public class RedisManager {
         config.setMaxTotal(10);
         config.setMaxIdle(5);
         config.setMinIdle(2);
+
         if(redisPort == null)
             pool = new JedisPool(config, redisHost);
         else pool = new JedisPool(config, redisHost, redisPort);

@@ -51,14 +51,14 @@ public class DBhibernetManager {
     public static void main(String[] args) throws JsonProcessingException {
         Gson g = new Gson();
         DBhibernetManager manager = DBhibernetManager.getInstance();
+
         RequestsFilter filter = new RequestsFilter();
-        filter.withStatus(eRequestStatus.CANCELED);
+        filter.withStatus(eRequestStatus.ON_GOING);
         filter.withLimit(20);
-
+//
         HttpNotifierRequestEntity res = manager.getRequests(filter).get(0);
-
-        res.setCallbackType(eCallbackType.GET);
-        manager.saveRequest(res);
+//
+        System.out.println(g.toJson(res));
 
 
 //        ObjectMapper objectMapper = new ObjectMapper();
@@ -353,7 +353,7 @@ public class DBhibernetManager {
             TypedQuery<HttpNotifierRequestEntity> query = entityManager.createQuery(jpql, HttpNotifierRequestEntity.class);
             if(filter != null){
                 if(filter.getStatus() != null){
-                    query.setParameter("status", filter.getStatus().getDbName());
+                    query.setParameter("status", filter.getStatus());
                 }
                 if(filter.getRequestId() != null){
                     query.setParameter("requestId", filter.getRequestId());
@@ -363,6 +363,20 @@ public class DBhibernetManager {
                 }
             }
             return query.getResultList();
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    public void resetQueryCache(){
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        try {
+
+            String nativeQuery = "RESET QUERY CACHE";
+            Query query = entityManager.createNativeQuery(nativeQuery);
+
+            query.executeUpdate();
+
         } finally {
             entityManager.close();
         }

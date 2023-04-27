@@ -25,7 +25,8 @@ import java.util.Scanner;
 public class CLI implements Runnable {
 
     private static Gson g = new GsonBuilder().setPrettyPrinting().create();
-    private static final String HOST = "https://call.loopitis.com";
+    private static String HOST = "https://call.loopitis.com";
+//    private static String HOST = "http://localhost:8080";
 
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help message")
     boolean helpRequested;
@@ -136,7 +137,11 @@ public class CLI implements Runnable {
         @Option(names = {"-f", "--file"}, description = "The file to print the result to")
         String file;
 
+        @Option(names = {"-h", "--host"}, description = "The host server")
+        String host;
+
         public void run() {
+            host = host != null ? host : HOST;
             ShowRequestsRequest req = new ShowRequestsRequest();
             eRequestStatus estatus = eRequestStatus.tryGetValueOf(status);
             if(estatus == null){
@@ -144,7 +149,7 @@ public class CLI implements Runnable {
                 return;
             }
             req.setStatus(estatus);
-            HttpResponse<String> result = RESTServices.POST(HOST+"/requests/list", g.toJson(req));
+            HttpResponse<String> result = RESTServices.POST(host+"/requests/list", g.toJson(req));
 
 
             if(result != null) {
@@ -169,7 +174,7 @@ public class CLI implements Runnable {
 
 
     public static void main(String[] args) {
-
+        System.out.println();
         Scanner scanner = new Scanner(System.in);
         while(true) {
             String command = scanner.nextLine();

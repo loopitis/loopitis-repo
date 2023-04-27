@@ -3,6 +3,7 @@ package com.example.demo;
 import com.google.gson.Gson;
 import ent.HttpNotifierRequestEntity;
 import enums.eEvent;
+import enums.eRequestStatus;
 import general.*;
 import managers.*;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class TestEndpoint {
 
         notif.setExternal_id(external_id);
         var notifierEntity = new HttpNotifierRequestEntity(notif);
-        notifierEntity.setStatus("PENDING");
+        notifierEntity.setStatus(eRequestStatus.PENDING);
         notifierEntity.setDone(0);
         Long internalId = RequestManager.getInstance().saveRequest(notifierEntity);//request a call , internal call id, external call id , call name, call status, type(get\call), interval, occurance,  data:json
         notif.setInternal_id(internalId);

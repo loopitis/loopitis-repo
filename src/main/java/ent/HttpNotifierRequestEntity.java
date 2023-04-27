@@ -1,6 +1,7 @@
 package ent;
 
 import enums.eCallbackType;
+import enums.eRequestStatus;
 import pojos.HttpNotifierRequest;
 
 import javax.persistence.*;
@@ -46,8 +47,9 @@ public class HttpNotifierRequestEntity {
     @Column(name = "name")
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private eRequestStatus status;
 
     @Column(name = "return_url")
     private String returnUrl;
@@ -118,11 +120,11 @@ public class HttpNotifierRequestEntity {
         this.name = name;
     }
 
-    public String getStatus() {
+    public eRequestStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(eRequestStatus status) {
         this.status = status;
     }
 
