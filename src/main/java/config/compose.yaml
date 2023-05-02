@@ -1,7 +1,9 @@
 version: "3.9"
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    labels:
+      com.docker.compose.project.license: "CC BY-NC-SA 4.0"
+    image: loopitis/loopitis-repo:zookeeper-1.0.0
     container_name: zookeeper
     hostname: zookeeper
     ports:
@@ -11,7 +13,9 @@ services:
     networks:
       - my_network
   kafka:
-    image: confluentinc/cp-kafka:latest
+    labels:
+      com.docker.compose.project.license: "CC BY-NC-SA 4.0"
+    image: loopitis/loopitis-repo:kafka-1.0.0
     container_name: kafka
     hostname: kafka
     depends_on:
@@ -46,10 +50,10 @@ services:
     networks:
       - my_network
   client:
+    labels:
+      com.docker.compose.project.license: "CC BY-NC-SA 4.0"
     container_name: client_container
-    build:
-      context: .
-      dockerfile: Dockerfile.client
+    image: loopitis/loopitis-repo:client-1.0.0
     environment:
       db_max_pool_size: ${db_max_pool_size}
       topic_name_tasks: ${topic_name_tasks}
@@ -68,9 +72,12 @@ services:
       my_network:
         ipv4_address: 172.16.238.17
   consumer:
-    build:
-      context: .
-      dockerfile: Dockerfile.consumer
+    labels:
+      com.docker.compose.project.license: "CC BY-NC-SA 4.0"
+    image: loopitis/loopitis-repo:consumer-1.0.0
+    #    build:
+    #      context: .
+    #      dockerfile: Dockerfile.consumer
     environment:
       cancel_request_channel: ${cancel_request_channel}
       db_max_pool_size: ${db_max_pool_size}
@@ -84,6 +91,7 @@ services:
       db_name: ${db_name}
       redis_host: ${redis_host}
       redis_port: ${redis_port}
+      redis_password: ${redis_password}
       redis_listeners_key: ${redis_listeners_key}
       notifications_http_version: ${notifications_http_version}
       endpoint_host: ${endpoint_host}
@@ -92,31 +100,30 @@ services:
       - kafka
     networks:
       - my_network
-  redis-ui:
-    image: rediscommander/redis-commander
-    ports:
-      - "8081:8081"
-    networks:
-      my_network:
-        ipv4_address: 172.16.238.15
-    environment:
-      REDIS_HOST: ${redis_host}
   redis:
+    labels:
+      com.docker.compose.project.license: "CC BY-NC-SA 4.0"
+    command: redis-server --requirepass ${redis_password}
     container_name: redis
-    image: redis
+    image: loopitis/loopitis-repo:redis-1.0.0
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     hostname: redis
+    environment:
+      REDIS_PASSWORD: ${redis_password}
     networks:
       my_network:
         ipv4_address: 172.16.238.14
   postgres:
+    labels:
+      com.docker.compose.project.license: "CC BY-NC-SA 4.0"
     container_name: my_postgres
-    build:
-      context: .
-      dockerfile: Dockerfile.postgres
+    image: loopitis/loopitis-repo:postgres-1.0.0
+    #    build:
+    #      context: .
+    #      dockerfile: Dockerfile.postgres
     environment:
       POSTGRES_USER: ${db_user}
       POSTGRES_PASSWORD: ${db_password}
@@ -131,24 +138,9 @@ services:
 
     command: >
       postgres -c listen_addresses=* -c ssl=on -c ssl_cert_file=/etc/ssl/certs/certificate.crt -c ssl_key_file=/etc/ssl/private/certificate.key
-  pgadmin:
-    container_name: my_pgadmin
-    build:
-      context: .
-      dockerfile: Dockerfile.pgAdmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-      PGADMIN_SERVER_SSL_CERT: /certs/certificate.crt
-      PGADMIN_SERVER_SSL_KEY: /certs/certificate.key
-    ports:
-      - "5050:80"
-    networks:
-      my_network:
-        ipv4_address: 172.16.238.11
-    hostname: pgadmin
-
   portainer:
+    labels:
+      com.docker.compose.project.license: "CC BY-NC-SA 4.0"
     container_name: my_portainer
     image: portainer/portainer-ce:latest
     ports:
@@ -161,11 +153,14 @@ services:
         ipv4_address: 172.16.238.12
     hostname: portainer
 
-  endpoint:
+  endpoints:
+    labels:
+      com.docker.compose.project.license: "CC BY-NC-SA 4.0"
     container_name: my_endpoint
-    build:
-      context: .
-      dockerfile: Dockerfile.endpoints
+    image: loopitis/loopitis-repo:endpoints-1.0.0
+    #    build:
+    #      context: .
+    #      dockerfile: Dockerfile.endpoints
     environment:
       cancel_request_channel: ${cancel_request_channel}
       db_max_pool_size: ${db_max_pool_size}
@@ -179,6 +174,7 @@ services:
       db_name: ${db_name}
       redis_host: ${redis_host}
       redis_port: ${redis_port}
+      redis_password: ${redis_password}
       redis_listeners_key: ${redis_listeners_key}
       minimum_interval_time: ${minimum_interval_time}
       notifications_http_version: ${notifications_http_version}
