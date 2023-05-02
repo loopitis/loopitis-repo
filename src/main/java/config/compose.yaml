@@ -42,6 +42,7 @@ services:
       - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1 # Set the transaction state log replication factor
       - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1 # Set the transaction state log minimum in-sync replicas
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 # Set the offsets topic replication factor
+
     networks:
       - my_network
   client:
@@ -50,7 +51,6 @@ services:
       context: .
       dockerfile: Dockerfile.client
     environment:
-      isDev: ${isDev}
       db_max_pool_size: ${db_max_pool_size}
       topic_name_tasks: ${topic_name_tasks}
       timer_threads_in_process: ${timer_threads_in_process}
@@ -72,7 +72,6 @@ services:
       context: .
       dockerfile: Dockerfile.consumer
     environment:
-      isDev: ${isDev}
       cancel_request_channel: ${cancel_request_channel}
       db_max_pool_size: ${db_max_pool_size}
       topic_name_tasks: ${topic_name_tasks}
@@ -101,7 +100,7 @@ services:
       my_network:
         ipv4_address: 172.16.238.15
     environment:
-      REDIS_HOST: ${REDIS_HOST}
+      REDIS_HOST: ${redis_host}
   redis:
     container_name: redis
     image: redis
@@ -119,19 +118,19 @@ services:
       context: .
       dockerfile: Dockerfile.postgres
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydb
+      POSTGRES_USER: ${db_user}
+      POSTGRES_PASSWORD: ${db_password}
+      POSTGRES_DB: ${db_name}
+    hostname: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
-      my_network:
-        ipv4_address: 172.16.238.10
-    hostname: postgres
+      - my_network
+
     command: >
-      postgres -c listen_addresses=*
+      postgres -c listen_addresses=* -c ssl=on -c ssl_cert_file=/etc/ssl/certs/certificate.crt -c ssl_key_file=/etc/ssl/private/certificate.key
   pgadmin:
     container_name: my_pgadmin
     build:
@@ -140,6 +139,8 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_SERVER_SSL_CERT: /certs/certificate.crt
+      PGADMIN_SERVER_SSL_KEY: /certs/certificate.key
     ports:
       - "5050:80"
     networks:
@@ -166,8 +167,6 @@ services:
       context: .
       dockerfile: Dockerfile.endpoints
     environment:
-      isDev: ${isDev}
-      cli_port: ${cli_port}
       cancel_request_channel: ${cancel_request_channel}
       db_max_pool_size: ${db_max_pool_size}
       topic_name_tasks: ${topic_name_tasks}

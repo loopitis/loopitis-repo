@@ -25,4 +25,5 @@ public class NotifierConstants {
     public static final String CONF_REDIS_CANCEL_CHANNEL = "cancel_request_channel";
     public static final String CONF_CLI_PORT = "cli_port";
     public static final String CONF_ENDPOINT_HOST = "endpoint_host";
+    public static final String CONF_REDIS_PASSWORD = "redis_password";
 }

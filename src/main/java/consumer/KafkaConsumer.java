@@ -38,6 +38,8 @@ public class KafkaConsumer {
     private Gson g = new Gson();
 
     public static void main(String[] args) {
+        log.debug("Starting Kafka Consumer");
+        System.out.println("Kafka consumer");
         KafkaConsumer consumer = new KafkaConsumer();
         consumer.run();
     }
@@ -87,6 +89,7 @@ public class KafkaConsumer {
             ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(2000));
             if(records.isEmpty()){
                 log.debug("nothing found");
+                continue;
             }
             for (ConsumerRecord<String, String> record : records) {
                 System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());

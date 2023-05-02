@@ -206,4 +206,8 @@ public class ConfigurationManager {
     public String getEndpointHost() {
         return _configuration.get(NotifierConstants.CONF_ENDPOINT_HOST);
     }
+
+    public String getRedisPassword() {
+        return _configuration.get(NotifierConstants.CONF_REDIS_PASSWORD);
+    }
 }
