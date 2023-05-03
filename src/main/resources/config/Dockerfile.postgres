@@ -1,4 +1,6 @@
 # Use the official PostgreSQL image as the base image
 FROM postgres:latest
+LABEL org.label-schema.license="CC BY-NC-SA 4.0"
+
 COPY init.sql /docker-entrypoint-initdb.d/
 
