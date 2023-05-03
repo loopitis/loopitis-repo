@@ -13,7 +13,7 @@ If you would like to use this project for commercial purposes and need a differe
 # **How to make it work** - All you need is two files
 
 
-If you want to use the app as is without any modification, **all you need is the compose.yaml file and config.properties file**. Copy both files to your working directory (it works both on Linux or Windows).
+If you want to use the app as is without any modification, **all you need is the compose.yaml file and config.properties file**. Copy both files from resources/config to your working directory (it works both on Linux or Windows).
 
 Make sure to have Docker Compose installed on your machine. For security reasons, it is highly recommended to run the Docker Compose on a Virtual Private Cloud (VPC) and set applicable passwords on the config.properties file (Redis password, Portainer password, and PostgreSQL passwords) even if you run it locally under a VPC. To run the Docker Compose, you should run the following command:
 
