@@ -1,6 +1,6 @@
 package managers;
 
-import com.example.demo.DemoApplication;
+import com.example.demo.LoopitisApplication;
 import com.google.gson.Gson;
 import enums.eEvent;
 import general.ClientConnectionDetails;
@@ -11,7 +11,7 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 
 public class EventManager {
-    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(LoopitisApplication.MY_LOGGER);
 
     private static EventManager _instance;
 

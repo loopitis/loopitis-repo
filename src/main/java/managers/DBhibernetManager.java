@@ -1,7 +1,7 @@
 package managers;
 
 import com.example.demo.ConfigurationManager;
-import com.example.demo.DemoApplication;
+import com.example.demo.LoopitisApplication;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariConfig;
@@ -9,7 +9,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import consumer.ExecutionRequest;
 import ent.HttpNotifierRequestEntity;
 
-import enums.eCallbackType;
 import enums.eProcess;
 import enums.eRequestStatus;
 import filters.ExecutionsFilter;
@@ -27,7 +26,7 @@ import java.util.Map;
 
 
 public class DBhibernetManager {
-    private static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
+    private static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(LoopitisApplication.MY_LOGGER);
 
     private static boolean DB_READ_ONLY = false;
 

@@ -1,13 +1,10 @@
 package com.example.demo;
 
 import com.google.gson.Gson;
-import filters.ExecutionsFilter;
 import filters.RequestsFilter;
 import general.CancelTaskRequest;
 import general.ErrorDetails;
-import general.ShowExecutionsRequest;
 import general.ShowRequestsRequest;
-import managers.ExecutionsManager;
 import managers.RedisManager;
 import managers.RequestsManager;
 import org.springframework.http.HttpStatus;
@@ -15,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import enums.eRequestStatus;
 
-import static com.example.demo.TestEndpoint.REDIS_CANCEL_CHANNEL;
+import static com.example.demo.LoopitisMainEndpoints.REDIS_CANCEL_CHANNEL;
 
 @RequestMapping("/requests")
 @RestController
@@ -23,7 +20,7 @@ public class RequestsEndpoint {
 
     public static final String CANCEL_PATH = "requests/cancel_task";
     public static final String REQUEST_LIST_EP = "requests/get_list";
-    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(LoopitisApplication.MY_LOGGER);
 
     private Gson g = new Gson();
 

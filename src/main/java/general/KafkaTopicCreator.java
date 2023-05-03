@@ -1,20 +1,19 @@
 package general;
 
 import com.example.demo.ConfigurationManager;
-import com.example.demo.DemoApplication;
-import com.example.demo.TestEndpoint;
+import com.example.demo.LoopitisApplication;
+import com.example.demo.LoopitisMainEndpoints;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
 
 public class KafkaTopicCreator {
-    private static final Logger log = LoggerFactory.getLogger(DemoApplication.MY_LOGGER);
+    private static final Logger log = LoggerFactory.getLogger(LoopitisApplication.MY_LOGGER);
 
     public static void main(String[] args) {
 
@@ -35,7 +34,7 @@ public class KafkaTopicCreator {
         properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         properties.setProperty(AdminClientConfig.CLIENT_ID_CONFIG, "KafkaTopicCreator");
 
-        createTopicIfNotExists(TestEndpoint.REQUEST_TASKS_TOPIC, 5, (short)1, properties);
+        createTopicIfNotExists(LoopitisMainEndpoints.REQUEST_TASKS_TOPIC, 5, (short)1, properties);
     }
     public static void createTopicIfNotExists(String topicName, int numPartitions, short replicationFactor, Properties props) {
 

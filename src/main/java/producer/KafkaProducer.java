@@ -1,11 +1,7 @@
 package producer;
 
 import com.example.demo.ConfigurationManager;
-import com.example.demo.DemoApplication;
-import general.KafkaTopicCreator;
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AdminClientConfig;
+import com.example.demo.LoopitisApplication;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -16,7 +12,7 @@ import java.util.Properties;
 import java.util.concurrent.Future;
 
 public class KafkaProducer {
-    private static final Logger log = LoggerFactory.getLogger(DemoApplication.MY_LOGGER);
+    private static final Logger log = LoggerFactory.getLogger(LoopitisApplication.MY_LOGGER);
 
     private static KafkaProducer instance;
     private final Properties properties;

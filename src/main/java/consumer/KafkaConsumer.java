@@ -1,8 +1,8 @@
 package consumer;
 
 import com.example.demo.ConfigurationManager;
-import com.example.demo.DemoApplication;
-import com.example.demo.TestEndpoint;
+import com.example.demo.LoopitisApplication;
+import com.example.demo.LoopitisMainEndpoints;
 import com.google.gson.Gson;
 import enums.eRequestStatus;
 import general.CancelTaskRequest;
@@ -25,7 +25,7 @@ import java.util.Properties;
 
 public class KafkaConsumer {
 
-    private static final Logger log = LoggerFactory.getLogger(DemoApplication.MY_LOGGER);
+    private static final Logger log = LoggerFactory.getLogger(LoopitisApplication.MY_LOGGER);
 
     private final Properties properties;
     private org.apache.kafka.clients.consumer.KafkaConsumer<String, String> kafkaConsumer;
@@ -81,7 +81,7 @@ public class KafkaConsumer {
         channelSubscriber.start();
 
         //subscribe to topic in kafka to get more requests
-        kafkaConsumer.subscribe(Collections.singletonList(TestEndpoint.REQUEST_TASKS_TOPIC));
+        kafkaConsumer.subscribe(Collections.singletonList(LoopitisMainEndpoints.REQUEST_TASKS_TOPIC));
 
 
         while (true) {
@@ -94,7 +94,7 @@ public class KafkaConsumer {
             for (ConsumerRecord<String, String> record : records) {
                 System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
                 if(record.value() == null) continue;
-                if(record.topic().equals(TestEndpoint.REQUEST_TASKS_TOPIC)) {
+                if(record.topic().equals(LoopitisMainEndpoints.REQUEST_TASKS_TOPIC)) {
                     pojos.HttpNotifierRequest request = gson.fromJson(record.value(), HttpNotifierRequest.class);
                     var getRequest = new HttpNotifier(request);
                     NotifierTask task = new NotifierTask(getRequest);
@@ -116,7 +116,7 @@ public class KafkaConsumer {
         return new Thread(new Runnable() {
             @Override
             public void run() {
-                RedisManager.getInstance().subscribeToChannel(TestEndpoint.REDIS_CANCEL_CHANNEL, new JedisPubSub() {
+                RedisManager.getInstance().subscribeToChannel(LoopitisMainEndpoints.REDIS_CANCEL_CHANNEL, new JedisPubSub() {
                     @Override
                     public void onMessage(String channel, String message) {
                         cancelRequest(channel, message);
@@ -128,7 +128,7 @@ public class KafkaConsumer {
 
     public void cancelRequest(String channel, String message) {
         System.out.println("$$$$$$$$$$$$$$$$$$$$ Msg from channel: "+channel +" Message: "+message+"$$$$$$$$$$$$$$$$$$$$$$$");
-        if(channel.equals(TestEndpoint.REDIS_CANCEL_CHANNEL)) {
+        if(channel.equals(LoopitisMainEndpoints.REDIS_CANCEL_CHANNEL)) {
             CancelTaskRequest cancelTaskRequest = g.fromJson(message, CancelTaskRequest.class);
             FutureCancel future = taskIdToFuture.get(cancelTaskRequest.getRequestId());
             if (future == null){

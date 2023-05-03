@@ -10,7 +10,7 @@ import java.util.*;
 
 
 public class ConfigurationManager {
-    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(LoopitisApplication.MY_LOGGER);
     private static Map<String, String> _configuration;
 
     private static ConfigurationManager _instance;

@@ -1,16 +1,15 @@
 package managers;
 
 import com.example.demo.ConfigurationManager;
-import com.example.demo.DemoApplication;
-import com.example.demo.TestEndpoint;
-import enums.eRedisDB;
+import com.example.demo.LoopitisApplication;
+import com.example.demo.LoopitisMainEndpoints;
 import redis.clients.jedis.*;
 
 import java.util.Map;
 import java.util.Set;
 
 public class RedisManager {
-    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(LoopitisApplication.MY_LOGGER);
 
     private JedisPool pool;
     private static RedisManager instance;
@@ -18,7 +17,7 @@ public class RedisManager {
     private static final String LISTENERS_KEY = ConfigurationManager.getInstance().getRedisListenersKey();
     private static final String REDIS_PASSWORD = ConfigurationManager.getInstance().getRedisPassword();
     public static void main(String[] args) {
-        RedisManager.getInstance().publishMessageToChannel(TestEndpoint.REDIS_CANCEL_CHANNEL, "koko");
+        RedisManager.getInstance().publishMessageToChannel(LoopitisMainEndpoints.REDIS_CANCEL_CHANNEL, "koko");
 //        var res= RedisManager.getInstance().subscribeToChannel(TestEndpoint.REDIS_CANCEL_CHANNEL, new JedisPubSub() {
 //            @Override
 //            public void onMessage(String channel, String message) {

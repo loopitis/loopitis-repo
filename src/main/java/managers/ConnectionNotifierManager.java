@@ -1,18 +1,15 @@
 package managers;
 
-import com.example.demo.DemoApplication;
+import com.example.demo.LoopitisApplication;
 import com.google.gson.Gson;
 import enums.eEvent;
 import general.ClientConnectionDetails;
 import general.ConnectRequest;
-import general.EventNoticiationData;
-import interfaces.I_EventListener;
-import services.RESTServices;
 
 import java.util.List;
 
 public class ConnectionNotifierManager {
-    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(DemoApplication.MY_LOGGER);
+    private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(LoopitisApplication.MY_LOGGER);
     private Gson g = new Gson();
 
     private static ConnectionNotifierManager _instance;

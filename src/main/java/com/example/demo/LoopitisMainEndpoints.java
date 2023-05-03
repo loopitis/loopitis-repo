@@ -20,13 +20,13 @@ import java.util.UUID;
 
 @RequestMapping("/set")
 @RestController
-public class TestEndpoint {
-    private static final Logger log = LoggerFactory.getLogger(DemoApplication.MY_LOGGER);
+public class LoopitisMainEndpoints {
+    private static final Logger log = LoggerFactory.getLogger(LoopitisApplication.MY_LOGGER);
     public static final String REQUEST_TASKS_TOPIC = ConfigurationManager.getInstance().getKafkaTopic();
     public static final String REDIS_CANCEL_CHANNEL = ConfigurationManager.getInstance().getRedisCancelChannel();
     private static Gson gson = new Gson();
 
-    @RequestMapping("/getNotifier")
+    @RequestMapping("/notifier")
     @PostMapping
     public ResponseEntity<String> createGetNotifier(@RequestBody HttpNotifierRequest notif){
         log.debug("I am here 222222");
