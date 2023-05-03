@@ -36,6 +36,7 @@ The POST request body can be:
 }
   
 # **Contributing**
+All code written and built in Java 19 , using openJDK
 If you would like to contribute to the Loopitis project, you can pull the code and make changes to the three processes (main files) classes that run:
 
 Endpoints process: This is a Spring Boot process that acts as the gateway to receive new requests. To make changes to this process, first copy the Dockerfile.endpoints, config.properties, and compose.yaml files to your working directory. The main class for endpoints is LoppitisApplication, and the main endpoints class is LoopitisMainEndpoints. After making changes, run the command "mvn package" to generate the endpoints.jar file, which you can copy to your working directory. Next, modify the compose.yaml file for the endpoints process, specifying the Dockerfile.endpoint in the build section. Finally, run the build and up commands: "docker-compose --env-file config.properties build endpoints" and "docker-compose --env-file config.properties up".
