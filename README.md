@@ -1,3 +1,9 @@
+
+# LOOP IT IS
+LoopItIs is a REST API task scheduler - it is designed to help developers streamline their workflow and improve their productivity. With LoopItIs, developers can focus on their core business while the app takes care of building and maintaining the infrastructure, including servers and databases. Additionally, the notification service allows users to set up custom notifications based on intervals they choose, and the task monitoring service makes it easy to track the progress of tasks and get updates on their status. Each notification comes with a unique ID, which allows users to update LoopItIs with the state of the task at the end. LoopItIs is the ultimate solution for developers who want to stay organized and on top of important tasks without having to constantly monitor their systems.
+
+The LoopItIs team is dedicated to providing a professional and reliable service to customers, with a commitment to being responsive, communicative, and attentive to their needs. Technical assistance and support are available whenever needed, ensuring a seamless experience from start to finish.
+
 # **License**
 
 This project is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/.
@@ -36,6 +42,7 @@ The POST request body can be:
 }
   
 # **Contributing**
+All code written and built in Java 19 , using openJDK
 If you would like to contribute to the Loopitis project, you can pull the code and make changes to the three processes (main files) classes that run:
 
 Endpoints process: This is a Spring Boot process that acts as the gateway to receive new requests. To make changes to this process, first copy the Dockerfile.endpoints, config.properties, and compose.yaml files to your working directory. The main class for endpoints is LoppitisApplication, and the main endpoints class is LoopitisMainEndpoints. After making changes, run the command "mvn package" to generate the endpoints.jar file, which you can copy to your working directory. Next, modify the compose.yaml file for the endpoints process, specifying the Dockerfile.endpoint in the build section. Finally, run the build and up commands: "docker-compose --env-file config.properties build endpoints" and "docker-compose --env-file config.properties up".
