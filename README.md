@@ -36,10 +36,22 @@ The POST request body can be:
 }
   
 # **Contributing**
-If you'd like to contribute to the project, you can pull the code. There are three main classes that run: the Spring Boot process, which acts as the gateway to receive new requests, the consumer, which pulls job requests from Kafka and a CLI process
-  
+If you would like to contribute to the Loopitis project, you can pull the code and make changes to the three main classes that run:
 
-Visit our website for more information: https://loopitis.com.
+Endpoints process: This is a Spring Boot process that acts as the gateway to receive new requests. To make changes to this process, first copy the Dockerfile.endpoints, config.properties, and compose.yaml files to your working directory. The main class for endpoints is LoppitisApplication, and the main endpoints class is LoopitisMainEndpoints. After making changes, run the command "mvn package" to generate the endpoints.jar file, which you can copy to your working directory. Next, modify the compose.yaml file for the endpoints process, specifying the Dockerfile.endpoint in the build section. Finally, run the build and up commands: "docker-compose --env-file config.properties build endpoints" and "docker-compose --env-file config.properties up".
+
+Consumer process: This is the consumer that pulls job requests from Kafka. To make changes to this process, first copy the Dockerfile.consumer, config.properties, and compose.yaml files to your working directory. The main class for the consumer is LoopitisConsumer. After making changes, export a jar from this main class, calling it consumer.jar, and copy it to your working directory. Next, modify the compose.yaml file for the consumer process, specifying the Dockerfile.consumer in the build section. Finally, run the build and up commands: "docker-compose --env-file config.properties build consumer" and "docker-compose --env-file config.properties up".
+
+CLI process: This can run as a standalone process. You can build and run the CLI class, or you can pack the endpoints process, but make sure to have the cli.jar. The endpoints process copies the cli.jar if it exists in your working directory.
+
+
+
+
+
+For any question you can always contact us at support@loopitis.com
+Visit our website for more information: https://loopitis.com
+
+I would love to hear what you think about this app. Share your thoughts with us !
 
 
 
