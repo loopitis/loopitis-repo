@@ -14,8 +14,8 @@ public class ConsumerThreadPool {
 
     private void init(){
         for(int i=0; i < threadCount ; i++){
-            KafkaConsumer taskGrabber = new KafkaConsumer();
-            Thread t = new Thread(KafkaConsumer::new);
+            LoopitisConsumer taskGrabber = new LoopitisConsumer();
+            Thread t = new Thread(LoopitisConsumer::new);
             t.start();
             pool.add(t);
 

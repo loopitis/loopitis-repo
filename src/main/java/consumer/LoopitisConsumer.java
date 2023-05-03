@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 
-public class KafkaConsumer {
+public class LoopitisConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(LoopitisApplication.MY_LOGGER);
 
@@ -40,11 +40,11 @@ public class KafkaConsumer {
     public static void main(String[] args) {
         log.debug("Starting Kafka Consumer");
         System.out.println("Kafka consumer");
-        KafkaConsumer consumer = new KafkaConsumer();
+        LoopitisConsumer consumer = new LoopitisConsumer();
         consumer.run();
     }
 
-    public KafkaConsumer(){
+    public LoopitisConsumer(){
 
         properties = new Properties();
         String boostrapServers = KAFKA_HOST+":9092";
