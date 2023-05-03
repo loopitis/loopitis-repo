@@ -1,3 +1,9 @@
+
+# LOOP IT IS
+LoopItIs is an infrastructure management service designed to help developers streamline their workflow and improve their productivity. With LoopItIs, developers can focus on their core business while the app takes care of building and maintaining the infrastructure, including servers and databases. Additionally, the notification service allows users to set up custom notifications based on intervals they choose, and the task monitoring service makes it easy to track the progress of tasks and get updates on their status. Each notification comes with a unique ID, which allows users to update LoopItIs with the state of the task at the end. LoopItIs is the ultimate solution for developers who want to stay organized and on top of important tasks without having to constantly monitor their systems.
+
+The LoopItIs team is dedicated to providing a professional and reliable service to customers, with a commitment to being responsive, communicative, and attentive to their needs. Technical assistance and support are available whenever needed, ensuring a seamless experience from start to finish.
+
 # **License**
 
 This project is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/.
