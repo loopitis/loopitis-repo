@@ -21,6 +21,6 @@ public class ExecutionsManager {
     }
 
     public List<ExecutionRequest> getExecutions(ExecutionsFilter filter) {
-        return DBhibernetManager.getInstance().getExecutions(filter);
+        return DBManager.getInstance().getExecutions(filter);
     }
 }

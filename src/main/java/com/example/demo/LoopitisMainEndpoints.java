@@ -138,7 +138,7 @@ public class LoopitisMainEndpoints {
         }
 
         //save the url to redis
-        boolean added = DBhibernetManager.getInstance().updateCommentOnExecution(commentRequest);
+        boolean added = DBManager.getInstance().updateCommentOnExecution(commentRequest);
         if(!added){
             ErrorDetails details = new ErrorDetails();
             details.withCode(500)

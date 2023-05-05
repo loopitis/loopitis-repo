@@ -15,27 +15,6 @@ import java.util.Properties;
 public class KafkaTopicCreator {
     private static final Logger log = LoggerFactory.getLogger(LoopitisApplication.MY_LOGGER);
 
-    public static void main(String[] args) {
-
-        var properties = new Properties();
-
-        String kafkaHost = ConfigurationManager.getInstance().getKafkaHost();
-        String boostrapServers = "https://kafka.loopitis.com"+":9092";
-        log.debug("bootstrap server is "+boostrapServers);
-        properties.setProperty("bootstrap.servers", boostrapServers);
-//        properties.setProperty("security.protocol","SASL_SSL");
-//        properties.setProperty("sasl.mechanism","PLAIN");
-//        properties.setProperty("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username='3FCWzHXahINkqWBzARKErZ' password='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY29uZHVrdG9yLmlvIiwic291cmNlQXBwbGljYXRpb24iOiJhZG1pbiIsInVzZXJNYWlsIjpudWxsLCJwYXlsb2FkIjp7InZhbGlkRm9yVXNlcm5hbWUiOiIzRkNXekhYYWhJTmtxV0J6QVJLRXJaIiwib3JnYW5pemF0aW9uSWQiOjcwNTgzLCJ1c2VySWQiOjgxNjg1LCJmb3JFeHBpcmF0aW9uQ2hlY2siOiIxYTFlMTIyOC1iZGFkLTQ3NDktOWNlMi03MjdiYzQ2N2IyNzkifX0.QqMmHKIAFoiUUF536vYIvOIQfkrUUJyl-HtsN4i4i-s';");
-        properties.put("security.protocol", "SSL");
-        properties.put("ssl.truststore.location", "~/db.certificate.pem");
-//
-        properties.put("group.id", "my-group");
-        properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        properties.setProperty(AdminClientConfig.CLIENT_ID_CONFIG, "KafkaTopicCreator");
-
-        createTopicIfNotExists(LoopitisMainEndpoints.REQUEST_TASKS_TOPIC, 5, (short)1, properties);
-    }
     public static void createTopicIfNotExists(String topicName, int numPartitions, short replicationFactor, Properties props) {
 
         try (AdminClient adminClient = AdminClient.create(props)) {

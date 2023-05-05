@@ -8,7 +8,7 @@ import enums.eRequestStatus;
 import general.CancelTaskRequest;
 import general.FutureCancel;
 import general.HttpNotifier;
-import managers.DBhibernetManager;
+import managers.DBManager;
 import managers.RedisManager;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -52,7 +52,7 @@ public class LoopitisConsumer {
         log.debug("@@@@ bout to connect to Kafka with host "+boostrapServers);
 
         properties.setProperty("bootstrap.servers", boostrapServers);
-//        properties.setProperty("security.protocol","SASL_SSL");
+//        properties.setProperty("security.protocol.proto","SASL_SSL");
 //        properties.setProperty("sasl.mechanism","PLAIN");
 //        properties.setProperty("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username='3FCWzHXahINkqWBzARKErZ' password='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY29uZHVrdG9yLmlvIiwic291cmNlQXBwbGljYXRpb24iOiJhZG1pbiIsInVzZXJNYWlsIjpudWxsLCJwYXlsb2FkIjp7InZhbGlkRm9yVXNlcm5hbWUiOiIzRkNXekhYYWhJTmtxV0J6QVJLRXJaIiwib3JnYW5pemF0aW9uSWQiOjcwNTgzLCJ1c2VySWQiOjgxNjg1LCJmb3JFeHBpcmF0aW9uQ2hlY2siOiIxYTFlMTIyOC1iZGFkLTQ3NDktOWNlMi03MjdiYzQ2N2IyNzkifX0.QqMmHKIAFoiUUF536vYIvOIQfkrUUJyl-HtsN4i4i-s';");
 
@@ -101,7 +101,7 @@ public class LoopitisConsumer {
 
                     log.debug("Updating DB task ongoing "+request.getExternal_id());
                     //update DB that the task is in progress
-                    DBhibernetManager.getInstance().updateStatus(request.getExternal_id(), eRequestStatus.ON_GOING);
+                    DBManager.getInstance().updateStatus(request.getExternal_id(), eRequestStatus.ON_GOING);
 
                     var future = task.handle();
                     taskIdToFuture.put(request.getExternal_id(), future);
@@ -145,7 +145,7 @@ public class LoopitisConsumer {
             }
             log.debug("Task canceled successfully "+cancelTaskRequest.getRequestId());
             taskIdToFuture.remove(cancelTaskRequest.getRequestId());
-            DBhibernetManager.getInstance().updateStatus(cancelTaskRequest.getRequestId(), eRequestStatus.CANCELED);
+            DBManager.getInstance().updateStatus(cancelTaskRequest.getRequestId(), eRequestStatus.CANCELED);
         }
         else{
             log.error("This consumer is not fmailiar with the request type "+message);

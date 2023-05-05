@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import consumer.ExecutionRequest;
 import enums.eCallbackType;
 import enums.eEvent;
-import managers.DBhibernetManager;
+import managers.DBManager;
 import managers.EventManager;
 import pojos.HttpNotifierRequest;
 
@@ -63,7 +63,7 @@ public class HttpNotifier {
 
             //pre execution - saving the execution in the execution list without status code (which will be received right after the execution)
             ExecutionRequest exec = new ExecutionRequest(executionId, notifierRequest.getExternal_id(), Calendar.getInstance().getTimeInMillis());
-            DBhibernetManager.getInstance().savePreExecution(exec);
+            DBManager.getInstance().savePreExecution(exec);
 
             //actual execution
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -71,8 +71,8 @@ public class HttpNotifier {
             exec.setStatusCode(statusCode);
 
             //post-execution - saving status code and updating request with how many done
-            DBhibernetManager.getInstance().savePostExecution(exec);
-            DBhibernetManager.getInstance().countExecutions(notifierRequest.getExternal_id());
+            DBManager.getInstance().savePostExecution(exec);
+            DBManager.getInstance().countExecutions(notifierRequest.getExternal_id());
 
             //get all client listeners and let them know
             EventManager.getInstance().fire(eEvent.EXECUTION_FIRED, g.toJson(exec));

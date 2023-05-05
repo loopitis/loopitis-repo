@@ -5,7 +5,7 @@ import enums.eEvent;
 import enums.eRequestStatus;
 import general.FutureCancel;
 import general.HttpNotifier;
-import managers.DBhibernetManager;
+import managers.DBManager;
 import managers.EventManager;
 
 import java.util.UUID;
@@ -38,7 +38,7 @@ public class NotifierThreadPool {
                     EventManager.getInstance().fire(eEvent.REQUEST_STARTED, request.getRequestId());
                     if (num >= maxTimes) {
                         futureCancel.cancel();
-                        DBhibernetManager.getInstance().updateStatus(request.getRequestId(), eRequestStatus.FINISHED);
+                        DBManager.getInstance().updateStatus(request.getRequestId(), eRequestStatus.FINISHED);
                         EventManager.getInstance().fire(eEvent.REQUEST_FINISHED, request.getRequestId());
                         return;
                     }

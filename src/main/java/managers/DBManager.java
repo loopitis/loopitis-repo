@@ -2,85 +2,86 @@ package managers;
 
 import com.example.demo.ConfigurationManager;
 import com.example.demo.LoopitisApplication;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.Gson;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import consumer.ExecutionRequest;
+import ent.HttpNotifierRequestEntity;
+
 import enums.eProcess;
+import enums.eRequestStatus;
+import filters.ExecutionsFilter;
+import filters.RequestsFilter;
+import general.CommentRequest;
 import general.DBConfiguration;
 import general.DBConfigurationException;
 import general.DBTestInitManager;
-import org.apache.commons.dbcp2.BasicDataSource;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import org.eclipse.persistence.config.PersistenceUnitProperties;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import javax.persistence.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 public class DBManager {
     private static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(LoopitisApplication.MY_LOGGER);
-
 
     private static boolean DB_READ_ONLY = false;
 
     private static DBManager dbManager = null;
 
+    private EntityManagerFactory sessionFactory;
+
     private String DB_USER = "myUser";
 
     private String DB_PASSWORD = "mypassword";
 
-    private BasicDataSource _connectionPool;
 
-    private static int DB_MAX_CONNECTIONS = -1;
+    private static int DB_MAX_CONNECTIONS = 1;
 
     private static String DB_NAME = "mydb";
 
     private static int DB_PORT_NUMBER = 5432;
 
-    private static String DB_SERVER_HOST = "localhost";
-    private SessionFactory sessionFactory;
+    private static String DB_SERVER_HOST = "redis";
 
-    public static void main(String[] args) throws DBConfigurationException {
-//        DBManager i = DBManager.getInstance();
-//        i.call();
+    public static void main(String[] args) throws JsonProcessingException {
+        Gson g = new Gson();
+        DBManager manager = DBManager.getInstance();
 
-        // Create a BasicDataSource with database connection details
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/mydb");
-        dataSource.setUsername("myusername");
-        dataSource.setPassword("mypassword");
+        RequestsFilter filter = new RequestsFilter();
+        filter.withStatus(eRequestStatus.ON_GOING);
+        filter.withLimit(20);
+//
+        HttpNotifierRequestEntity res = manager.getRequests(filter).get(0);
+//
+        System.out.println(g.toJson(res));
 
-        // Create a Hibernate configuration with the datasource
-        Configuration configuration = new Configuration()
-                .setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect")
-                .setProperty("hibernate.connection.datasource", "myDataSource");
 
-        // Build the Hibernate SessionFactory
-        SessionFactory sessionFactory = configuration.buildSessionFactory();
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        JsonNode jsonData = objectMapper.readTree(json);
+//
 
-        // Open a session from the SessionFactory
-        Session session = sessionFactory.openSession();
 
-        // Run an SQL query using the session
-        String query = "SELECT * FROM my_table";
-        List results = session.createNativeQuery(query).list();
-        for (Object row : results) {
-            System.out.println(row);
-        }
+//        System.out.println(notifierRequest.getInterval());
+//        Person p = new Person("hey", "Jude");
+//        p.setId(4);
+//        manager.addPerson(p);
+//        System.out.println(p);
 
-        // Close the session and SessionFactory
-        session.close();
-        sessionFactory.close();
     }
 
-
+    private void testSelect() {
+        String queryString = "SELECT e FROM Employee e WHERE e.department = :dept";
+    }
 
     private DBManager() {
         try {
             System.out.println("DB manager initted");
             Class.forName("org.postgresql.Driver");
-            if (_connectionPool == null) {
+            if (sessionFactory == null) {
                 setConfiguration(ConfigurationManager.getInstance().getDBConfiguration(eProcess.ENDPOINTS_PROCESS));
             }
 
@@ -102,27 +103,42 @@ public class DBManager {
         DB_PORT_NUMBER = dbConfiguration.get_dbPort();
         DB_NAME = dbConfiguration.get_dbName();
 
-
         initConnection();
     }
 
-    private void createDbPoolConnection() {
-
-        _connectionPool = new BasicDataSource();
-//        _connectionPool.set("QuantifyAPI");
-//        _connectionPool.setApplicationName(DB_SERVER_NAME);
-        _connectionPool.setUrl("jdbc:postgresql://"+DB_SERVER_HOST+":"+DB_PORT_NUMBER+"/"+DB_NAME);
-
-        _connectionPool.setUsername(DB_USER);
-        _connectionPool.setPassword(DB_PASSWORD);
-        _connectionPool.setMaxTotal(DB_MAX_CONNECTIONS);
-        _connectionPool.setInitialSize(3);
 
 
+
+    private void getSessionFactory() {
+        // Add connection pool
+        String jdbc_full_url = "jdbc:postgresql://" + DB_SERVER_HOST + ":" + DB_PORT_NUMBER + "/" + DB_NAME;
+        log.debug("Setting db host to ******** : " + jdbc_full_url);
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(jdbc_full_url);
+        hikariConfig.setUsername(DB_USER);
+        hikariConfig.setPassword(DB_PASSWORD);
+
+        hikariConfig.setDriverClassName("org.postgresql.Driver");
+
+        hikariConfig.setMaximumPoolSize(10);
+        hikariConfig.setMinimumIdle(5);
+        hikariConfig.setConnectionTimeout(30000);
+        hikariConfig.setIdleTimeout(600000);
+        hikariConfig.setMaxLifetime(1800000);
+        HikariDataSource dataSource = new HikariDataSource(hikariConfig);
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(PersistenceUnitProperties.JTA_DATASOURCE, dataSource);
+        properties.put(PersistenceUnitProperties.JDBC_DRIVER, "org.postgresql.Driver");
+        properties.put(PersistenceUnitProperties.JDBC_URL, jdbc_full_url);
+        properties.put(PersistenceUnitProperties.JDBC_USER, DB_USER);
+        properties.put(PersistenceUnitProperties.JDBC_PASSWORD, DB_PASSWORD);
+
+        // Configure the EntityManagerFactory to use the HikariCP DataSource
+        sessionFactory = Persistence.createEntityManagerFactory("examplePU", properties);
 
 
     }
-
 
 
 
@@ -145,11 +161,8 @@ public class DBManager {
         log.debug("*********   " + "DB:" + DB_NAME + " at " + DB_SERVER_HOST + "   ***********");
         log.debug("******************************************");
 
-        createDbPoolConnection();
-//        sessionFactory = new Configuration().configure().buildSessionFactory(new StandardServiceRegistryBuilder()
-//                .applySetting(Environment.DATASOURCE, _connectionPool)
-//                .build());
-        testConnection();
+        getSessionFactory();
+//        testConnection();
     }
 
     public boolean checkDBAndReconnectIfNeeded() {
@@ -164,74 +177,241 @@ public class DBManager {
     }
 
     private void testConnection() throws DBConfigurationException {
-        Connection onLineDbconnection = null;
-        try {
-            onLineDbconnection = _connectionPool.getConnection();
-            log.debug("DB test connection passed db name " + DB_NAME + " on " + DB_SERVER_HOST);
-            return;
-        } catch (SQLException ex) {
-            log.error("DB test connection has failed", ex);
-            throw new DBConfigurationException("Test DB connection has failed - check configuration file!");
+    }
+
+    public void saveRequest(HttpNotifierRequestEntity request) {
+        // Obtain an EntityManager instance from EntityManagerFactory
+        EntityManager em = sessionFactory.createEntityManager();
+
+
+        EntityTransaction tx = em.getTransaction();
+        try{
+            tx.begin();
+            em.persist(request);
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
         } finally {
-            if (onLineDbconnection != null) {
-                try {
-                    onLineDbconnection.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
+            em.close();
         }
 
+        System.out.println(request);
     }
 
 
-    private void call() throws DBConfigurationException {
-        Connection onLineDbconnection = null;
-        Statement statement = null;
-        ResultSet resultSet = null;
+    public void savePreExecution(ExecutionRequest request) {
+        EntityManager em = sessionFactory.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try{
+            tx.begin();
+            em.persist(request);
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
 
+        System.out.println(request);
+    }
+
+    public void savePostExecution(ExecutionRequest exec) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        EntityTransaction tx = entityManager.getTransaction();
+        try{
+            tx.begin();
+            String nativeQuery = "UPDATE notifier.executions set status_code = ? where i_id = ?";
+
+            Query query = entityManager.createNativeQuery(nativeQuery);
+            query.setParameter(1, exec.getStatusCode());
+            query.setParameter(2, exec.getId());
+            int numUpdated = query.executeUpdate();
+
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    public void countExecutions(String externalId) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        EntityTransaction tx = entityManager.getTransaction();
+        try{
+            tx.begin();
+            String nativeQuery = "UPDATE notifier.requests set done = done+1 where e_id = ?";
+
+            Query query = entityManager.createNativeQuery(nativeQuery);
+            query.setParameter(1, externalId);
+            int numUpdated = query.executeUpdate();
+
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    public int updateStatus(String requestId, eRequestStatus status) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        EntityTransaction tx = entityManager.getTransaction();
+        try{
+            tx.begin();
+            String nativeQuery = "UPDATE notifier.requests set status =? where e_id = ?";
+
+            Query query = entityManager.createNativeQuery(nativeQuery);
+            query.setParameter(1, status.getDbName());
+            query.setParameter(2, requestId);
+            int numUpdated = query.executeUpdate();
+
+            tx.commit();
+            return numUpdated;
+        }
+        catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            return -1;
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    public boolean updateCommentOnExecution(CommentRequest commentRequest) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        EntityTransaction tx = entityManager.getTransaction();
+        try{
+            tx.begin();
+            String nativeQuery = "UPDATE notifier.executions set comment = ? where e_id = ?";
+
+            Query query = entityManager.createNativeQuery(nativeQuery);
+            query.setParameter(1, commentRequest.getComment());
+            query.setParameter(2, commentRequest.getExecutionId());
+
+            int numUpdated = query.executeUpdate();
+
+            tx.commit();
+            if(numUpdated == 0){
+                return false;
+            }
+            return true;
+        }
+        catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    public List<HttpNotifierRequestEntity> getRequests(RequestsFilter filter) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
         try {
-            onLineDbconnection = _connectionPool.getConnection();
-            try {
-                statement = onLineDbconnection.createStatement();
-                String sql = "SELECT * FROM myTable"; // Replace with your table name
-                resultSet = statement.executeQuery(sql);
-
-                while (resultSet.next()) {
-                    // Retrieve data from each row and process it
-                    int id = resultSet.getInt("id");
-                    String name = resultSet.getString("name");
-                    System.out.println("ID: " + id + ", Name: " + name );
+            String jpql = "SELECT req FROM HttpNotifierRequestEntity req ";
+            if(filter != null){
+                boolean isFirstCondition = true;
+                if(filter.getStatus() != null){
+                    if(isFirstCondition){
+                        jpql+="WHERE ";
+                        isFirstCondition = false;
+                    }
+                    jpql+="req.status= :status ";
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (resultSet != null) {
-                        resultSet.close();
+                if(filter.getRequestId() != null){
+                    if(isFirstCondition){
+                        jpql+="WHERE ";
+                        isFirstCondition = false;
                     }
+                    else{
+                        jpql+=" and ";
+                    }
+                    jpql+="req.externalId= :requestId ";
+                }
 
-                    if (statement != null) {
-                        statement.close();
-                    }
-
-                    if (_connectionPool != null) {
-                        _connectionPool.close();
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
+            }
+            TypedQuery<HttpNotifierRequestEntity> query = entityManager.createQuery(jpql, HttpNotifierRequestEntity.class);
+            if(filter != null){
+                if(filter.getStatus() != null){
+                    query.setParameter("status", filter.getStatus());
+                }
+                if(filter.getRequestId() != null){
+                    query.setParameter("requestId", filter.getRequestId());
+                }
+                if(filter.getLimit() != null){
+                    query.setMaxResults(filter.getLimit());
                 }
             }
+            return query.getResultList();
+        } finally {
+            entityManager.close();
         }
-        catch (Exception ex){
-            ex.printStackTrace();
-        }
-
     }
 
+    public void resetQueryCache(){
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        try {
 
+            String nativeQuery = "RESET QUERY CACHE";
+            Query query = entityManager.createNativeQuery(nativeQuery);
 
+            query.executeUpdate();
 
+        } finally {
+            entityManager.close();
+        }
+    }
 
+    public List<ExecutionRequest> getExecutions(ExecutionsFilter filter) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        try {
+            String jpql = "SELECT req FROM ExecutionRequest req ";
+            if(filter != null){
+                if(filter.getRequestId() != null){
+                    jpql+=" WHERE req.requestId= :req ";
+                }
+                if(filter.getComment() != null){
+                    jpql+= "and req.comment= :comment ";
+                }
+
+                jpql+="order by req.timeExecuted " ;
+
+            }
+            TypedQuery<ExecutionRequest> query = entityManager.createQuery(jpql, ExecutionRequest.class);
+            if(filter != null){
+                if(filter.getRequestId() != null){
+                    query.setParameter("req", filter.getRequestId());
+                }
+                if(filter.getComment() != null){
+                    query.setParameter("comment", filter.getComment());
+                }
+                if(filter.getLimit() != null){
+                    query.setMaxResults(filter.getLimit());
+                }
+            }
+            return query.getResultList();
+
+        } finally {
+            entityManager.close();
+        }
+    }
 }

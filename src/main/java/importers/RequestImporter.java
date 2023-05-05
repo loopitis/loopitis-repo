@@ -1,12 +1,11 @@
 package importers;
 
 import ent.HttpNotifierRequestEntity;
-import managers.DBhibernetManager;
-import pojos.HttpNotifierRequest;
+import managers.DBManager;
 
 public class RequestImporter {
     public Long saveRequest(HttpNotifierRequestEntity notif) {
-        DBhibernetManager.getInstance().saveRequest(notif);
+        DBManager.getInstance().saveRequest(notif);
         return notif.getId();
 
     }

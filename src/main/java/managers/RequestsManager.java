@@ -21,6 +21,6 @@ public class RequestsManager {
     }
 
     public List<HttpNotifierRequestEntity> getRequests(RequestsFilter filter) {
-        return DBhibernetManager.getInstance().getRequests(filter);
+        return DBManager.getInstance().getRequests(filter);
     }
 }
