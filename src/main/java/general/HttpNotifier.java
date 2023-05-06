@@ -120,6 +120,7 @@ public class HttpNotifier {
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .uri(url)
                 .timeout(Duration.ofSeconds(3))
+                .header("Content-Type", "application/json")
                 .build();
 
         return request;
