@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pojos.HttpNotifierRequest;
+import pojos.HttpNotifierRequestTranslated;
 import producer.KafkaProducer;
 import services.Services;
 
@@ -31,7 +32,10 @@ public class LoopitisMainEndpoints {
     public ResponseEntity<String> createGetNotifier(@RequestBody HttpNotifierRequest notif){
         log.debug("I am here 222222");
 
-        NotifierCheckResult result = NotifierRequestChecker.check(notif);
+        //we translate the requested object because we want to work with ms in the delay and the interval
+        HttpNotifierRequestTranslated requestTranslated = new HttpNotifierRequestTranslated(notif);
+
+        NotifierCheckResult result = NotifierRequestChecker.check(requestTranslated);
         if(result != null && result.isError()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(result));
         }
@@ -40,18 +44,18 @@ public class LoopitisMainEndpoints {
         String external_id = uuid.toString();
 
         notif.setExternal_id(external_id);
-        var notifierEntity = new HttpNotifierRequestEntity(notif);
+        var notifierEntity = new HttpNotifierRequestEntity(requestTranslated);
         notifierEntity.setStatus(eRequestStatus.PENDING);
         notifierEntity.setDone(0);
         Long internalId = RequestManager.getInstance().saveRequest(notifierEntity);//request a call , internal call id, external call id , call name, call status, type(get\call), interval, occurance,  data:json
         notif.setInternal_id(internalId);
 
         log.info("$$$$$$$$$$$$$$$$$$$$$$$ About to send data to kafka for topic "+ REQUEST_TASKS_TOPIC);
-        var future = KafkaProducer.getInstance().send(REQUEST_TASKS_TOPIC, gson.toJson(notif));
+        var future = KafkaProducer.getInstance().send(REQUEST_TASKS_TOPIC, gson.toJson(requestTranslated));
         if(future != null){
             log.debug("Request task Added successfully to Kafka ");
         }
-        EventManager.getInstance().fire(eEvent.REQUEST_ADDED, gson.toJson(notif));
+        EventManager.getInstance().fire(eEvent.REQUEST_ADDED, gson.toJson(requestTranslated));
 
         return ResponseEntity.ok("{ \"id\":\""+external_id+"\",\"internal_id\":"+internalId+"}");
 

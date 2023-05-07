@@ -3,6 +3,8 @@ package ent;
 import enums.eCallbackType;
 import enums.eRequestStatus;
 import pojos.HttpNotifierRequest;
+import pojos.HttpNotifierRequestTranslated;
+import services.Services;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -15,7 +17,7 @@ public class HttpNotifierRequestEntity {
 
     public HttpNotifierRequestEntity(){}
 
-    public HttpNotifierRequestEntity(HttpNotifierRequest entity) {
+    public HttpNotifierRequestEntity(HttpNotifierRequestTranslated entity) {
         this.id = entity.getId();
         this.externalId = entity.getExternal_id();
         this.name = entity.getName();

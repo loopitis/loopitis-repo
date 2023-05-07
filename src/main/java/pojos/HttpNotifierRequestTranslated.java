@@ -1,11 +1,12 @@
 package pojos;
 
 import enums.eCallbackType;
+import services.Services;
 
-public class HttpNotifierRequest {
+public class HttpNotifierRequestTranslated {
     private String return_url;
-    private String delay;
-    private String interval;
+    private Long delay;
+    private Long interval;
     private String payload;
     private Long id;
     private Integer occurrences;
@@ -19,16 +20,22 @@ public class HttpNotifierRequest {
     private eCallbackType callback_type;
 
 
-    public HttpNotifierRequest(){}
+    public HttpNotifierRequestTranslated(){}
 
-    public HttpNotifierRequest(String returnUrl, String delay, String interval, String payload, Long id, Integer occurance, eCallbackType callbackType) {
-        return_url = returnUrl;
-        this.delay = delay;
-        this.interval = interval;
-        this.payload = payload;
-        this.id = id;
-        this.occurrences = occurance;
-        this.callback_type = callbackType;
+    public HttpNotifierRequestTranslated(HttpNotifierRequest request) {
+        this.name = request.getName();
+        this.occurrences = request.getOccurrences();
+        this.external_id = request.getExternal_id();
+        this.callback_type = request.getCallback_type();
+        this.return_url = request.getReturn_url();
+        this.payload = request.getPayload();
+        this.id = request.getId();
+        this.internal_id = request.getInternal_id();
+        this.delay = Services.convertToMilliseconds(request.getDelay());
+        this.interval = Services.convertToMilliseconds(request.getInterval());
+
+
+
     }
 
     public String getReturn_url() {
@@ -40,19 +47,19 @@ public class HttpNotifierRequest {
     }
 
 
-    public String getDelay() {
+    public Long getDelay() {
         return delay;
     }
 
-    public void setDelay(String delay) {
+    public void setDelay(Long delay) {
         this.delay = delay;
     }
 
-    public String getInterval() {
+    public Long getInterval() {
         return interval;
     }
 
-    public void setInterval(String interval) {
+    public void setInterval(Long interval) {
         this.interval = interval;
     }
 
@@ -111,8 +118,5 @@ public class HttpNotifierRequest {
     public void setOccurrences(Integer occurrences) {
         this.occurrences = occurrences;
     }
+
 }
-
-
-
-

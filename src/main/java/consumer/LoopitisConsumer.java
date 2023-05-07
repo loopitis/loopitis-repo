@@ -15,6 +15,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pojos.HttpNotifierRequest;
+import pojos.HttpNotifierRequestTranslated;
 import redis.clients.jedis.JedisPubSub;
 
 import java.time.Duration;
@@ -95,7 +96,7 @@ public class LoopitisConsumer {
                 System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
                 if(record.value() == null) continue;
                 if(record.topic().equals(LoopitisMainEndpoints.REQUEST_TASKS_TOPIC)) {
-                    pojos.HttpNotifierRequest request = gson.fromJson(record.value(), HttpNotifierRequest.class);
+                    pojos.HttpNotifierRequestTranslated request = gson.fromJson(record.value(), HttpNotifierRequestTranslated.class);
                     var getRequest = new HttpNotifier(request);
                     NotifierTask task = new NotifierTask(getRequest);
 

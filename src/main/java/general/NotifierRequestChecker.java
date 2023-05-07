@@ -3,6 +3,7 @@ package general;
 import com.example.demo.ConfigurationManager;
 import enums.eCallbackType;
 import pojos.HttpNotifierRequest;
+import pojos.HttpNotifierRequestTranslated;
 
 import static services.Services.isValidURL;
 
@@ -11,7 +12,7 @@ public class NotifierRequestChecker {
 
     private static final Long MINIMUM_INTERVAL_TIME = ConfigurationManager.getInstance().getMinimumIntervalTime();
 
-    public static NotifierCheckResult check(HttpNotifierRequest g) {
+    public static NotifierCheckResult check(HttpNotifierRequestTranslated g) {
         var res = new NotifierCheckResult();
         if(g.getInterval() == null){
             ErrorDetails details = new ErrorDetails();
@@ -32,7 +33,7 @@ public class NotifierRequestChecker {
             res.setError(details);
             return res;
         }
-        if(g.getDelay() < 0){
+        if(g.getDelay() == null || g.getDelay() < 0){
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
                     .withMessage("Value Error")
@@ -41,7 +42,7 @@ public class NotifierRequestChecker {
             res.setError(details);
             return res;
         }
-        if(g.getOccurrences() < 2){
+        if(g.getOccurrences() == null || g.getOccurrences() < 2){
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
                     .withMessage("Value Error")

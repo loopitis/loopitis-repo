@@ -8,7 +8,7 @@ import enums.eCallbackType;
 import enums.eEvent;
 import managers.DBManager;
 import managers.EventManager;
-import pojos.HttpNotifierRequest;
+import pojos.HttpNotifierRequestTranslated;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -34,9 +34,9 @@ public class HttpNotifier {
 
     private static final Gson g = new Gson();
 
-    private HttpNotifierRequest notifierRequest;
+    private HttpNotifierRequestTranslated notifierRequest;
 
-    public HttpNotifier(pojos.HttpNotifierRequest notif){
+    public HttpNotifier(pojos.HttpNotifierRequestTranslated notif){
         this.notifierRequest = notif;
     }
 

@@ -56,10 +56,10 @@ public class CLI implements Runnable {
         String name;
 
         @Option(names = {"-i", "--interval"}, required = true, description = "The interval between executions (in milliseconds)")
-        Long interval;
+        String interval;
 
-        @Option(names = {"-l", "--delay"}, description = "The delay before the first execution (in milliseconds)")
-        Long delay;
+        @Option(names = {"-l", "--delay"}, description = "The delay before the first execution (could be either a number in ms such as 1000 or 1m, 2h, 3w etc.)")
+        String delay;
 
         @Option(names = {"-p", "--payload"}, description = "The payload to send with the request")
         String payload;
