@@ -1,7 +1,7 @@
 
 # LOOP IT IS
 
-Loopitis is an on-premise software that you can use to schedule and automate recurring tasks. For instance, if you need to receive a report every hour for a specific user, you can send a POST request to Loopitis with the necessary details.
+Loopitis is an **on-premise software** that you can use to schedule and automate recurring tasks. For instance, if you need to receive a report every hour for a specific user, you can send a POST request to Loopitis with the necessary details.
 
 To do this, you would provide a JSON payload that includes the following information:
 
@@ -27,7 +27,7 @@ send a POST request to Loopitis with the following json:
   "occurrences": 1000,
   "name": "my job request",
   "return_url": "https://myApp.com/callme",  
-  "payload": "{"request_report_for_user_id":1234}",
+  "payload": "{\"request_report_for_user_id\":1234}",
   "callback_type": "POST"
 }
 ```
@@ -41,11 +41,11 @@ Loopitis returns a response similar to this one:
 ```
  
 
-from that moment Loopitis gets your job request it will wait {delay} milliseconds (in the example 1 second) before it starts executing. 
+from that moment Loopitis gets your job request it will wait {delay} milliseconds (in the example 5 minutes) before it starts executing. 
 Loopitis will send an HTTP call {callback_type} (POST in this case) to the {return_url} (https://myapp.com/callme int this case) for {occurences} times (1000 in this case) with payload {payload} 
 
 
-Have you ever had to deal with repetitive tasks that ended up causing more trouble than they were worth? Sometimes, a simple scheduler isn't enough for developers dealing with large amounts of repetitive tasks. If a scheduler goes down, it can be difficult to determine when, why, and how many tasks were completed before it failed. Additionally, it can be challenging to track when a specific task was last completed and to receive notifications when tasks fail. For example, in my last project, I had to generate a report for every user in the system every 10 minutes. With 1000 users, that meant generating an average of 16 reports per second. It was hard to keep track of which reports had failed and why, and I only discovered the issues when users reported them. Loopitis solves this problem by allowing developers to schedule specific methods to be called for each user at set intervals, rather than relying on a centralized scheduler. This way, developers can easily track when a specific task was last completed and receive notifications when tasks fail, making it easier to keep everything running smoothly.
+If you ever had to deal with repetitive tasks that ended up causing more trouble than they were worth. Sometimes, a simple scheduler isn't enough for developers dealing with large amounts of repetitive tasks. If a scheduler goes down, it can be difficult to determine when, why, and how many tasks were completed before it failed. Additionally, it can be challenging to track when a specific task was last completed and to receive notifications when tasks fail. For example, in my last project, I had to generate a report for every user in the system every 10 minutes. With 1000 users, that meant generating an average of 16 reports per second. It was hard to keep track of which reports had failed and why, and I only discovered the issues when users reported them. Loopitis solves this problem by allowing developers to schedule specific methods to be called for each user at set intervals, rather than relying on a centralized scheduler. This way, developers can easily track when a specific task was last completed and receive notifications when tasks fail, making it easier to keep everything running smoothly.
 
 The LoopItIs team is dedicated to providing a professional and reliable service to customers, with a commitment to being responsive, communicative, and attentive to their needs. Technical assistance and support are available whenever needed, ensuring a seamless experience from start to finish.
 
@@ -55,10 +55,10 @@ This project is licensed under the Creative Commons Attribution-NonCommercial-Sh
 
 If you would like to use this project for commercial purposes and need a different license, please contact us at support@loopitis.com to discuss your options.
 
-# **How to make it work** - All you need is two files
+# **How to make it work** - All you need is three files
 
 
-If you want to use the app as is without any modification, **all you need is the compose.yaml file and config.properties file**. Copy both files from resources/config to your working directory (it works both on Linux or Windows).
+If you want to use the app as is without any modification, **all you need is the compose.yaml, init.sql file and config.properties file**. Copy both files from resources/config to your working directory (it works both on Linux or Windows).
 
 Make sure to have Docker Compose installed on your machine. For security reasons, it is highly recommended to run the Docker Compose on a Virtual Private Cloud (VPC) and set applicable passwords on the config.properties file (Redis password, Portainer password, and PostgreSQL passwords) even if you run it locally under a VPC. To run the Docker Compose, you should run the following command:
 
