@@ -7,7 +7,7 @@ Spoiler alert, example of usage:
 Say you want to get a report every 1 hour for user 1234 , 
 
 send a POST request to Loopitis with the following json: 
-{
+'''{
   "interval": "1h",
   "delay": "5m"",    
   "occurrences": 1000,
@@ -15,13 +15,13 @@ send a POST request to Loopitis with the following json:
   "return_url": "https://myApp.com/callme",  
   "payload": "{"request_report_for_user_id":"1234}",
   "callback_type": "POST"
-}
+}'''
 
 Loopitis returns a response similar to this one:
-{
+'''{
     "id": "e67416bd-8bd5-4b3d-abf3-67e19884f8e3",
     "internal_id": 8
-}
+}'''
  
 
 from that moment Loopitis gets your job request it will wait {delay} milliseconds (in the example 1 second) before it starts executing. 
