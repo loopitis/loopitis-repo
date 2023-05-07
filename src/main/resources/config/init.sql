@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS notifier.requests
     name character varying(255) COLLATE pg_catalog."default",
     status character varying(255) COLLATE pg_catalog."default",
     return_url character varying(255) COLLATE pg_catalog."default",
+    notify_status character varying(255) COLLATE pg_catalog."default",
     delay bigint,
     "interval" bigint,
     occurances integer,
