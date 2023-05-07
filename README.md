@@ -87,7 +87,7 @@ To send a POST request, set the content-type to application/json and send the re
 
 The POST request body can be:
 
-
+```json
 {
   "interval": 10000,
   "delay": 1000,
@@ -97,6 +97,7 @@ The POST request body can be:
   "payload": "<your payload>",
   "callback_type": "POST"
 }
+```
   
 # **Contributing**
 All code written and built in Java 19 , using openJDK
