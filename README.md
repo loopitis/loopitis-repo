@@ -5,7 +5,7 @@ Loopitis is an **on-premise software** that you can use to schedule and automate
 
 To do this, you would provide a JSON payload that includes the following information:
 
-* "interval": the frequency of the recurring task (e.g. "1h" for every hour)
+* "interval": the frequency of the recurring task (e.g. "1h" for every hour or 1w+3h+20m for every 1 week and 3 hours and 20 minutes)
 * "delay": the time delay in milliseconds before the task starts executing
 * "occurrences": the number of times the task should repeat
 * "name": a name for your job request
