@@ -3,11 +3,13 @@ package general;
 import com.example.demo.ConfigurationManager;
 import com.example.demo.LoopitisApplication;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import consumer.ExecutionRequest;
 import enums.eCallbackType;
 import enums.eEvent;
 import managers.DBManager;
 import managers.EventManager;
+import pojos.HttpNotifierRequest;
 import pojos.HttpNotifierRequestTranslated;
 import services.RESTServices;
 
@@ -33,15 +35,15 @@ public class HttpNotifier {
         HTTP_VERSION = httpVersion == 2 ? HttpClient.Version.HTTP_2 : HttpClient.Version.HTTP_1_1;
     }
 
-    private static final Gson g = new Gson();
+    private static final Gson g = new GsonBuilder()
+            .disableHtmlEscaping()
+            .create();
 
     private HttpNotifierRequestTranslated notifierRequest;
 
     public HttpNotifier(pojos.HttpNotifierRequestTranslated notif){
         this.notifierRequest = notif;
     }
-
-
 
     public String getRequestId() {
         if(notifierRequest != null) return notifierRequest.getExternal_id();
@@ -144,8 +146,8 @@ public class HttpNotifier {
                     notifierRequest.getOccurrences(),
                     notifierRequest.getExternal_id(),
                     notifierRequest.getName(),
-                    cancellationLink.replace("\u003d", "="),
-                    showRequest.replace("\u003d", "="));
+                    cancellationLink,
+                    showRequest);
             return g.toJson(res);
         }
 
