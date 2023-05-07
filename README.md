@@ -34,7 +34,7 @@ send a POST request to Loopitis with the following json:
 ```
 
 Loopitis returns a response similar to this one:
-```
+```json
 {
     "id": "e67416bd-8bd5-4b3d-abf3-67e19884f8e3",
     "internal_id": 8
