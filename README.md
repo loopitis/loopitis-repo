@@ -18,13 +18,13 @@ Once Loopitis receives your job request, it will wait for the specified delay be
 Loopitis will also provide a response that includes an ID for your job request and an internal ID for tracking purposes.
 
 # Example of usage: 
-Say you want to get a report every 1 hour for user 1234 , 
+Say you want to pull a report every 1.5 hour for user 1234 , 
 
 send a POST request to Loopitis with the following json: 
 ```json
 {
-  "interval": "1h",
-  "delay": "5m",    
+  "interval": "1h+30m",
+  "delay": "1m",    
   "occurrences": 1000,
   "name": "my job request",
   "return_url": "https://myApp.com/callme",  
