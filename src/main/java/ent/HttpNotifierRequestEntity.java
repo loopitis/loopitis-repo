@@ -30,6 +30,7 @@ public class HttpNotifierRequestEntity {
         this.requestTime = new Timestamp(currentMillis);
         this.firstExecTime = new Timestamp(currentMillis+this.delay);
         this.callbackType = entity.getCallback_type();
+        this.notifyOnStatusNotOk = entity.getNotify_status_not_ok();
 
     }
 
@@ -55,6 +56,9 @@ public class HttpNotifierRequestEntity {
 
     @Column(name = "return_url")
     private String returnUrl;
+
+    @Column(name = "notify_status")
+    private String notifyOnStatusNotOk;
 
     @Column(name = "delay")
     private Long delay;
@@ -184,6 +188,14 @@ public class HttpNotifierRequestEntity {
 
     public void setCallbackType(eCallbackType callbackType) {
         this.callbackType = callbackType;
+    }
+
+    public String getNotifyOnStatusNotOk() {
+        return notifyOnStatusNotOk;
+    }
+
+    public void setNotifyOnStatusNotOk(String notifyOnStatusNotOk) {
+        this.notifyOnStatusNotOk = notifyOnStatusNotOk;
     }
 }
 

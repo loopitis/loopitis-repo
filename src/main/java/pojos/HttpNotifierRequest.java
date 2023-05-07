@@ -4,6 +4,7 @@ import enums.eCallbackType;
 
 public class HttpNotifierRequest {
     private String return_url;
+    private String notify_status_not_ok;
     private String delay;
     private String interval;
     private String payload;
@@ -110,6 +111,14 @@ public class HttpNotifierRequest {
 
     public void setOccurrences(Integer occurrences) {
         this.occurrences = occurrences;
+    }
+
+    public String getNotify_status_not_ok() {
+        return notify_status_not_ok;
+    }
+
+    public void setNotify_status_not_ok(String notify_status_not_ok) {
+        this.notify_status_not_ok = notify_status_not_ok;
     }
 }
 

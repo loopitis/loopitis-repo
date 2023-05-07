@@ -67,6 +67,15 @@ public class NotifierRequestChecker {
             res.setError(details);
             return res;
         }
+        if(g.getNotify_status_not_ok() != null && !isValidURL(g.getReturn_url())){
+            ErrorDetails details = new ErrorDetails();
+            details.withCode(400)
+                    .withMessage("Value Error")
+                    .withDetails("Return notify if \"status not ok\" must be valid url")
+                    .withField("return_url");
+            res.setError(details);
+            return res;
+        }
         return res;
     }
 

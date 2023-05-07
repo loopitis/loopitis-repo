@@ -9,6 +9,7 @@ import enums.eEvent;
 import managers.DBManager;
 import managers.EventManager;
 import pojos.HttpNotifierRequestTranslated;
+import services.RESTServices;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -87,6 +88,12 @@ public class HttpNotifier {
                 else{
                     log.info("Got empty response from client ");
                 }
+            }
+            //notify if requested for status not ok
+            if(statusCode != 200 && notifierRequest.getNotify_status_not_ok() != null){
+                //status code is not ok and user provided a notification endpoint
+                log.debug("status code is not ok and user provided a notification endpoint "+notifierRequest.getNotify_status_not_ok());
+                RESTServices.POST(notifierRequest.getNotify_status_not_ok(), g.toJson(exec));
             }
 
         }

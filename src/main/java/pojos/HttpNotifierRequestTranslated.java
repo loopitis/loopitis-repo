@@ -5,6 +5,7 @@ import services.Services;
 
 public class HttpNotifierRequestTranslated {
     private String return_url;
+    private String notify_status_not_ok;
     private Long delay;
     private Long interval;
     private String payload;
@@ -28,14 +29,12 @@ public class HttpNotifierRequestTranslated {
         this.external_id = request.getExternal_id();
         this.callback_type = request.getCallback_type();
         this.return_url = request.getReturn_url();
+        this.notify_status_not_ok = request.getNotify_status_not_ok();
         this.payload = request.getPayload();
         this.id = request.getId();
         this.internal_id = request.getInternal_id();
         this.delay = Services.convertToMilliseconds(request.getDelay());
         this.interval = Services.convertToMilliseconds(request.getInterval());
-
-
-
     }
 
     public String getReturn_url() {
@@ -119,4 +118,11 @@ public class HttpNotifierRequestTranslated {
         this.occurrences = occurrences;
     }
 
+    public String getNotify_status_not_ok() {
+        return notify_status_not_ok;
+    }
+
+    public void setNotify_status_not_ok(String notify_status_not_ok) {
+        this.notify_status_not_ok = notify_status_not_ok;
+    }
 }

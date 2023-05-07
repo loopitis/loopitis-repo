@@ -26,6 +26,7 @@ public class Services {
             // Extract value and unit from each component
             String unit = component.substring(component.length() - 1);
             Integer value = tryParseInt(component);
+
             if(value == null) return null;
 
             // Convert component duration to milliseconds
