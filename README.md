@@ -5,7 +5,7 @@ Loopitis is an **on-premise software** that you can use to schedule and automate
 
 To do this, you would provide a JSON payload that includes the following information:
 
-* "interval": the frequency of the recurring task (e.g. "1h" for every hour)
+* "interval": the frequency of the recurring task (e.g. "1h" for every hour or 1w+3h+20m for every 1 week and 3 hours and 20 minutes)
 * "delay": the time delay in milliseconds before the task starts executing
 * "occurrences": the number of times the task should repeat
 * "name": a name for your job request
@@ -18,13 +18,13 @@ Once Loopitis receives your job request, it will wait for the specified delay be
 Loopitis will also provide a response that includes an ID for your job request and an internal ID for tracking purposes.
 
 # Example of usage: 
-Say you want to get a report every 1 hour for user 1234 , 
+Say you want to pull a report every 1.5 hour for user 1234 , 
 
 send a POST request to Loopitis with the following json: 
 ```json
 {
-  "interval": "1h",
-  "delay": "5m",    
+  "interval": "1h+30m",
+  "delay": "1m",    
   "occurrences": 1000,
   "name": "my job request",
   "return_url": "https://myApp.com/callme",  
@@ -34,7 +34,7 @@ send a POST request to Loopitis with the following json:
 ```
 
 Loopitis returns a response similar to this one:
-```
+```json
 {
     "id": "e67416bd-8bd5-4b3d-abf3-67e19884f8e3",
     "internal_id": 8
@@ -43,7 +43,7 @@ Loopitis returns a response similar to this one:
  
 
 from that moment Loopitis gets your job request it will wait {delay} milliseconds (in the example 5 minutes) before it starts executing. 
-Loopitis will send an HTTP call {callback_type} (POST in this case) to the {return_url} (https://myapp.com/callme int this case) for {occurences} times (1000 in this case) with payload {payload} 
+Loopitis will send an HTTP call {callback_type} (POST in this case) to the {return_url} (https://myapp.com/callme in this case) for {occurences} times (1000 in this case) with payload {payload} 
 
 
 If you ever had to deal with repetitive tasks that ended up causing more trouble than they were worth. Sometimes, a simple scheduler isn't enough for developers dealing with large amounts of repetitive tasks. If a scheduler goes down, it can be difficult to determine when, why, and how many tasks were completed before it failed. Additionally, it can be challenging to track when a specific task was last completed and to receive notifications when tasks fail. For example, in my last project, I had to generate a report for every user in the system every 10 minutes. With 1000 users, that meant generating an average of 16 reports per second. It was hard to keep track of which reports had failed and why, and I only discovered the issues when users reported them. Loopitis solves this problem by allowing developers to schedule specific methods to be called for each user at set intervals, rather than relying on a centralized scheduler. This way, developers can easily track when a specific task was last completed and receive notifications when tasks fail, making it easier to keep everything running smoothly.
@@ -53,6 +53,17 @@ The LoopItIs team is dedicated to providing a professional and reliable service 
 # **License**
 
 This project is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/.
+
+In a human-readable summary here is what you can do:
+* Share — copy and redistribute the material in any medium or format
+* Adapt — remix, transform, and build upon the material
+
+**Under the following terms:**
+* Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+* NonCommercial — You may not use the material for commercial purposes.
+* ShareAlike — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+
+No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
 
 If you would like to use this project for commercial purposes and need a different license, please contact us at support@loopitis.com to discuss your options.
 
