@@ -39,16 +39,16 @@ public class LoopitisMainEndpoints {
         if(result != null && result.isError()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(result));
         }
-        NotifierRequestChecker.setDefaultsForMissingValues(notif);
+        NotifierRequestChecker.setDefaultsForMissingValues(requestTranslated);
         UUID uuid = UUID.randomUUID();
         String external_id = uuid.toString();
 
-        notif.setExternal_id(external_id);
+        requestTranslated.setExternal_id(external_id);
         var notifierEntity = new HttpNotifierRequestEntity(requestTranslated);
         notifierEntity.setStatus(eRequestStatus.PENDING);
         notifierEntity.setDone(0);
         Long internalId = RequestManager.getInstance().saveRequest(notifierEntity);//request a call , internal call id, external call id , call name, call status, type(get\call), interval, occurance,  data:json
-        notif.setInternal_id(internalId);
+        requestTranslated.setInternal_id(internalId);
 
         log.info("$$$$$$$$$$$$$$$$$$$$$$$ About to send data to kafka for topic "+ REQUEST_TASKS_TOPIC);
         var future = KafkaProducer.getInstance().send(REQUEST_TASKS_TOPIC, gson.toJson(requestTranslated));

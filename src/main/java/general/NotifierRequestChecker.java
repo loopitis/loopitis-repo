@@ -71,7 +71,7 @@ public class NotifierRequestChecker {
     }
 
 
-    public static void setDefaultsForMissingValues(HttpNotifierRequest notif) {
+    public static void setDefaultsForMissingValues(HttpNotifierRequestTranslated notif) {
         if(notif.getCallback_type() == null){
             notif.setCallback_type(eCallbackType.POST);
         }
