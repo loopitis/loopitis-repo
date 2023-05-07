@@ -5,13 +5,14 @@ Loopitis is an **on-premise software** that you can use to schedule and automate
 
 To do this, you would provide a JSON payload that includes the following information:
 
-"interval": the frequency of the recurring task (e.g. "1h" for every hour)
-"delay": the time delay in milliseconds before the task starts executing
-"occurrences": the number of times the task should repeat
-"name": a name for your job request
-"return_url": the URL where Loopitis should send the callback
-"payload": any additional data that the task requires
-"callback_type": the HTTP method that Loopitis should use for the callback (e.g. POST, GET, etc.)
+* "interval": the frequency of the recurring task (e.g. "1h" for every hour)
+* "delay": the time delay in milliseconds before the task starts executing
+* "occurrences": the number of times the task should repeat
+* "name": a name for your job request
+* "return_url": the URL where Loopitis should send the callback
+* "payload": any additional data that the task requires
+* "callback_type": the HTTP method that Loopitis should use for the callback (e.g. POST, GET, etc.)
+
 Once Loopitis receives your job request, it will wait for the specified delay before executing the task. It will then send an HTTP call to the return URL for the specified number of occurrences with the payload you provided.
 
 Loopitis will also provide a response that includes an ID for your job request and an internal ID for tracking purposes.
