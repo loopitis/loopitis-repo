@@ -13,6 +13,7 @@ import pojos.HttpNotifierRequest;
 import pojos.HttpNotifierRequestTranslated;
 import services.RESTServices;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -44,6 +45,7 @@ public class HttpNotifier {
     public HttpNotifier(pojos.HttpNotifierRequestTranslated notif){
         this.notifierRequest = notif;
     }
+
 
     public String getRequestId() {
         if(notifierRequest != null) return notifierRequest.getExternal_id();
@@ -123,6 +125,7 @@ public class HttpNotifier {
     private HttpRequest generatePOSThttpRequest(String executionId, int executionNumber) {
 
         var jsonBody = getContent(executionId, executionNumber, eCallbackType.POST);
+        System.out.println("json string response is "+jsonBody);
         URI url = URI.create(notifierRequest.getReturn_url());
 
         HttpRequest request = HttpRequest.newBuilder()
