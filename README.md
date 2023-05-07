@@ -9,7 +9,7 @@ Say you want to get a report every 1 hour for user 1234 ,
 send a POST request to Loopitis with the following json: 
 '''{
   "interval": "1h",
-  "delay": "5m"",    
+  "delay": "5m",    
   "occurrences": 1000,
   "name": "my job request",
   "return_url": "https://myApp.com/callme",  
