@@ -144,8 +144,8 @@ public class HttpNotifier {
                     notifierRequest.getOccurrences(),
                     notifierRequest.getExternal_id(),
                     notifierRequest.getName(),
-                    cancellationLink,
-                    showRequest);
+                    cancellationLink.replace("\u003d", "="),
+                    showRequest.replace("\u003d", "="));
             return g.toJson(res);
         }
 

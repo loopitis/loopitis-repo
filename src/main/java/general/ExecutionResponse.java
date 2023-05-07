@@ -2,53 +2,27 @@ package general;
 
 public class ExecutionResponse {
 
-    private String showRequest;
     private Integer requestedTimes;
     private String parentRequestId;
     private String parentRequestName;
-    private Integer executionNumer;
+    private Integer executionNumber;
     private String executionId;
     private String payload;
-    private String canceLink;
+    private String showRequest;
+    private String cancelLink;
 
     public ExecutionResponse(){}
 
-    public ExecutionResponse(String executionId, int executionNumber, String payload, Integer occurrences, String requestId, String name, String canceLink, String showRequest) {
+    public ExecutionResponse(String executionId, int executionNumber, String payload, Integer occurrences, String requestId, String name, String cancelLink, String showRequest) {
         this.executionId = executionId;
         this.payload = payload;
         this.requestedTimes = occurrences;
-        this.executionNumer = executionNumber;
+        this.executionNumber = executionNumber;
         this.parentRequestId = requestId;
         this.parentRequestName = name;
-        this.canceLink = canceLink;
+        this.cancelLink = cancelLink;
         this.showRequest = showRequest;
 
-    }
-
-
-
-    public String getExecutionId() {
-        return executionId;
-    }
-
-    public void setExecutionId(String executionId) {
-        this.executionId = executionId;
-    }
-
-    public String getPayload() {
-        return payload;
-    }
-
-    public void setPayload(String payload) {
-        this.payload = payload;
-    }
-
-    public Integer getExecutionNumer() {
-        return executionNumer;
-    }
-
-    public void setExecutionNumer(Integer executionNumer) {
-        this.executionNumer = executionNumer;
     }
 
     public Integer getRequestedTimes() {
@@ -75,12 +49,28 @@ public class ExecutionResponse {
         this.parentRequestName = parentRequestName;
     }
 
-    public String getCanceLink() {
-        return canceLink;
+    public Integer getExecutionNumber() {
+        return executionNumber;
     }
 
-    public void setCanceLink(String canceLink) {
-        this.canceLink = canceLink;
+    public void setExecutionNumber(Integer executionNumber) {
+        this.executionNumber = executionNumber;
+    }
+
+    public String getExecutionId() {
+        return executionId;
+    }
+
+    public void setExecutionId(String executionId) {
+        this.executionId = executionId;
+    }
+
+    public String getPayload() {
+        return payload;
+    }
+
+    public void setPayload(String payload) {
+        this.payload = payload;
     }
 
     public String getShowRequest() {
@@ -89,5 +79,13 @@ public class ExecutionResponse {
 
     public void setShowRequest(String showRequest) {
         this.showRequest = showRequest;
+    }
+
+    public String getCancelLink() {
+        return cancelLink;
+    }
+
+    public void setCancelLink(String cancelLink) {
+        this.cancelLink = cancelLink;
     }
 }
