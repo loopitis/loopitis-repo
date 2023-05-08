@@ -12,7 +12,7 @@ To do this, you would provide a JSON payload that includes the following informa
 * "return_url": the URL where Loopitis should send the callback
 * "payload": any additional data that the task requires
 * "callback_type": the HTTP method that Loopitis should use for the callback (e.g. POST, GET, etc.)
-* "notify_status_not_ok": The url to call (POST call) if status code of execution is not 200 (or time out has reached) 
+* "notify_status_not_ok": The url to call (POST call) if status code of a call to <return_url> is not 200 (or time out has reached) 
 
 Once Loopitis receives your job request, it will wait for the specified delay before executing the task. It will then send an HTTP call to the return URL for the specified number of occurrences with the payload you provided.
 
