@@ -48,7 +48,7 @@ Loopitis returns a response similar to this one:
 ```
  
 
-from that moment Loopitis gets your job request it will wait {delay} milliseconds (in the example 5 minutes) before it starts executing. 
+From that moment Loopitis gets your job request it will wait {delay} milliseconds (in the example 5 minutes) before it starts executing. 
 Loopitis will send an HTTP call {callback_type} (POST in this case) to the {return_url} (https://myapp.com/callme in this case) for {occurences} times (1000 in this case) with payload {payload} 
 If anything goes wrong , status code was not received on a call or any status code that is not ok (200) Loopitis will send a POST call to {notify_status_not_ok} . Note that it is better to send an alert to a different server just in case the server is down.
 
