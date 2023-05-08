@@ -104,6 +104,16 @@ The POST request body can be:
   "callback_type": "POST"
 }
 ```
+
+# Scale with Loopitis
+Loopitis was designed to scale ! It is built with several processes that runs together.
+A producer, Kafka as the queue and a consumer. 
+You can set as many consumers as you need. You can set in config.properties the max number of threads that each consumer will use for executing jobs.
+To set more than one consumer simply use --scale as in the following example: 
+```shell
+docker-compose --env-file config.properties up --scale consumer=3
+```
+
   
 # **Contributing**
 All code written and built in Java 19 , using openJDK
