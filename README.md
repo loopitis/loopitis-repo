@@ -18,6 +18,10 @@ Once Loopitis receives your job request, it will wait for the specified delay be
 
 Loopitis will also provide a response that includes an ID for your job request and an internal ID for tracking purposes.
 
+If you ever had to deal with repetitive tasks that ended up causing more trouble than they were worth. Sometimes, a simple scheduler isn't enough for developers dealing with large amounts of repetitive tasks. If a scheduler goes down, it can be difficult to determine when, why, and how many tasks were completed before it failed. Additionally, it can be challenging to track when a specific task was last completed and to receive notifications when tasks fail. For example, in my last project, I had to generate a report for every user in the system every 10 minutes. With 1000 users, that meant generating an average of 16 reports per second. It was hard to keep track of which reports had failed and why, and I only discovered the issues when users reported them. Loopitis solves this problem by allowing developers to schedule specific methods to be called for each user at set intervals, rather than relying on a centralized scheduler. This way, developers can easily track when a specific task was last completed and receive notifications when tasks fail, making it easier to keep everything running smoothly.
+
+The LoopItIs team is dedicated to providing a professional and reliable service to customers, with a commitment to being responsive, communicative, and attentive to their needs. Technical assistance and support are available whenever needed, ensuring a seamless experience from start to finish.
+
 # Example of usage: 
 Say you want to pull a report every 1.5 hour for user 1234 , 
 
@@ -50,11 +54,6 @@ If anything goes wrong , status code was not received on a call or any status co
 
 # Usage Example #2:
 Loopitis can be utilized to keep an eye on the behavior of your process. For instance, you may configure Loopitis with a scheduler to call a method in your application that tests your database connection every hour. If the connection is unresponsive or faulty, Loopitis will notify the specified URL in {notify_status_not_ok} (if specified) with an alert. You can define the type of alert you want to receive, such as email or SMS, and implement the necessary steps to handle any issues that may arise with your application.
-
-
-If you ever had to deal with repetitive tasks that ended up causing more trouble than they were worth. Sometimes, a simple scheduler isn't enough for developers dealing with large amounts of repetitive tasks. If a scheduler goes down, it can be difficult to determine when, why, and how many tasks were completed before it failed. Additionally, it can be challenging to track when a specific task was last completed and to receive notifications when tasks fail. For example, in my last project, I had to generate a report for every user in the system every 10 minutes. With 1000 users, that meant generating an average of 16 reports per second. It was hard to keep track of which reports had failed and why, and I only discovered the issues when users reported them. Loopitis solves this problem by allowing developers to schedule specific methods to be called for each user at set intervals, rather than relying on a centralized scheduler. This way, developers can easily track when a specific task was last completed and receive notifications when tasks fail, making it easier to keep everything running smoothly.
-
-The LoopItIs team is dedicated to providing a professional and reliable service to customers, with a commitment to being responsive, communicative, and attentive to their needs. Technical assistance and support are available whenever needed, ensuring a seamless experience from start to finish.
 
 # **License**
 
