@@ -9,11 +9,9 @@ import enums.eCallbackType;
 import enums.eEvent;
 import managers.DBManager;
 import managers.EventManager;
-import pojos.HttpNotifierRequest;
 import pojos.HttpNotifierRequestTranslated;
 import services.RESTServices;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -93,11 +91,14 @@ public class HttpNotifier {
                     log.info("Got empty response from client ");
                 }
             }
+            System.out.println("status code is "+statusCode);
             //notify if requested for status not ok
             if(statusCode != 200 && notifierRequest.getNotify_status_not_ok() != null){
+                System.out.println("status code is not ok and user provided a notification endpoint "+notifierRequest.getNotify_status_not_ok());
                 //status code is not ok and user provided a notification endpoint
                 log.debug("status code is not ok and user provided a notification endpoint "+notifierRequest.getNotify_status_not_ok());
                 RESTServices.POST(notifierRequest.getNotify_status_not_ok(), g.toJson(exec));
+
             }
 
         }
