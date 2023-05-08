@@ -1,7 +1,7 @@
 
 # LOOP IT IS
 
-Loopitis is an **on-premise software** that you can use to schedule and automate recurring tasks. For instance, if you need to receive a report every hour for a specific user, you can send a POST request to Loopitis with the necessary details.
+Loopitis (https://loopitis.com) is an **on-premise software** that you can use to schedule and automate recurring tasks. For instance, if you need to receive a report every hour for a specific user, you can send a POST request to Loopitis with the necessary details.
 
 To do this, you would provide a JSON payload that includes the following information:
 
@@ -12,10 +12,15 @@ To do this, you would provide a JSON payload that includes the following informa
 * "return_url": the URL where Loopitis should send the callback
 * "payload": any additional data that the task requires
 * "callback_type": the HTTP method that Loopitis should use for the callback (e.g. POST, GET, etc.)
+* "notify_status_not_ok": The url to call (POST call) if status code of a call to <return_url> is not 200 (or time out has reached) 
 
 Once Loopitis receives your job request, it will wait for the specified delay before executing the task. It will then send an HTTP call to the return URL for the specified number of occurrences with the payload you provided.
 
 Loopitis will also provide a response that includes an ID for your job request and an internal ID for tracking purposes.
+
+If you ever had to deal with repetitive tasks that ended up causing more trouble than they were worth. Sometimes, a simple scheduler isn't enough for developers dealing with large amounts of repetitive tasks. If a scheduler goes down, it can be difficult to determine when, why, and how many tasks were completed before it failed. Additionally, it can be challenging to track when a specific task was last completed and to receive notifications when tasks fail. For example, in my last project, I had to generate a report for every user in the system every 10 minutes. With 1000 users, that meant generating an average of 16 reports per second. It was hard to keep track of which reports had failed and why, and I only discovered the issues when users reported them. Loopitis solves this problem by allowing developers to schedule specific methods to be called for each user at set intervals, rather than relying on a centralized scheduler. This way, developers can easily track when a specific task was last completed and receive notifications when tasks fail, making it easier to keep everything running smoothly.
+
+The LoopItIs team is dedicated to providing a professional and reliable service to customers, with a commitment to being responsive, communicative, and attentive to their needs. Technical assistance and support are available whenever needed, ensuring a seamless experience from start to finish.
 
 # Example of usage: 
 Say you want to pull a report every 1.5 hour for user 1234 , 
@@ -29,7 +34,8 @@ send a POST request to Loopitis with the following json:
   "name": "my job request",
   "return_url": "https://myApp.com/callme",  
   "payload": "{\"request_report_for_user_id\":1234}",
-  "callback_type": "POST"
+  "callback_type": "POST",
+  "notify_status_not_ok": "https://myApp.com/alert"
 }
 ```
 
@@ -42,13 +48,13 @@ Loopitis returns a response similar to this one:
 ```
  
 
-from that moment Loopitis gets your job request it will wait {delay} milliseconds (in the example 5 minutes) before it starts executing. 
+From that moment Loopitis gets your job request it will wait {delay} milliseconds (in the example 5 minutes) before it starts executing. 
 Loopitis will send an HTTP call {callback_type} (POST in this case) to the {return_url} (https://myapp.com/callme in this case) for {occurences} times (1000 in this case) with payload {payload} 
+If anything goes wrong , status code was not received on a call or any status code that is not ok (200) Loopitis will send a POST call to {notify_status_not_ok} . Note that it is better to send an alert to a different server just in case the server is down.
 
+# Usage Example #2:
+Loopitis can be utilized to monitor the behavior of your process. For instance, if you want to test your database connection every hour, you can set up Loopitis with a scheduler to call a method in your application that performs the test. If the connection is not responding or faulty, Loopitis will send an alert to the URL specified in {notify_status_not_ok} (if provided). You can set up the desired alert type to receive under this path, such as email or SMS. However, it is important to note that the implementation of the alert is entirely the user's responsibility once they receive it from Loopitis. The user must define and set up the necessary steps to address any issues that may arise with their application.
 
-If you ever had to deal with repetitive tasks that ended up causing more trouble than they were worth. Sometimes, a simple scheduler isn't enough for developers dealing with large amounts of repetitive tasks. If a scheduler goes down, it can be difficult to determine when, why, and how many tasks were completed before it failed. Additionally, it can be challenging to track when a specific task was last completed and to receive notifications when tasks fail. For example, in my last project, I had to generate a report for every user in the system every 10 minutes. With 1000 users, that meant generating an average of 16 reports per second. It was hard to keep track of which reports had failed and why, and I only discovered the issues when users reported them. Loopitis solves this problem by allowing developers to schedule specific methods to be called for each user at set intervals, rather than relying on a centralized scheduler. This way, developers can easily track when a specific task was last completed and receive notifications when tasks fail, making it easier to keep everything running smoothly.
-
-The LoopItIs team is dedicated to providing a professional and reliable service to customers, with a commitment to being responsive, communicative, and attentive to their needs. Technical assistance and support are available whenever needed, ensuring a seamless experience from start to finish.
 
 # **License**
 
