@@ -53,7 +53,8 @@ Loopitis will send an HTTP call {callback_type} (POST in this case) to the {retu
 If anything goes wrong , status code was not received on a call or any status code that is not ok (200) Loopitis will send a POST call to {notify_status_not_ok} . Note that it is better to send an alert to a different server just in case the server is down.
 
 # Usage Example #2:
-Loopitis can be utilized to keep an eye on the behavior of your process. For instance, you may configure Loopitis with a scheduler to call a method in your application that tests your database connection every hour. If the connection is unresponsive or faulty, Loopitis will notify the specified URL in {notify_status_not_ok} (if specified) with an alert. You can define the type of alert you want to receive, such as email or SMS, and implement the necessary steps to handle any issues that may arise with your application.
+Loopitis can be utilized to monitor the behavior of your process. For instance, if you want to test your database connection every hour, you can set up Loopitis with a scheduler to call a method in your application that performs the test. If the connection is not responding or faulty, Loopitis will send an alert to the URL specified in {notify_status_not_ok} (if provided). You can set up the desired alert type to receive under this path, such as email or SMS. However, it is important to note that the implementation of the alert is entirely the user's responsibility once they receive it from Loopitis. The user must define and set up the necessary steps to address any issues that may arise with their application.
+
 
 # **License**
 
