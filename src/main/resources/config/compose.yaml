@@ -107,6 +107,8 @@ services:
     container_name: my_endpoint
     image: loopitis/loopitis-repo:endpoints-1.0.0
     environment:
+      loopitis_user: ${loopitis_user}
+      loopitis_password: ${loopitis_password}
       cancel_request_channel: ${cancel_request_channel}
       db_max_pool_size: ${db_max_pool_size}
       topic_name_tasks: ${topic_name_tasks}

@@ -207,4 +207,12 @@ public class ConfigurationManager {
     public String getRedisPassword() {
         return _configuration.get(NotifierConstants.CONF_REDIS_PASSWORD);
     }
+
+    public String getLoopitisUser() {
+        return _configuration.get(NotifierConstants.CONF_LOOPITIS_USER);
+    }
+
+    public String getLoopitisPassword() {
+        return _configuration.get(NotifierConstants.CONF_LOOPITIS_PASSWORD);
+    }
 }

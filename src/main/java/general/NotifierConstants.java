@@ -26,4 +26,6 @@ public class NotifierConstants {
     public static final String CONF_CLI_PORT = "cli_port";
     public static final String CONF_ENDPOINT_HOST = "endpoint_host";
     public static final String CONF_REDIS_PASSWORD = "redis_password";
+    public static final String CONF_LOOPITIS_USER = "loopitis_user";
+    public static final String CONF_LOOPITIS_PASSWORD = "loopitis_password";
 }
