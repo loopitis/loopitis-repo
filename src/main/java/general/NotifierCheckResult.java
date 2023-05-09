@@ -9,7 +9,6 @@ public class NotifierCheckResult {
     }
 
 
-
     public void setError(ErrorDetails details) {
         isError = true;
         error = details;

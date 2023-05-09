@@ -1,38 +1,55 @@
-
 # LOOP IT IS
 
-Loopitis (https://loopitis.com) is an **on-premise software** that you can use to schedule and automate recurring tasks. For instance, if you need to receive a report every hour for a specific user, you can send a POST request to Loopitis with the necessary details.
+Loopitis (https://loopitis.com) is an **on-premise software** that you can use to schedule and automate recurring tasks.
+For instance, if you need to receive a report every hour for a specific user, you can send a POST request to Loopitis
+with the necessary details.
 
 To do this, you would provide a JSON payload that includes the following information:
 
-* "interval": the frequency of the recurring task (e.g. "1h" for every hour or 1w+3h+20m for every 1 week and 3 hours and 20 minutes)
+* "interval": the frequency of the recurring task (e.g. "1h" for every hour or 1w+3h+20m for every 1 week and 3 hours
+  and 20 minutes)
 * "delay": the time delay in milliseconds before the task starts executing
 * "occurrences": the number of times the task should repeat
 * "name": a name for your job request
 * "return_url": the URL where Loopitis should send the callback
 * "payload": any additional data that the task requires
 * "callback_type": the HTTP method that Loopitis should use for the callback (e.g. POST, GET, etc.)
-* "notify_status_not_ok": The url to call (POST call) if status code of a call to <return_url> is not 200 (or time out has reached) 
+* "notify_status_not_ok": The url to call (POST call) if status code of a call to <return_url> is not 200 (or time out
+  has reached)
 
-Once Loopitis receives your job request, it will wait for the specified delay before executing the task. It will then send an HTTP call to the return URL for the specified number of occurrences with the payload you provided.
+Once Loopitis receives your job request, it will wait for the specified delay before executing the task. It will then
+send an HTTP call to the return URL for the specified number of occurrences with the payload you provided.
 
 Loopitis will also provide a response that includes an ID for your job request and an internal ID for tracking purposes.
 
-If you ever had to deal with repetitive tasks that ended up causing more trouble than they were worth. Sometimes, a simple scheduler isn't enough for developers dealing with large amounts of repetitive tasks. If a scheduler goes down, it can be difficult to determine when, why, and how many tasks were completed before it failed. Additionally, it can be challenging to track when a specific task was last completed and to receive notifications when tasks fail. For example, in my last project, I had to generate a report for every user in the system every 10 minutes. With 1000 users, that meant generating an average of 16 reports per second. It was hard to keep track of which reports had failed and why, and I only discovered the issues when users reported them. Loopitis solves this problem by allowing developers to schedule specific methods to be called for each user at set intervals, rather than relying on a centralized scheduler. This way, developers can easily track when a specific task was last completed and receive notifications when tasks fail, making it easier to keep everything running smoothly.
+If you ever had to deal with repetitive tasks that ended up causing more trouble than they were worth. Sometimes, a
+simple scheduler isn't enough for developers dealing with large amounts of repetitive tasks. If a scheduler goes down,
+it can be difficult to determine when, why, and how many tasks were completed before it failed. Additionally, it can be
+challenging to track when a specific task was last completed and to receive notifications when tasks fail. For example,
+in my last project, I had to generate a report for every user in the system every 10 minutes. With 1000 users, that
+meant generating an average of 16 reports per second. It was hard to keep track of which reports had failed and why, and
+I only discovered the issues when users reported them. Loopitis solves this problem by allowing developers to schedule
+specific methods to be called for each user at set intervals, rather than relying on a centralized scheduler. This way,
+developers can easily track when a specific task was last completed and receive notifications when tasks fail, making it
+easier to keep everything running smoothly.
 
-The LoopItIs team is dedicated to providing a professional and reliable service to customers, with a commitment to being responsive, communicative, and attentive to their needs. Technical assistance and support are available whenever needed, ensuring a seamless experience from start to finish.
+The LoopItIs team is dedicated to providing a professional and reliable service to customers, with a commitment to being
+responsive, communicative, and attentive to their needs. Technical assistance and support are available whenever needed,
+ensuring a seamless experience from start to finish.
 
-# Example of usage: 
-Say you want to pull a report every 1.5 hour for user 1234 , 
+# Example of usage:
 
-send a POST request to Loopitis with the following json: 
+Say you want to pull a report every 1.5 hour for user 1234 ,
+
+send a POST request to Loopitis with the following json:
+
 ```json
 {
   "interval": "1h+30m",
-  "delay": "1m",    
+  "delay": "1m",
   "occurrences": 1000,
   "name": "my job request",
-  "return_url": "https://myApp.com/callme",  
+  "return_url": "https://myApp.com/callme",
   "payload": "{\"request_report_for_user_id\":1234}",
   "callback_type": "POST",
   "notify_status_not_ok": "https://myApp.com/alert"
@@ -40,45 +57,66 @@ send a POST request to Loopitis with the following json:
 ```
 
 Loopitis returns a response similar to this one:
+
 ```json
 {
-    "id": "e67416bd-8bd5-4b3d-abf3-67e19884f8e3",
-    "internal_id": 8
+  "id": "e67416bd-8bd5-4b3d-abf3-67e19884f8e3",
+  "internal_id": 8
 }
 ```
- 
 
-From that moment Loopitis gets your job request it will wait {delay} milliseconds (in the example 5 minutes) before it starts executing. 
-Loopitis will send an HTTP call {callback_type} (POST in this case) to the {return_url} (https://myapp.com/callme in this case) for {occurences} times (1000 in this case) with payload {payload} 
-If anything goes wrong , status code was not received on a call or any status code that is not ok (200) Loopitis will send a POST call to {notify_status_not_ok} . Note that it is better to send an alert to a different server just in case the server is down.
+From that moment Loopitis gets your job request it will wait {delay} milliseconds (in the example 5 minutes) before it
+starts executing.
+Loopitis will send an HTTP call {callback_type} (POST in this case) to the {return_url} (https://myapp.com/callme in
+this case) for {occurences} times (1000 in this case) with payload {payload}
+If anything goes wrong , status code was not received on a call or any status code that is not ok (200) Loopitis will
+send a POST call to {notify_status_not_ok} . Note that it is better to send an alert to a different server just in case
+the server is down.
 
 # Usage Example #2:
-Loopitis can be utilized to monitor the behavior of your process. For instance, if you want to test your database connection every hour, you can set up Loopitis with a scheduler to call a method in your application that performs the test. If the connection is not responding or faulty, Loopitis will send an alert to the URL specified in {notify_status_not_ok} (if provided). You can set up the desired alert type to receive under this path, such as email or SMS. However, it is important to note that the implementation of the alert is entirely the user's responsibility once they receive it from Loopitis. The user must define and set up the necessary steps to address any issues that may arise with their application.
 
+Loopitis can be utilized to monitor the behavior of your process. For instance, if you want to test your database
+connection every hour, you can set up Loopitis with a scheduler to call a method in your application that performs the
+test. If the connection is not responding or faulty, Loopitis will send an alert to the URL specified in
+{notify_status_not_ok} (if provided). You can set up the desired alert type to receive under this path, such as email or
+SMS. However, it is important to note that the implementation of the alert is entirely the user's responsibility once
+they receive it from Loopitis. The user must define and set up the necessary steps to address any issues that may arise
+with their application.
 
 # **License**
 
-This project is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/.
+This project is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To
+view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/.
 
 In a human-readable summary here is what you can do:
+
 * Share — copy and redistribute the material in any medium or format
 * Adapt — remix, transform, and build upon the material
 
 **Under the following terms:**
-* Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+
+* Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You
+  may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
 * NonCommercial — You may not use the material for commercial purposes.
-* ShareAlike — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+* ShareAlike — If you remix, transform, or build upon the material, you must distribute your contributions under the
+  same license as the original.
 
-No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
+No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from
+doing anything the license permits.
 
-If you would like to use this project for commercial purposes and need a different license, please contact us at support@loopitis.com to discuss your options.
+If you would like to use this project for commercial purposes and need a different license, please contact us at
+support@loopitis.com to discuss your options.
 
 # **How to make it work** - All you need is three files
 
+If you want to use the app as is without any modification, **all you need is the compose.yaml, init.sql file and
+config.properties file**. Copy both files from resources/config to your working directory (it works both on Linux or
+Windows).
 
-If you want to use the app as is without any modification, **all you need is the compose.yaml, init.sql file and config.properties file**. Copy both files from resources/config to your working directory (it works both on Linux or Windows).
-
-Make sure to have Docker Compose installed on your machine. For security reasons, it is highly recommended to run the Docker Compose on a Virtual Private Cloud (VPC) and set applicable passwords on the config.properties file (Redis password, Portainer password, and PostgreSQL passwords) even if you run it locally under a VPC. To run the Docker Compose, you should run the following command:
+Make sure to have Docker Compose installed on your machine. For security reasons, it is highly recommended to run the
+Docker Compose on a Virtual Private Cloud (VPC) and set applicable passwords on the config.properties file (Redis
+password, Portainer password, and PostgreSQL passwords) even if you run it locally under a VPC. To run the Docker
+Compose, you should run the following command:
 
 
 > docker-compose --env-file config.properties up
@@ -106,28 +144,41 @@ The POST request body can be:
 ```
 
 # Scale with Loopitis
+
 Loopitis was designed to scale ! It is built with several processes that runs together.
-A producer, Kafka as the queue and a consumer. 
-You can set as many consumers as you need. You can set in config.properties the max number of threads that each consumer will use for executing jobs.
-To set more than one consumer simply use --scale as in the following example: 
+A producer, Kafka as the queue and a consumer.
+You can set as many consumers as you need. You can set in config.properties the max number of threads that each consumer
+will use for executing jobs.
+To set more than one consumer simply use --scale as in the following example:
+
 ```shell
 docker-compose --env-file config.properties up --scale consumer=3
 ```
 
-  
 # **Contributing**
+
 All code written and built in Java 19 , using openJDK
-If you would like to contribute to the Loopitis project, you can pull the code and make changes to the three processes (main files) classes that run:
+If you would like to contribute to the Loopitis project, you can pull the code and make changes to the three processes (
+main files) classes that run:
 
-Endpoints process: This is a Spring Boot process that acts as the gateway to receive new requests. To make changes to this process, first copy the Dockerfile.endpoints, config.properties, and compose.yaml files to your working directory. The main class for endpoints is LoppitisApplication, and the main endpoints class is LoopitisMainEndpoints. After making changes, run the command "mvn package" to generate the endpoints.jar file, which you can copy to your working directory. Next, modify the compose.yaml file for the endpoints process, specifying the Dockerfile.endpoint in the build section. Finally, run the build and up commands: "docker-compose --env-file config.properties build endpoints" and "docker-compose --env-file config.properties up".
+Endpoints process: This is a Spring Boot process that acts as the gateway to receive new requests. To make changes to
+this process, first copy the Dockerfile.endpoints, config.properties, and compose.yaml files to your working directory.
+The main class for endpoints is LoppitisApplication, and the main endpoints class is LoopitisMainEndpoints. After making
+changes, run the command "mvn package" to generate the endpoints.jar file, which you can copy to your working directory.
+Next, modify the compose.yaml file for the endpoints process, specifying the Dockerfile.endpoint in the build section.
+Finally, run the build and up commands: "docker-compose --env-file config.properties build endpoints" and "
+docker-compose --env-file config.properties up".
 
-Consumer process: This is the consumer that pulls job requests from Kafka. To make changes to this process, first copy the Dockerfile.consumer, config.properties, and compose.yaml files to your working directory. The main class for the consumer is LoopitisConsumer. After making changes, export a jar from this main class, calling it consumer.jar, and copy it to your working directory. Next, modify the compose.yaml file for the consumer process, specifying the Dockerfile.consumer in the build section. Finally, run the build and up commands: "docker-compose --env-file config.properties build consumer" and "docker-compose --env-file config.properties up".
+Consumer process: This is the consumer that pulls job requests from Kafka. To make changes to this process, first copy
+the Dockerfile.consumer, config.properties, and compose.yaml files to your working directory. The main class for the
+consumer is LoopitisConsumer. After making changes, export a jar from this main class, calling it consumer.jar, and copy
+it to your working directory. Next, modify the compose.yaml file for the consumer process, specifying the
+Dockerfile.consumer in the build section. Finally, run the build and up commands: "docker-compose --env-file
+config.properties build consumer" and "docker-compose --env-file config.properties up".
 
-CLI process: This can run as a standalone process. You can build and run the CLI class, or you can pack the endpoints process, but make sure to have the cli.jar. The endpoints process copies the cli.jar if it exists in your working directory.
-
-
-
-
+CLI process: This can run as a standalone process. You can build and run the CLI class, or you can pack the endpoints
+process, but make sure to have the cli.jar. The endpoints process copies the cli.jar if it exists in your working
+directory.
 
 For any question you can always contact us at support@loopitis.com
 Visit our website for more information: https://loopitis.com

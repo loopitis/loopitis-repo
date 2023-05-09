@@ -15,8 +15,7 @@ import java.io.OutputStream;
 public class S3FileReader {
 
 
-
-    public void downloadConfigFromS3(String filePath){
+    public void downloadConfigFromS3(String filePath) {
         String accessKey = System.getenv("AWS_ACCESS_KEY_ID");
         String secretKey = System.getenv("AWS_SECRET_ACCESS_KEY");
         String bucketName = System.getenv("BUCKET_NAME");
@@ -34,7 +33,7 @@ public class S3FileReader {
 
         InputStream inputStream = s3Object.getObjectContent();
 
-        try{
+        try {
             OutputStream outputStream = new FileOutputStream(filePath + fileName);
 
             IOUtils.copy(inputStream, outputStream);
@@ -44,13 +43,10 @@ public class S3FileReader {
             inputStream.close();
             outputStream.close();
 
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-
-
 
 
 }

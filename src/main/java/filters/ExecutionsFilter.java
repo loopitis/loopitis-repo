@@ -10,7 +10,7 @@ public class ExecutionsFilter {
         return this;
     }
 
-    public String getRequestId(){
+    public String getRequestId() {
         return this.requestId;
     }
 
@@ -19,7 +19,7 @@ public class ExecutionsFilter {
         return this;
     }
 
-    public Integer getLimit(){
+    public Integer getLimit() {
         return this.limit;
     }
 

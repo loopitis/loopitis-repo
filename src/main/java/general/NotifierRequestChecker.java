@@ -2,7 +2,6 @@ package general;
 
 import com.example.demo.ConfigurationManager;
 import enums.eCallbackType;
-import pojos.HttpNotifierRequest;
 import pojos.HttpNotifierRequestTranslated;
 
 import static services.Services.isValidURL;
@@ -14,7 +13,7 @@ public class NotifierRequestChecker {
 
     public static NotifierCheckResult check(HttpNotifierRequestTranslated g) {
         var res = new NotifierCheckResult();
-        if(g.getInterval() == null){
+        if (g.getInterval() == null) {
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
                     .withMessage("Value Error")
@@ -24,16 +23,16 @@ public class NotifierRequestChecker {
             res.setError(details);
             return res;
         }
-        if(g.getInterval() < MINIMUM_INTERVAL_TIME) {
+        if (g.getInterval() < MINIMUM_INTERVAL_TIME) {
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
                     .withMessage("Value Error")
-                    .withDetails("Interval cannot be less than "+MINIMUM_INTERVAL_TIME)
+                    .withDetails("Interval cannot be less than " + MINIMUM_INTERVAL_TIME)
                     .withField("Interval");
             res.setError(details);
             return res;
         }
-        if(g.getDelay() == null || g.getDelay() < 0){
+        if (g.getDelay() == null || g.getDelay() < 0) {
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
                     .withMessage("Value Error")
@@ -42,14 +41,14 @@ public class NotifierRequestChecker {
             res.setError(details);
             return res;
         }
-        if(g.getOccurrences() == null || g.getOccurrences() < 2){
+        if (g.getOccurrences() == null || g.getOccurrences() < 2) {
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
                     .withMessage("Value Error")
                     .withDetails("Occurrences cannot be negative ")
                     .withField("occurrences");
         }
-        if(g.getReturn_url() == null){
+        if (g.getReturn_url() == null) {
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
                     .withMessage("Value missing")
@@ -58,7 +57,7 @@ public class NotifierRequestChecker {
             res.setError(details);
             return res;
         }
-        if(!isValidURL(g.getReturn_url())){
+        if (!isValidURL(g.getReturn_url())) {
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
                     .withMessage("Value Error")
@@ -67,7 +66,7 @@ public class NotifierRequestChecker {
             res.setError(details);
             return res;
         }
-        if(g.getNotify_status_not_ok() != null && !isValidURL(g.getReturn_url())){
+        if (g.getNotify_status_not_ok() != null && !isValidURL(g.getReturn_url())) {
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
                     .withMessage("Value Error")
@@ -81,7 +80,7 @@ public class NotifierRequestChecker {
 
 
     public static void setDefaultsForMissingValues(HttpNotifierRequestTranslated notif) {
-        if(notif.getCallback_type() == null){
+        if (notif.getCallback_type() == null) {
             notif.setCallback_type(eCallbackType.POST);
         }
     }

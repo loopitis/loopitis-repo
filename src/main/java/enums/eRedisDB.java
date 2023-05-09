@@ -5,8 +5,8 @@ public enum eRedisDB {
 
     private final int db;
 
-    private eRedisDB(int db){
-        this.db=db;
+    private eRedisDB(int db) {
+        this.db = db;
     }
 
 

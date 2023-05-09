@@ -20,10 +20,10 @@ public class ExecutionsEndpoint {
 
     @RequestMapping("/list")
     @PostMapping
-    public ResponseEntity<String> getExecutions(@RequestBody ShowExecutionsRequest req){
-        log.debug("Received getExecution with data  "+g.toJson(req));
+    public ResponseEntity<String> getExecutions(@RequestBody ShowExecutionsRequest req) {
+        log.debug("Received getExecution with data  " + g.toJson(req));
 
-        if(req == null || req.getRequestId() == null || req.getRequestId().isEmpty()){
+        if (req == null || req.getRequestId() == null || req.getRequestId().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         ExecutionsFilter filter = new ExecutionsFilter();

@@ -13,17 +13,14 @@ import java.util.concurrent.Future;
 
 public class KafkaProducer {
     private static final Logger log = LoggerFactory.getLogger(LoopitisApplication.MY_LOGGER);
-
+    private final static String KAFKA_HOST = ConfigurationManager.getInstance().getKafkaHost();
     private static KafkaProducer instance;
     private final Properties properties;
-
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> kafkaProducer;
 
-    private final static String KAFKA_HOST = ConfigurationManager.getInstance().getKafkaHost();
-
-    private KafkaProducer(){
+    private KafkaProducer() {
         properties = new Properties();
-        String boostrapServers = KAFKA_HOST+":9092";
+        String boostrapServers = KAFKA_HOST + ":9092";
 
         properties.setProperty("bootstrap.servers", boostrapServers);
         properties.setProperty("key.serializer", StringSerializer.class.getName());
@@ -31,23 +28,23 @@ public class KafkaProducer {
         kafkaProducer = new org.apache.kafka.clients.producer.KafkaProducer<String, String>(properties);
     }
 
-    public synchronized static KafkaProducer getInstance(){
-        if(instance == null){
+    public synchronized static KafkaProducer getInstance() {
+        if (instance == null) {
             instance = new KafkaProducer();
         }
         return instance;
     }
 
-    public boolean shutdown(){
+    public boolean shutdown() {
         kafkaProducer.flush();
         kafkaProducer.close();
         return true;
     }
 
 
-    public Future<RecordMetadata> send(String topic, String value){
-        log.debug("Sending data to "+properties.get("bootstrap.servers"));
-            var producerRecord = new ProducerRecord<String, String>(topic, value);
+    public Future<RecordMetadata> send(String topic, String value) {
+        log.debug("Sending data to " + properties.get("bootstrap.servers"));
+        var producerRecord = new ProducerRecord<String, String>(topic, value);
         return kafkaProducer.send(producerRecord);
     }
 

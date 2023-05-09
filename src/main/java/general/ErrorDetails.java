@@ -10,22 +10,22 @@ public class ErrorDetails {
 
     }
 
-    public ErrorDetails withCode(int code){
+    public ErrorDetails withCode(int code) {
         this.code = code;
         return this;
     }
 
-    public ErrorDetails withMessage(String msg){
+    public ErrorDetails withMessage(String msg) {
         this.message = msg;
         return this;
     }
 
-    public ErrorDetails withDetails(String details){
+    public ErrorDetails withDetails(String details) {
         this.details = details;
         return this;
     }
 
-    public ErrorDetails withField(String field){
+    public ErrorDetails withField(String field) {
         this.field = field;
         return this;
     }

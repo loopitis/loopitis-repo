@@ -12,9 +12,8 @@ public class ExecutionsManager {
     private static ExecutionsManager _instance;
 
 
-
-    public static synchronized ExecutionsManager getInstance(){
-        if(_instance == null){
+    public static synchronized ExecutionsManager getInstance() {
+        if (_instance == null) {
             _instance = new ExecutionsManager();
         }
         return _instance;

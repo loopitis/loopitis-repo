@@ -3,9 +3,10 @@ package general;
 public class CancelTaskRequest {
     private String requestId;
 
-    public CancelTaskRequest(){}
+    public CancelTaskRequest() {
+    }
 
-    public CancelTaskRequest(String requestId){
+    public CancelTaskRequest(String requestId) {
         this.requestId = requestId;
     }
 

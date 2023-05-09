@@ -12,12 +12,11 @@ import java.time.Duration;
 public class RESTServices {
     private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(LoopitisApplication.MY_LOGGER);
 
-    public static HttpResponse<String> GET(String url){
+    public static HttpResponse<String> GET(String url) {
         try {
             log.debug("About to fire a GET request ");
 
             StringBuilder uriBuilder = new StringBuilder(url);
-
 
 
             URI uri = URI.create(uriBuilder.toString());
@@ -36,13 +35,12 @@ public class RESTServices {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if(response != null)
+            if (response != null)
                 log.info(response.body());
 
             return response;
 
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             return null;
         }
@@ -51,7 +49,7 @@ public class RESTServices {
 
     public static HttpResponse<String> POST(String url, String requestBody) {
         try {
-            log.debug("About to fire a POST request "+url+" body: "+requestBody);
+            log.debug("About to fire a POST request " + url + " body: " + requestBody);
 
             URI uri = URI.create(url);
 
@@ -69,13 +67,12 @@ public class RESTServices {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if(response != null)
+            if (response != null)
                 log.info(response.body());
 
             return response;
 
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             return null;
         }

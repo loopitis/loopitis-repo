@@ -2,9 +2,7 @@ package ent;
 
 import enums.eCallbackType;
 import enums.eRequestStatus;
-import pojos.HttpNotifierRequest;
 import pojos.HttpNotifierRequestTranslated;
-import services.Services;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -15,7 +13,42 @@ import java.util.Calendar;
 public class HttpNotifierRequestEntity {
 
 
-    public HttpNotifierRequestEntity(){}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "i_id")
+    private Long id;
+    @Column(name = "callbackType")
+    @Enumerated(EnumType.STRING)
+    private eCallbackType callbackType;
+    @Column(name = "e_id")
+    private String externalId;
+    @Column(name = "name")
+    private String name;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private eRequestStatus status;
+    @Column(name = "return_url")
+    private String returnUrl;
+    @Column(name = "notify_status")
+    private String notifyOnStatusNotOk;
+    @Column(name = "delay")
+    private Long delay;
+    @Column(name = "interval")
+    private Long interval;
+    @Column(name = "occurances")
+    private Integer occurrences;
+    @Column(name = "done")
+    private Integer done;
+    @Lob
+    @Column(name = "payload")
+    private String payload;
+    @Column(name = "request_time")
+    private Timestamp requestTime;
+    @Column(name = "first_exec_time")
+    private Timestamp firstExecTime;
+
+    public HttpNotifierRequestEntity() {
+    }
 
     public HttpNotifierRequestEntity(HttpNotifierRequestTranslated entity) {
         this.id = entity.getId();
@@ -28,60 +61,11 @@ public class HttpNotifierRequestEntity {
         this.payload = entity.getPayload();
         long currentMillis = Calendar.getInstance().getTimeInMillis();
         this.requestTime = new Timestamp(currentMillis);
-        this.firstExecTime = new Timestamp(currentMillis+this.delay);
+        this.firstExecTime = new Timestamp(currentMillis + this.delay);
         this.callbackType = entity.getCallback_type();
         this.notifyOnStatusNotOk = entity.getNotify_status_not_ok();
 
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "i_id")
-    private Long id;
-
-    @Column(name = "callbackType")
-    @Enumerated(EnumType.STRING)
-    private eCallbackType callbackType;
-
-
-    @Column(name = "e_id")
-    private String externalId;
-
-    @Column(name = "name")
-    private String name;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private eRequestStatus status;
-
-    @Column(name = "return_url")
-    private String returnUrl;
-
-    @Column(name = "notify_status")
-    private String notifyOnStatusNotOk;
-
-    @Column(name = "delay")
-    private Long delay;
-
-    @Column(name = "interval")
-    private Long interval;
-
-    @Column(name = "occurances")
-    private Integer occurrences;
-
-    @Column(name = "done")
-    private Integer done;
-
-
-    @Lob
-    @Column(name = "payload")
-    private String payload;
-
-    @Column(name = "request_time")
-    private Timestamp requestTime;
-
-    @Column(name = "first_exec_time")
-    private Timestamp firstExecTime;
 
     // getters and setters
 

@@ -1,10 +1,7 @@
 package general;
 
-import com.example.demo.ConfigurationManager;
 import com.example.demo.LoopitisApplication;
-import com.example.demo.LoopitisMainEndpoints;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +19,7 @@ public class KafkaTopicCreator {
                 NewTopic newTopic = new NewTopic(topicName, numPartitions, replicationFactor);
                 adminClient.createTopics(Collections.singleton(newTopic)).all().get();
                 System.out.println("Topic " + topicName + " created successfully.");
-            }
-            else {
+            } else {
                 System.out.println("Topic " + topicName + " already exists.");
             }
         } catch (Exception e) {

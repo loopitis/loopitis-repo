@@ -21,7 +21,8 @@ public class HttpNotifierRequestTranslated {
     private eCallbackType callback_type;
 
 
-    public HttpNotifierRequestTranslated(){}
+    public HttpNotifierRequestTranslated() {
+    }
 
     public HttpNotifierRequestTranslated(HttpNotifierRequest request) {
         this.name = request.getName();
@@ -78,20 +79,20 @@ public class HttpNotifierRequestTranslated {
         this.id = id;
     }
 
-    public void setExternal_id(String external_id) {
-        this.external_id = external_id;
-    }
-
-    public void setInternal_id(Long internal_id) {
-        this.internal_id = internal_id;
-    }
-
     public String getExternal_id() {
         return external_id;
     }
 
+    public void setExternal_id(String external_id) {
+        this.external_id = external_id;
+    }
+
     public Long getInternal_id() {
         return internal_id;
+    }
+
+    public void setInternal_id(Long internal_id) {
+        this.internal_id = internal_id;
     }
 
     public String getName() {
@@ -106,16 +107,16 @@ public class HttpNotifierRequestTranslated {
         return occurrences;
     }
 
+    public void setOccurrences(Integer occurrences) {
+        this.occurrences = occurrences;
+    }
+
     public eCallbackType getCallback_type() {
         return callback_type;
     }
 
     public void setCallback_type(eCallbackType callback_type) {
         this.callback_type = callback_type;
-    }
-
-    public void setOccurrences(Integer occurrences) {
-        this.occurrences = occurrences;
     }
 
     public String getNotify_status_not_ok() {

@@ -4,7 +4,8 @@ public class CommentRequest {
     private String executionId;
     private String comment;
 
-    public CommentRequest(){}
+    public CommentRequest() {
+    }
 
     public String getExecutionId() {
         return executionId;

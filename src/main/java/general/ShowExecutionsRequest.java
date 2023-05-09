@@ -3,7 +3,8 @@ package general;
 public class ShowExecutionsRequest {
     private String requestId;
 
-    public ShowExecutionsRequest(){}
+    public ShowExecutionsRequest() {
+    }
 
     public String getRequestId() {
         return requestId;

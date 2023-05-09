@@ -10,13 +10,11 @@ import java.util.List;
 
 public class ConnectionNotifierManager {
     private final static org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(LoopitisApplication.MY_LOGGER);
+    private static ConnectionNotifierManager _instance;
     private Gson g = new Gson();
 
-    private static ConnectionNotifierManager _instance;
-
-
-    public static synchronized ConnectionNotifierManager getInstance(){
-        if(_instance == null){
+    public static synchronized ConnectionNotifierManager getInstance() {
+        if (_instance == null) {
             _instance = new ConnectionNotifierManager();
         }
         return _instance;

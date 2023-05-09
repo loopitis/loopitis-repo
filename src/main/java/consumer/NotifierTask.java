@@ -8,12 +8,12 @@ public class NotifierTask {
 
     private HttpNotifier request;
 
-    public NotifierTask(HttpNotifier req){
+    public NotifierTask(HttpNotifier req) {
         this.request = req;
     }
 
 
-    public FutureCancel handle(){
+    public FutureCancel handle() {
         return NotifierThreadPool.getInstance().assignTask(request);
     }
 }

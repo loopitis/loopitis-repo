@@ -8,7 +8,8 @@ public class ShowRequestsRequest {
 
     private String requestId;
 
-    public ShowRequestsRequest(){}
+    public ShowRequestsRequest() {
+    }
 
 
     public eRequestStatus getStatus() {

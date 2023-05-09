@@ -14,7 +14,8 @@ public class EventNoticiationData {
         this.json = data;
     }
 
-    public EventNoticiationData(){}
+    public EventNoticiationData() {
+    }
 
     public eEvent getEvent() {
         return event;

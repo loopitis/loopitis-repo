@@ -8,20 +8,19 @@ public enum eRequestStatus {
 
     private final String dbName;
 
-    private eRequestStatus(String dbName){
+    private eRequestStatus(String dbName) {
         this.dbName = dbName;
     }
 
     public static eRequestStatus tryGetValueOf(String status) {
-        try{
+        try {
             return valueOf(status.toUpperCase());
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             return null;
         }
     }
 
-    public String getDbName(){
+    public String getDbName() {
         return this.dbName;
     }
 }

@@ -10,7 +10,7 @@ public class ClientConnectionDetails {
 
     public ClientConnectionDetails(List<eEvent> eventsToListen) {
         events = eventsToListen;
-        failures =0;
+        failures = 0;
     }
 
     public List<eEvent> getEvents() {

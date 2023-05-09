@@ -4,13 +4,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 
 public class FutureCancel {
-    Future<?>  future;
+    Future<?> future;
     private boolean canceled = false;
 
     public boolean cancel() {
         canceled = true;
 
-        if (future != null){
+        if (future != null) {
             return future.cancel(true);
         }
         return false;
@@ -18,7 +18,7 @@ public class FutureCancel {
 
     public void setFuture(ScheduledFuture<?> future) {
         this.future = future;
-        if(canceled){
+        if (canceled) {
             future.cancel(true);
         }
     }

@@ -8,7 +8,7 @@ public class RequestsFilter {
     private Integer limit;
     private String requestId;
 
-    public RequestsFilter withStatus(eRequestStatus status){
+    public RequestsFilter withStatus(eRequestStatus status) {
         this.status = status;
         return this;
     }

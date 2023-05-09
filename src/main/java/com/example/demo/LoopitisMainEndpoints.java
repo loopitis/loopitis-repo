@@ -5,12 +5,18 @@ import ent.HttpNotifierRequestEntity;
 import enums.eEvent;
 import enums.eRequestStatus;
 import general.*;
-import managers.*;
+import managers.ConnectionNotifierManager;
+import managers.DBManager;
+import managers.EventManager;
+import managers.RequestManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import pojos.HttpNotifierRequest;
 import pojos.HttpNotifierRequestTranslated;
 import producer.KafkaProducer;
@@ -22,21 +28,21 @@ import java.util.UUID;
 @RequestMapping("/set")
 @RestController
 public class LoopitisMainEndpoints {
-    private static final Logger log = LoggerFactory.getLogger(LoopitisApplication.MY_LOGGER);
     public static final String REQUEST_TASKS_TOPIC = ConfigurationManager.getInstance().getKafkaTopic();
     public static final String REDIS_CANCEL_CHANNEL = ConfigurationManager.getInstance().getRedisCancelChannel();
+    private static final Logger log = LoggerFactory.getLogger(LoopitisApplication.MY_LOGGER);
     private static Gson gson = new Gson();
 
     @RequestMapping("/notifier")
     @PostMapping
-    public ResponseEntity<String> createGetNotifier(@RequestBody HttpNotifierRequest notif){
+    public ResponseEntity<String> createGetNotifier(@RequestBody HttpNotifierRequest notif) {
         log.debug("I am here 222222");
 
         //we translate the requested object because we want to work with ms in the delay and the interval
         HttpNotifierRequestTranslated requestTranslated = new HttpNotifierRequestTranslated(notif);
 
         NotifierCheckResult result = NotifierRequestChecker.check(requestTranslated);
-        if(result != null && result.isError()){
+        if (result != null && result.isError()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(result));
         }
         NotifierRequestChecker.setDefaultsForMissingValues(requestTranslated);
@@ -50,45 +56,45 @@ public class LoopitisMainEndpoints {
         Long internalId = RequestManager.getInstance().saveRequest(notifierEntity);//request a call , internal call id, external call id , call name, call status, type(get\call), interval, occurance,  data:json
         requestTranslated.setInternal_id(internalId);
 
-        log.info("$$$$$$$$$$$$$$$$$$$$$$$ About to send data to kafka for topic "+ REQUEST_TASKS_TOPIC);
+        log.info("$$$$$$$$$$$$$$$$$$$$$$$ About to send data to kafka for topic " + REQUEST_TASKS_TOPIC);
         var future = KafkaProducer.getInstance().send(REQUEST_TASKS_TOPIC, gson.toJson(requestTranslated));
-        if(future != null){
+        if (future != null) {
             log.debug("Request task Added successfully to Kafka ");
         }
         EventManager.getInstance().fire(eEvent.REQUEST_ADDED, gson.toJson(requestTranslated));
 
-        return ResponseEntity.ok("{ \"id\":\""+external_id+"\",\"internal_id\":"+internalId+"}");
+        return ResponseEntity.ok("{ \"id\":\"" + external_id + "\",\"internal_id\":" + internalId + "}");
 
     }
 
 
     @RequestMapping("/connection")
     @PostMapping
-    public ResponseEntity<String> connect(@RequestBody ConnectRequest connectRequest){
-        log.debug("Received Request to connect "+connectRequest);
-        if(connectRequest == null || connectRequest.getUrl() == null || connectRequest.getUrl().isEmpty()) {
+    public ResponseEntity<String> connect(@RequestBody ConnectRequest connectRequest) {
+        log.debug("Received Request to connect " + connectRequest);
+        if (connectRequest == null || connectRequest.getUrl() == null || connectRequest.getUrl().isEmpty()) {
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
                     .withField("url")
                     .withDetails("url not provided")
                     .withMessage("Bad input parameters");
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
 
         }
-        if(!Services.isValidURL(connectRequest.getUrl())){
+        if (!Services.isValidURL(connectRequest.getUrl())) {
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
                     .withField("url")
                     .withDetails("url not valid")
                     .withMessage("Bad input parameters");
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
         }
-        log.debug("Receievd request to "+connectRequest);
+        log.debug("Receievd request to " + connectRequest);
 
 
         //save the url to redis
         ConnectionNotifierManager.getInstance().saveConnectionRequest(connectRequest, Arrays.stream(eEvent.values()).toList()/*listen on all events*/);
-        String response = "{\"connected\": \"true\", \"url\": \""+connectRequest.getUrl()+"\"}";
+        String response = "{\"connected\": \"true\", \"url\": \"" + connectRequest.getUrl() + "\"}";
         return ResponseEntity.ok().body(response);
 
     }
@@ -114,42 +120,39 @@ public class LoopitisMainEndpoints {
 //    }
 
 
-
-
-
     @RequestMapping("/execution/comment")
     @PostMapping
-    public ResponseEntity<String> addCommentToSpecificExecution(@RequestBody CommentRequest commentRequest){
-        log.debug("Received Request to comment execution "+commentRequest);
-        if(commentRequest == null || commentRequest.getExecutionId() == null || commentRequest.getExecutionId().isEmpty()) {
+    public ResponseEntity<String> addCommentToSpecificExecution(@RequestBody CommentRequest commentRequest) {
+        log.debug("Received Request to comment execution " + commentRequest);
+        if (commentRequest == null || commentRequest.getExecutionId() == null || commentRequest.getExecutionId().isEmpty()) {
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
                     .withField("executionId")
                     .withDetails("executionId not provided")
                     .withMessage("Bad input parameters");
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
 
         }
 
-        if(commentRequest == null || commentRequest.getComment() == null || commentRequest.getComment().isEmpty()) {
+        if (commentRequest == null || commentRequest.getComment() == null || commentRequest.getComment().isEmpty()) {
             ErrorDetails details = new ErrorDetails();
             details.withCode(400)
                     .withField("comment")
                     .withDetails("comment not provided")
                     .withMessage("Bad input parameters");
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
 
         }
 
         //save the url to redis
         boolean added = DBManager.getInstance().updateCommentOnExecution(commentRequest);
-        if(!added){
+        if (!added) {
             ErrorDetails details = new ErrorDetails();
             details.withCode(500)
                     .withField("executionId")
                     .withDetails("Failed adding comment")
                     .withMessage("Execution id was not found");
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(details));
 
         }
         return ResponseEntity.ok().body("{\"result\":\"comment added\"}");

@@ -11,8 +11,8 @@ public class RequestManager {
     private static RequestManager _instance;
 
 
-    public static synchronized RequestManager getInstance(){
-        if(_instance == null){
+    public static synchronized RequestManager getInstance() {
+        if (_instance == null) {
             _instance = new RequestManager();
         }
         return _instance;

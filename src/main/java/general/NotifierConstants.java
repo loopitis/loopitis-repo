@@ -2,7 +2,7 @@ package general;
 
 public class NotifierConstants {
 
-    public static final String CONF_DB_ENDPOINTS_CONNECTION_PULL_MAX_SIZE  = "db_max_pool_size";
+    public static final String CONF_DB_ENDPOINTS_CONNECTION_PULL_MAX_SIZE = "db_max_pool_size";
     public static final String KAFKA_TASKS_TOPIC_NAME = "topic_name_tasks";
     public static final String CONF_DB_NAME = "db_name";
     public static final String CONF_DB_SERVER_NAME = "db_host";

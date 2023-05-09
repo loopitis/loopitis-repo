@@ -8,7 +8,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import consumer.ExecutionRequest;
 import ent.HttpNotifierRequestEntity;
-
 import enums.eProcess;
 import enums.eRequestStatus;
 import filters.ExecutionsFilter;
@@ -31,21 +30,27 @@ public class DBManager {
     private static boolean DB_READ_ONLY = false;
 
     private static DBManager dbManager = null;
-
+    private static int DB_MAX_CONNECTIONS = 1;
+    private static String DB_NAME = "mydb";
+    private static int DB_PORT_NUMBER = 5432;
+    private static String DB_SERVER_HOST = "redis";
     private EntityManagerFactory sessionFactory;
-
     private String DB_USER = "myUser";
-
     private String DB_PASSWORD = "mypassword";
 
+    private DBManager() {
+        try {
+            System.out.println("DB manager initted");
+            Class.forName("org.postgresql.Driver");
+            if (sessionFactory == null) {
+                setConfiguration(ConfigurationManager.getInstance().getDBConfiguration(eProcess.ENDPOINTS_PROCESS));
+            }
 
-    private static int DB_MAX_CONNECTIONS = 1;
-
-    private static String DB_NAME = "mydb";
-
-    private static int DB_PORT_NUMBER = 5432;
-
-    private static String DB_SERVER_HOST = "redis";
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) throws JsonProcessingException {
         Gson g = new Gson();
@@ -73,22 +78,15 @@ public class DBManager {
 
     }
 
-    private void testSelect() {
-        String queryString = "SELECT e FROM Employee e WHERE e.department = :dept";
+    public static synchronized DBManager getInstance() {
+        if (dbManager == null) {
+            dbManager = new DBManager();
+        }
+        return dbManager;
     }
 
-    private DBManager() {
-        try {
-            System.out.println("DB manager initted");
-            Class.forName("org.postgresql.Driver");
-            if (sessionFactory == null) {
-                setConfiguration(ConfigurationManager.getInstance().getDBConfiguration(eProcess.ENDPOINTS_PROCESS));
-            }
-
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    private void testSelect() {
+        String queryString = "SELECT e FROM Employee e WHERE e.department = :dept";
     }
 
     public void setConfiguration(DBConfiguration dbConfiguration) throws DBConfigurationException {
@@ -105,9 +103,6 @@ public class DBManager {
 
         initConnection();
     }
-
-
-
 
     private void getSessionFactory() {
         // Add connection pool
@@ -140,19 +135,8 @@ public class DBManager {
 
     }
 
-
-
-
     public boolean isDBName(String prodDB) {
         return DB_NAME != null && DB_NAME.equals(prodDB);
-    }
-
-
-    public static synchronized DBManager getInstance() {
-        if (dbManager == null) {
-            dbManager = new DBManager();
-        }
-        return dbManager;
     }
 
     private void initConnection() throws DBConfigurationException {
@@ -185,12 +169,11 @@ public class DBManager {
 
 
         EntityTransaction tx = em.getTransaction();
-        try{
+        try {
             tx.begin();
             em.persist(request);
             tx.commit();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (tx.isActive()) {
                 tx.rollback();
             }
@@ -206,12 +189,11 @@ public class DBManager {
     public void savePreExecution(ExecutionRequest request) {
         EntityManager em = sessionFactory.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try{
+        try {
             tx.begin();
             em.persist(request);
             tx.commit();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (tx.isActive()) {
                 tx.rollback();
             }
@@ -226,7 +208,7 @@ public class DBManager {
     public void savePostExecution(ExecutionRequest exec) {
         EntityManager entityManager = sessionFactory.createEntityManager();
         EntityTransaction tx = entityManager.getTransaction();
-        try{
+        try {
             tx.begin();
             String nativeQuery = "UPDATE notifier.executions set status_code = ? where i_id = ?";
 
@@ -236,8 +218,7 @@ public class DBManager {
             int numUpdated = query.executeUpdate();
 
             tx.commit();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (tx.isActive()) {
                 tx.rollback();
             }
@@ -250,7 +231,7 @@ public class DBManager {
     public void countExecutions(String externalId) {
         EntityManager entityManager = sessionFactory.createEntityManager();
         EntityTransaction tx = entityManager.getTransaction();
-        try{
+        try {
             tx.begin();
             String nativeQuery = "UPDATE notifier.requests set done = done+1 where e_id = ?";
 
@@ -259,8 +240,7 @@ public class DBManager {
             int numUpdated = query.executeUpdate();
 
             tx.commit();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (tx.isActive()) {
                 tx.rollback();
             }
@@ -273,7 +253,7 @@ public class DBManager {
     public int updateStatus(String requestId, eRequestStatus status) {
         EntityManager entityManager = sessionFactory.createEntityManager();
         EntityTransaction tx = entityManager.getTransaction();
-        try{
+        try {
             tx.begin();
             String nativeQuery = "UPDATE notifier.requests set status =? where e_id = ?";
 
@@ -284,8 +264,7 @@ public class DBManager {
 
             tx.commit();
             return numUpdated;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (tx.isActive()) {
                 tx.rollback();
             }
@@ -298,7 +277,7 @@ public class DBManager {
     public boolean updateCommentOnExecution(CommentRequest commentRequest) {
         EntityManager entityManager = sessionFactory.createEntityManager();
         EntityTransaction tx = entityManager.getTransaction();
-        try{
+        try {
             tx.begin();
             String nativeQuery = "UPDATE notifier.executions set comment = ? where e_id = ?";
 
@@ -309,12 +288,11 @@ public class DBManager {
             int numUpdated = query.executeUpdate();
 
             tx.commit();
-            if(numUpdated == 0){
+            if (numUpdated == 0) {
                 return false;
             }
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (tx.isActive()) {
                 tx.rollback();
             }
@@ -328,36 +306,35 @@ public class DBManager {
         EntityManager entityManager = sessionFactory.createEntityManager();
         try {
             String jpql = "SELECT req FROM HttpNotifierRequestEntity req ";
-            if(filter != null){
+            if (filter != null) {
                 boolean isFirstCondition = true;
-                if(filter.getStatus() != null){
-                    if(isFirstCondition){
-                        jpql+="WHERE ";
+                if (filter.getStatus() != null) {
+                    if (isFirstCondition) {
+                        jpql += "WHERE ";
                         isFirstCondition = false;
                     }
-                    jpql+="req.status= :status ";
+                    jpql += "req.status= :status ";
                 }
-                if(filter.getRequestId() != null){
-                    if(isFirstCondition){
-                        jpql+="WHERE ";
+                if (filter.getRequestId() != null) {
+                    if (isFirstCondition) {
+                        jpql += "WHERE ";
                         isFirstCondition = false;
+                    } else {
+                        jpql += " and ";
                     }
-                    else{
-                        jpql+=" and ";
-                    }
-                    jpql+="req.externalId= :requestId ";
+                    jpql += "req.externalId= :requestId ";
                 }
 
             }
             TypedQuery<HttpNotifierRequestEntity> query = entityManager.createQuery(jpql, HttpNotifierRequestEntity.class);
-            if(filter != null){
-                if(filter.getStatus() != null){
+            if (filter != null) {
+                if (filter.getStatus() != null) {
                     query.setParameter("status", filter.getStatus());
                 }
-                if(filter.getRequestId() != null){
+                if (filter.getRequestId() != null) {
                     query.setParameter("requestId", filter.getRequestId());
                 }
-                if(filter.getLimit() != null){
+                if (filter.getLimit() != null) {
                     query.setMaxResults(filter.getLimit());
                 }
             }
@@ -367,7 +344,7 @@ public class DBManager {
         }
     }
 
-    public void resetQueryCache(){
+    public void resetQueryCache() {
         EntityManager entityManager = sessionFactory.createEntityManager();
         try {
 
@@ -385,26 +362,26 @@ public class DBManager {
         EntityManager entityManager = sessionFactory.createEntityManager();
         try {
             String jpql = "SELECT req FROM ExecutionRequest req ";
-            if(filter != null){
-                if(filter.getRequestId() != null){
-                    jpql+=" WHERE req.requestId= :req ";
+            if (filter != null) {
+                if (filter.getRequestId() != null) {
+                    jpql += " WHERE req.requestId= :req ";
                 }
-                if(filter.getComment() != null){
-                    jpql+= "and req.comment= :comment ";
+                if (filter.getComment() != null) {
+                    jpql += "and req.comment= :comment ";
                 }
 
-                jpql+="order by req.timeExecuted " ;
+                jpql += "order by req.timeExecuted ";
 
             }
             TypedQuery<ExecutionRequest> query = entityManager.createQuery(jpql, ExecutionRequest.class);
-            if(filter != null){
-                if(filter.getRequestId() != null){
+            if (filter != null) {
+                if (filter.getRequestId() != null) {
                     query.setParameter("req", filter.getRequestId());
                 }
-                if(filter.getComment() != null){
+                if (filter.getComment() != null) {
                     query.setParameter("comment", filter.getComment());
                 }
-                if(filter.getLimit() != null){
+                if (filter.getLimit() != null) {
                     query.setMaxResults(filter.getLimit());
                 }
             }

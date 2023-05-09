@@ -11,7 +11,8 @@ public class ExecutionResponse {
     private String showRequest;
     private String cancelLink;
 
-    public ExecutionResponse(){}
+    public ExecutionResponse() {
+    }
 
     public ExecutionResponse(String executionId, int executionNumber, String payload, Integer occurrences, String requestId, String name, String cancelLink, String showRequest) {
         this.executionId = executionId;

@@ -16,7 +16,7 @@ public class Services {
     }
 
     public static Long convertToMilliseconds(String duration) {
-        if(isLongValue(duration)) return Long.valueOf(duration);//in case number is given
+        if (isLongValue(duration)) return Long.valueOf(duration);//in case number is given
 
         long milliseconds = 0;
 
@@ -27,7 +27,7 @@ public class Services {
             String unit = component.substring(component.length() - 1);
             Integer value = tryParseInt(component);
 
-            if(value == null) return null;
+            if (value == null) return null;
 
             // Convert component duration to milliseconds
             switch (unit) {
@@ -57,8 +57,7 @@ public class Services {
     private static Integer tryParseInt(String component) {
         try {
             return Integer.parseInt(component.substring(0, component.length() - 1));
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             return null;
         }
     }
@@ -68,8 +67,7 @@ public class Services {
         try {
             Long.valueOf(duration);
             return true;
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             return false;
         }
 

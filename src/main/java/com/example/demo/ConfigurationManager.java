@@ -26,6 +26,11 @@ public class ConfigurationManager {
         return _instance;
     }
 
+    private static void downloaToS3(String path) {
+        //get the file from S3
+        S3FileReader reader = new S3FileReader();
+        reader.downloadConfigFromS3(path);
+    }
 
     public boolean setConfiguration() {
         Map<String, String> map = buildMap();
@@ -67,7 +72,6 @@ public class ConfigurationManager {
         return keyValue;
     }
 
-
     public Properties loadProperties() {
 
         Properties prop = new Properties();
@@ -77,17 +81,17 @@ public class ConfigurationManager {
 
         try {
             path = System.getProperty("user.home");
-            path += File.separator + "notifier"+File.separator ;
+            path += File.separator + "notifier" + File.separator;
             File customDir = new File(path);
 
 
             if (customDir.exists()) {//if  user/conf does not exists create `one
                 log.debug(customDir + " already exists");
-                File fullPath = new File(path+filename);
-                if(!fullPath.exists()){
+                File fullPath = new File(path + filename);
+                if (!fullPath.exists()) {
                     return null;
                 }
-            } else{
+            } else {
                 return null;
 
             }
@@ -117,12 +121,6 @@ public class ConfigurationManager {
         return null;
     }
 
-    private static void downloaToS3(String path) {
-        //get the file from S3
-        S3FileReader reader = new S3FileReader();
-        reader.downloadConfigFromS3(path);
-    }
-
     public boolean isLoaded() {
         return _configuration != null;
     }
@@ -135,7 +133,7 @@ public class ConfigurationManager {
 
     public DBConfiguration getDBConfiguration(eProcess process) {
         DBConfiguration dbConf = getBasicDBConfiguration();
-        switch(process){
+        switch (process) {
             case ENDPOINTS_PROCESS:
                 dbConf.set_maxPoolSize(Integer.valueOf(_configuration.get(NotifierConstants.CONF_DB_ENDPOINTS_CONNECTION_PULL_MAX_SIZE)));
                 return dbConf;
@@ -147,7 +145,7 @@ public class ConfigurationManager {
     }
 
     public DBConfiguration getBasicDBConfiguration() {
-        try{
+        try {
             DBConfiguration dbConf = new DBConfiguration();
             dbConf.set_dbName(_configuration.get(NotifierConstants.CONF_DB_NAME));
             dbConf.set_dbHost(_configuration.get(NotifierConstants.CONF_DB_SERVER_NAME));
@@ -156,9 +154,8 @@ public class ConfigurationManager {
             dbConf.set_dbPort(Integer.valueOf(_configuration.get(NotifierConstants.CONF_DB_PORT)));
             dbConf.setReadOnly(Boolean.valueOf(_configuration.get(NotifierConstants.CONF_DB_READ_ONLY_MODE)));
             return dbConf;
-        }
-        catch(Exception ex){
-            log.error("error while trying to extract configuration data - check if the configuration.properties is valid",ex);
+        } catch (Exception ex) {
+            log.error("error while trying to extract configuration data - check if the configuration.properties is valid", ex);
             return null;
         }
     }
