@@ -1,7 +1,7 @@
 
 # LOOP IT IS
 
-Loopitis (https://loopitis.com) is an **on-premise software** that you can use to schedule and automate recurring tasks. For instance, if you need to receive a report every hour for a specific user, you can send a POST request to Loopitis with the necessary details.
+Loopitis (https://loopitis.com) is an **on-premise software** that you can use to schedule and automate recurring tasks. For instance, if you need to pull\generate a report every hour for a specific user, you can send a POST request to Loopitis with the necessary details.
 
 To do this, you would provide a JSON payload that includes the following information:
 
