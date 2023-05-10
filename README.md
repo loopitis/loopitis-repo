@@ -107,11 +107,10 @@ doing anything the license permits.
 If you would like to use this project for commercial purposes and need a different license, please contact us at
 support@loopitis.com to discuss your options.
 
-# **How to make it work** - All you need is three files
+# **How to make it work** - It's super easy with Docker-comppse
 
-If you want to use the app as is without any modification, **all you need is the compose.yaml, init.sql file and
-config.properties file**. Copy both files from resources/config to your working directory (it works both on Linux or
-Windows).
+Even if you're not familiar with docker or docker compose, setting this app to work is super easy !
+If you want to use the app as is without any modification, **all you need is the compose.yaml, init.sql file and config.properties file**. Copy both files from resources/config to your working directory (it works both on Linux or Windows).
 
 Make sure to have Docker Compose installed on your machine. For security reasons, it is highly recommended to run the
 Docker Compose on a Virtual Private Cloud (VPC) and set applicable passwords on the config.properties file (Redis
