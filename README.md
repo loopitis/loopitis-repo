@@ -29,7 +29,7 @@ Even if you're not familiar with docker or docker compose, setting this app to w
 
 Make sure to have Docker Compose installed on your machine.
 
-run the following command and that's it !  you can start using it.
+On linux, run the following command and that's it !  you can start using it.
 ```bash
 curl -sSL https://bit.ly/3W0DUPt | bash
 ```
