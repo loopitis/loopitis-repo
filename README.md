@@ -1,66 +1,42 @@
-# LOOP IT IS
+# LOOP IT IS - Schedule and Automate Recurring Tasks
 
-Loopitis (https://loopitis.com) is an **on-premise software** that you can use to schedule and automate recurring tasks.
-For instance, if you need to receive a report every hour for a specific user, you can send a POST request to Loopitis
-with the necessary details.
+Loopitis (https://loopitis.com) is an on-premise software that you can use to schedule and automate recurring tasks such as generating reports or sending notifications. With Loopitis, you can easily schedule tasks to run at specific intervals and track their progress. Additionally, Loopitis can also be used to check that all your processes are functioning well and monitor tasks in real-time. It provides an easy-to-use interface for creating and managing tasks, as well as comprehensive reporting to help you keep track of all your automated processes. With Loopitis, you can save time and reduce the risk of errors by automating repetitive tasks, allowing you to focus on more important work.
 
-To do this, you would provide a JSON payload that includes the following information:
+## Features
+Loopitis provides the following features:
 
-* "interval": the frequency of the recurring task (e.g. "1h" for every hour or 1w+3h+20m for every 1 week and 3 hours
-  and 20 minutes)
-* "delay": the time delay in milliseconds before the task starts executing
-* "occurrences": the number of times the task should repeat
-* "name": a name for your job request
-* "return_url": the URL where Loopitis should send the callback
-* "payload": any additional data that the task requires
-* "callback_type": the HTTP method that Loopitis should use for the callback (e.g. POST, GET, etc.)
-* "notify_status_not_ok": The url to call (POST call) if status code of a call to <return_url> is not 200 (or time out
-  has reached)
-
-Once Loopitis receives your job request, it will wait for the specified delay before executing the task. It will then
-send an HTTP call to the return URL for the specified number of occurrences with the payload you provided.
-
-Loopitis will also provide a response that includes an ID for your job request and an internal ID for tracking purposes.
+* **Flexible scheduling**: Schedule tasks to run at any interval you need, whether it's every hour, every day, every week, or something else entirely.
+* **Advanced tracking:** Track the progress of each task in real-time, including the number of times it has run and whether it has succeeded or failed.
+* **Customizable payloads:** Send any additional data required for each task to ensure it runs smoothly.
+* **Powerful callback options:** Receive notifications of each task's completion status via HTTP callbacks to your specified endpoint.
+* **Easy installation:** Use Docker Compose to quickly set up and run the Loopitis software.
 
 
-# **Installation** - It's super easy with Docker-comppse
+# Installation
 
-Even if you're not familiar with docker or docker compose, setting this app to work is super easy !
+Setting up Loopitis is quick and easy using Docker Compose. Follow these steps to get started:
 
-Make sure to have Docker Compose installed on your machine.
-
-On linux, run the following command and that's it !  you can start using it.
+1. Install Docker Compose on your machine.
+2. Run the following command in your terminal:
 ```bash
 curl -sSL https://bit.ly/3W0DUPt | bash
 ```
 
-**What this command do ?**
+This command will download and run a script that sets up Loopitis on your machine.
 
-First the bitly url is a shortend link for our run.sh file under github, the actual link is:
-https://raw.githubusercontent.com/loopitis/loopitis-repo/master/src/main/resources/config/run.sh
+If you prefer to install Loopitis manually, follow these steps:
 
-You can click the link to see the content and see what it does, basically here are the steps which you can run manually:
-* download compose.yaml file  - this file defines which processes to run and whats the repository in docker hub.
-* download init.sql - this file defines the schema and tables in the DB
-* download config.properties - this file contains the app configurations as well as user&passwords.
-* The rest of the script is generating new passwords for redis, postgres and for the endpoint
-* eventually the script runs the docker-compose "up" command to start the app.
-
-**Run Manually**
-
-If you decide install loopitis manually we strongly recommend to change postgres, redis and loopitis passwords in the config.properties file.
-You should Copy the compose.yaml,init.sql and config.properties files from github and then simply run:
+1. Copy the '**compose.yaml**', '**init.sql**', and '**config.properties**' files from the GitHub repository.
+2. Update the credentials in the config.properties file to ensure secure access.
+3. Run the following command in your terminal:
 
 ```shell
 docker-compose --env-file config.properties up
 ```
 
-If you're using Windows, use docker compose instead of docker-compose.
+This command will start the Loopitis software.
 
-You can use the -d flag if you want to detach it.
-
-Once the containers are up and running, you can communicate with the endpoint container through port 8080.
-Wether you run it automatically or manually, Don't forget that calls to loopitis requires Basic Authorization . the user and password are in the config.properties file.
+# Usage
 
 To send a POST request, set the content-type to application/json and send the request to localhost:8080/set/notifier.
 
@@ -94,7 +70,26 @@ Here's a breakdown of the options used in this command:
   http://localhost:8080 is the URL we want to make the request to.
 * Replace <your_base64_encoded_credentials> with your actual base64-encoded credentials.
 
-# Why should I use it 
+
+To do this, you would provide a JSON payload that includes the following information:
+
+* "interval": the frequency of the recurring task (e.g. "1h" for every hour or 1w+3h+20m for every 1 week and 3 hours
+  and 20 minutes)
+* "delay": the time delay in milliseconds before the task starts executing
+* "occurrences": the number of times the task should repeat
+* "name": a name for your job request
+* "return_url": the URL where Loopitis should send the callback
+* "payload": any additional data that the task requires
+* "callback_type": the HTTP method that Loopitis should use for the callback (e.g. POST, GET, etc.)
+* "notify_status_not_ok": The url to call (POST call) if status code of a call to <return_url> is not 200 (or time out
+  has reached)
+
+Once Loopitis receives your job request, it will wait for the specified delay before executing the task. It will then
+send an HTTP call to the return URL for the specified number of occurrences with the payload you provided.
+
+Loopitis will also provide a response that includes an ID for your job request and an internal ID for tracking purposes.
+
+# Why use Loopitis
 If you ever had to deal with repetitive tasks that ended up causing more trouble than they were worth. Sometimes, a
 simple scheduler isn't enough for developers dealing with large amounts of repetitive tasks. If a scheduler goes down,
 it can be difficult to determine when, why, and how many tasks were completed before it failed. Additionally, it can be
