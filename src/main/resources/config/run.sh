@@ -17,60 +17,55 @@ URLS=(
     "https://raw.githubusercontent.com/loopitis/loopitis-repo/master/src/main/resources/config/init.sql"
 )
 
-# Download each file in the array using curl
+# Download each file in the array using curl if it doesn't exist
 for url in "${URLS[@]}"
 do
     # The file name to save the downloaded file as
     FILE_NAME=$(basename "$url")
 
-    # Check if file already exists
+    # Check if the file exists
     if [ -f "$FILE_NAME" ]; then
-        echo "$FILE_NAME already exists. Skipping download."
+        echo "$FILE_NAME already exists"
     else
         # Download the file using curl
         curl -o "$FILE_NAME" "$url"
+
+        # Set passwords in config.properties if file was downloaded
+        if [ "$FILE_NAME" == "config.properties" ]; then
+            # Generate a random password for db
+            db_password=$(openssl rand -base64 12)
+
+            # Update the value of the db_password property in the config.properties file
+            sed -i "s/^db_password=.*/db_password=$db_password/" config.properties
+
+
+            ##### Generate password for redis ######
+
+
+            # Generate a random password for redis
+            redis_password=$(openssl rand -base64 12)
+
+            # Update the value of the db_password property in the config.properties file
+            sed -i "s/^redis_password=.*/redis_password=$redis_password/" config.properties
+
+
+            ##### Generate password for Endpoint  #######
+
+
+            # Generate a random password
+            loopitis_password=$(openssl rand -base64 12)
+
+            # Update the value of the db_password property in the config.properties file
+            sed -i "s/^loopitis_password=.*/loopitis_password=$loopitis_password/" config.properties
+
+
+            echo "New generated loopitis user&password:"
+            echo "user: user"
+            echo "password: $loopitis_password"
+
+            echo "This password should be used to call loopitis endpoints using a Basic Authorization in the header"
+        fi
     fi
 done
 
-# Generate password for DB
-
-# Generate a random password for db
-db_password=$(openssl rand -base64 12)
-
-# Update the value of the db_password property in the config.properties file
-sed -i "s/^db_password=.*/db_password=$db_password/" config.properties
-
-
-##### Generate password for redis ######
-
-
-# Generate a random password for redis
-redis_password=$(openssl rand -base64 12)
-
-# Update the value of the db_password property in the config.properties file
-sed -i "s/^redis_password=.*/redis_password=$db_password/" config.properties
-
-
-##### Generate password for Endpoint  #######
-
-
-# Generate a random password
-loopitis_password=$(openssl rand -base64 12)
-
-# Update the value of the db_password property in the config.properties file
-sed -i "s/^loopitis_password=.*/loopitis_password=$loopitis_password/" config.properties
-
-
-echo "New generated loopitis user&password:"
-echo "user: user"
-echo "password: $loopitis_password"
-
-echo "This password should be used to call loopitis endpoints using a  Basic Authorization in the header"
-
 docker-compose --env-file config.properties up
-
-
-
-#curl -sSL https://bit.ly/3W0DUPt | bash
-#or
-#curl -sSL https://raw.githubusercontent.com/loopitis/loopitis-repo/master/src/main/resources/config/run.sh | bash
