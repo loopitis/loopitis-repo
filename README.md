@@ -77,7 +77,9 @@ curl -X POST \
   "name": "my job request",
   "return_url": "<your return url>",
   "payload": "<your payload>",
-  "callback_type": "POST"
+  "callback_type": "POST",
+  "notify_status_not_ok": "<return url for error notifications>"
+
 }' \
 http://localhost:8080/set/notifier
 
