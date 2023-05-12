@@ -21,7 +21,7 @@ Setting up Loopitis is quick and easy using Docker Compose. Follow these steps t
 1. Install Docker Compose on your machine.
 2. Run the following command in your terminal:
 ```bash
-curl -sSL https://bit.ly/3W0DUPt | bash
+curl -sSL https://loopitis.com/run | bash
 ```
 
 This command will download and run a script that sets up Loopitis on your machine.
