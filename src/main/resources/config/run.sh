@@ -23,11 +23,16 @@ do
     # The file name to save the downloaded file as
     FILE_NAME=$(basename "$url")
 
-    # Download the file using curl
-    curl -o "$FILE_NAME" "$url"
+    # Check if file already exists
+    if [ -f "$FILE_NAME" ]; then
+        echo "$FILE_NAME already exists. Skipping download."
+    else
+        # Download the file using curl
+        curl -o "$FILE_NAME" "$url"
+    fi
 done
 
-# Generate passowrd for DB
+# Generate password for DB
 
 # Generate a random password for db
 db_password=$(openssl rand -base64 12)
@@ -63,9 +68,6 @@ echo "password: $loopitis_password"
 echo "This password should be used to call loopitis endpoints using a  Basic Authorization in the header"
 
 docker-compose --env-file config.properties up
-
-
-
 
 
 
