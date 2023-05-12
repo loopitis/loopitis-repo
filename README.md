@@ -1,6 +1,8 @@
 # LOOP IT IS - Schedule and Automate Recurring Tasks
 
-Loopitis (https://loopitis.com) is an on-premise software that you can use to schedule and automate recurring tasks such as generating reports or sending notifications. With Loopitis, you can easily schedule tasks to run at specific intervals and track their progress. Additionally, Loopitis can also be used to check that all your processes are functioning well and monitor tasks in real-time. It provides an easy-to-use interface for creating and managing tasks, as well as comprehensive reporting to help you keep track of all your automated processes. With Loopitis, you can save time and reduce the risk of errors by automating repetitive tasks, allowing you to focus on more important work.
+Loopitis (https://loopitis.com) is an on-premise cross-platform software that you can use to schedule and automate recurring tasks such as generating reports or sending notifications.
+With Loopitis, you can easily schedule tasks to run at specific intervals and track their progress.
+Additionally, Loopitis can also be used to check that all your processes are functioning well and monitor tasks in real-time. It provides an easy-to-use interface for creating and managing tasks, as well as comprehensive reporting to help you keep track of all your automated processes. With Loopitis, you can save time and reduce the risk of errors by automating repetitive tasks, allowing you to focus on more important work.
 
 ## Features
 Loopitis provides the following features:
@@ -38,10 +40,18 @@ This command will start the Loopitis software.
 
 # Usage
 
-To send a POST request, set the content-type to application/json and send the request to localhost:8080/set/notifier.
+## Request a job
 
-The POST request body can be:
+To request a job, send a POST request to the /set/notifier endpoint. The request can include the following parameters in the request body:
 
+* interval: the frequency of the recurring task (e.g. "1h" for every hour or 1w+3h+20m for every 1 week and 3 hours and 20 minutes).
+* delay: the time delay in milliseconds before the task starts executing.
+* occurrences: the number of times the task should repeat.
+* name: a name for your job request.
+* return_url: the URL where Loopitis should send the callback.
+* payload: any additional data that the task requires.
+* callback_type: the HTTP method that Loopitis should use for the callback (e.g. POST, GET, etc.).
+* notify_status_not_ok: The URL to call (POST call) if the status code of a call to return_url is not 200 (or timeout has reached).
 ```shell
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -61,33 +71,68 @@ http://localhost:8080/set/notifier
 
 ```
 
-Here's a breakdown of the options used in this command:
-
-* -X POST specifies that we want to make a POST request.
-* -H "Content-Type: application/json" sets the Content-Type header to application/json.
-* -H "Authorization: Basic <your_base64_encoded_credentials>" sets the Authorization header to a base64-encoded string of your credentials in the format username:password.
-* -d '<JSON data>' sets the request body to the JSON data provided. Note that the JSON data should be enclosed in single quotes (') to prevent the shell from interpreting any special characters.
-  http://localhost:8080 is the URL we want to make the request to.
 * Replace <your_base64_encoded_credentials> with your actual base64-encoded credentials.
 
-
-To do this, you would provide a JSON payload that includes the following information:
-
-* "interval": the frequency of the recurring task (e.g. "1h" for every hour or 1w+3h+20m for every 1 week and 3 hours
-  and 20 minutes)
-* "delay": the time delay in milliseconds before the task starts executing
-* "occurrences": the number of times the task should repeat
-* "name": a name for your job request
-* "return_url": the URL where Loopitis should send the callback
-* "payload": any additional data that the task requires
-* "callback_type": the HTTP method that Loopitis should use for the callback (e.g. POST, GET, etc.)
-* "notify_status_not_ok": The url to call (POST call) if status code of a call to <return_url> is not 200 (or time out
-  has reached)
-
-Once Loopitis receives your job request, it will wait for the specified delay before executing the task. It will then
-send an HTTP call to the return URL for the specified number of occurrences with the payload you provided.
+Once Loopitis receives your job request, it will wait for the specified delay before executing the task. It will then send an HTTP call to the return URL for the specified number of occurrences with the payload you provided.
 
 Loopitis will also provide a response that includes an ID for your job request and an internal ID for tracking purposes.
+
+On every call to return_url, Loopitis will provide the following data:
+
+```shell
+{  
+  "parentRequestId": "d0f3b9f2-d973-4f15-b371-56ddd8a741bf",
+  "parentRequestName": "my first job",
+  "requestedTimes": 4,
+  "executionNumber": 3,
+  "executionId": "f8b667c9-9485-4a82-a63d-291920662831",
+  "payload": "<your job's payload>>",
+  "showRequest": "http://localhost:8080/requests/get_list?requestId=d0f3b9f2-d973-4f15-b371-56ddd8a741bf",
+  "cancelLink": "http://localhost:8080/requests/cancel_task?requestId=d0f3b9f2-d973-4f15-b371-56ddd8a741bf"
+}
+```
+Here's a breakdown of the data that Loopitis provides:
+
+* parentRequestId: the job ID.
+* parentRequestName: the job name.
+* requestedTimes: the number of occurrences requested in the job.
+* executionNumber: the current execution number out of the requested times.
+* executionId: the execution ID.
+* payload: the payload that was defined in the job request.
+* showRequest: a link to show the request details.
+* cancelLink: a link to cancel future executions.
+
+If the user specified a notify_status_not_ok URL in the job request,
+Loopitis will also send an HTTP call to that URL if the status code returned by the return_url 
+is not 200 or if the timeout has been reached. The payload of the notify_status_not_ok
+call will include the following data:
+
+```
+{
+  "parentRequestId": "d0f3b9f2-d973-4f15-b371-56ddd8a741bf",
+  "executionId": "f8b667c9-9485-4a82-a63d-291920662831",
+  "callback_status_code": 404
+}
+```
+
+The notify_status_not_ok payload includes the job ID, the execution ID,
+and the HTTP status code returned by the callback.
+
+
+To send back more data about the task execution, the user can include the execution ID in the response payload to the return URL. 
+For example, if the user wants to send a "success" or "failure" status, they can include a "status" key in the JSON payload with 
+the corresponding value. Loopitis will include this data which can be then monitored.
+
+Overall, this feature allows the user to monitor the status of their tasks and take appropriate actions if any issues arise.
+
+to send back data about that executions you can use /set/execution/comment/
+
+```shell
+{
+  "executionId": "<the execution id>",
+  "comment": "<the data to add to this execution>"  
+}
+```
 
 # Why use Loopitis
 If you ever had to deal with repetitive tasks that ended up causing more trouble than they were worth. Sometimes, a
