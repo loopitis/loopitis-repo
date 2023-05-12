@@ -22,13 +22,84 @@ send an HTTP call to the return URL for the specified number of occurrences with
 
 Loopitis will also provide a response that includes an ID for your job request and an internal ID for tracking purposes.
 
+
+# **Installation** - It's super easy with Docker-comppse
+
+Even if you're not familiar with docker or docker compose, setting this app to work is super easy !
+
+Make sure to have Docker Compose installed on your machine.
+
+run the following command and that's it !  you can start using it.
+```bash
+curl -sSL https://bit.ly/3W0DUPt | bash
+```
+
+**What this command do ?**
+
+First the bitly url is a shortend link for our run.sh file under github, the actual link is:
+https://raw.githubusercontent.com/loopitis/loopitis-repo/master/src/main/resources/config/run.sh
+
+You can click the link to see the content and see what it does, basically here are the steps which you can run manually:
+* download compose.yaml file  - this file defines which processes to run and whats the repository in docker hub.
+* download init.sql - this file defines the schema and tables in the DB
+* download config.properties - this file contains the app configurations as well as user&passwords.
+* The rest of the script is generating new passwords for redis, postgres and for the endpoint
+* eventually the script runs the docker-compose "up" command to start the app.
+
+**Run Manually**
+
+If you decide install loopitis manually we strongly recommend to change postgres, redis and loopitis passwords in the config.properties file.
+You should Copy the compose.yaml,init.sql and config.properties files from github and then simply run:
+
+```shell
+docker-compose --env-file config.properties up
+```
+
+If you're using Windows, use docker compose instead of docker-compose.
+
+You can use the -d flag if you want to detach it.
+
+Once the containers are up and running, you can communicate with the endpoint container through port 8080.
+Wether you run it automatically or manually, Don't forget that calls to loopitis requires Basic Authorization . the user and password are in the config.properties file.
+
+To send a POST request, set the content-type to application/json and send the request to localhost:8080/set/notifier.
+
+The POST request body can be:
+
+```shell
+curl -X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: Basic <your_base64_encoded_credentials>" \
+-d '{
+  "interval": 10000,
+  "delay": 1000,
+  "occurrences": 15,
+  "name": "my job request",
+  "return_url": "<your return url>",
+  "payload": "<your payload>",
+  "callback_type": "POST"
+}' \
+http://localhost:8080/set/notifier
+
+```
+
+Here's a breakdown of the options used in this command:
+
+* -X POST specifies that we want to make a POST request.
+* -H "Content-Type: application/json" sets the Content-Type header to application/json.
+* -H "Authorization: Basic <your_base64_encoded_credentials>" sets the Authorization header to a base64-encoded string of your credentials in the format username:password.
+* -d '<JSON data>' sets the request body to the JSON data provided. Note that the JSON data should be enclosed in single quotes (') to prevent the shell from interpreting any special characters.
+  http://localhost:8080 is the URL we want to make the request to.
+* Replace <your_base64_encoded_credentials> with your actual base64-encoded credentials.
+
+# Why should I use it 
 If you ever had to deal with repetitive tasks that ended up causing more trouble than they were worth. Sometimes, a
 simple scheduler isn't enough for developers dealing with large amounts of repetitive tasks. If a scheduler goes down,
 it can be difficult to determine when, why, and how many tasks were completed before it failed. Additionally, it can be
 challenging to track when a specific task was last completed and to receive notifications when tasks fail. For example,
-in my last project, I had to generate a report for every user in the system every 10 minutes. With 1000 users, that
+in our last project, we had to generate a report for every user in the system every 10 minutes. With 1000 users, that
 meant generating an average of 16 reports per second. It was hard to keep track of which reports had failed and why, and
-I only discovered the issues when users reported them. Loopitis solves this problem by allowing developers to schedule
+we only discovered the issues when users reported them. Loopitis solves this problem by allowing developers to schedule
 specific methods to be called for each user at set intervals, rather than relying on a centralized scheduler. This way,
 developers can easily track when a specific task was last completed and receive notifications when tasks fail, making it
 easier to keep everything running smoothly.
@@ -106,76 +177,6 @@ doing anything the license permits.
 
 If you would like to use this project for commercial purposes and need a different license, please contact us at
 support@loopitis.com to discuss your options.
-
-# **Installation** - It's super easy with Docker-comppse
-
-Even if you're not familiar with docker or docker compose, setting this app to work is super easy !
-
-Make sure to have Docker Compose installed on your machine.
-
-run the following command and that's it !  you can start using it. 
-```bash
-curl -sSL https://bit.ly/3W0DUPt | bash
-```
-
-**What this command do ?**
-
-First the bitly url is a shortend link for our run.sh file under github, the actual link is:
-https://raw.githubusercontent.com/loopitis/loopitis-repo/master/src/main/resources/config/run.sh
-
-You can click the link to see the content and see what it does, basically here are the steps which you can run manually:
-* download compose.yaml file  - this file defines which processes to run and whats the repository in docker hub.
-* download init.sql - this file defines the schema and tables in the DB
-* download config.properties - this file contains the app configurations as well as user&passwords.
-* The rest of the script is generating new passwords for redis, postgres and for the endpoint
-* eventually the script runs the docker-compose "up" command to start the app. 
-
-**Run Manually** 
-
-If you decide install loopitis manually we strongly recommend to change postgres, redis and loopitis passwords in the config.properties file.
-You should Copy the compose.yaml,init.sql and config.properties files from github and then simply run: 
-
-```shell
-docker-compose --env-file config.properties up
-```
-
-If you're using Windows, use docker compose instead of docker-compose.
-
-You can use the -d flag if you want to detach it.
-
-Once the containers are up and running, you can communicate with the endpoint container through port 8080.
-Wether you run it automatically or manually, Don't forget that calls to loopitis requires Basic Authorization . the user and password are in the config.properties file. 
-
-To send a POST request, set the content-type to application/json and send the request to localhost:8080/set/notifier.
-
-The POST request body can be:
-
-```shell
-curl -X POST \
--H "Content-Type: application/json" \
--H "Authorization: Basic <your_base64_encoded_credentials>" \
--d '{
-  "interval": 10000,
-  "delay": 1000,
-  "occurrences": 15,
-  "name": "my job request",
-  "return_url": "<your return url>",
-  "payload": "<your payload>",
-  "callback_type": "POST"
-}' \
-http://localhost:8080/set/notifier
-
-```
-
-Here's a breakdown of the options used in this command:
-
-* -X POST specifies that we want to make a POST request.
-* -H "Content-Type: application/json" sets the Content-Type header to application/json.
-* -H "Authorization: Basic <your_base64_encoded_credentials>" sets the Authorization header to a base64-encoded string of your credentials in the format username:password.
-* -d '<JSON data>' sets the request body to the JSON data provided. Note that the JSON data should be enclosed in single quotes (') to prevent the shell from interpreting any special characters.
-http://localhost:8080 is the URL we want to make the request to.
-* Replace <your_base64_encoded_credentials> with your actual base64-encoded credentials.
-
 
 # Scale with Loopitis
 
