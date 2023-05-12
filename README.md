@@ -261,7 +261,9 @@ For any question you can always contact us at support@loopitis.com
 Visit our website for more information: https://loopitis.com
 
 I would love to hear what you think about this app. Share your thoughts with us !
-<iframe width="560" height="315" src="https://www.youtube.com/watch?v=_nS1ebwKgQE" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+
+[![Video Label](http://img.youtube.com/vi/_nS1ebwKgQE/0.jpg)](https://www.youtube.com/watch?v=_nS1ebwKgQE)
 
 
 
