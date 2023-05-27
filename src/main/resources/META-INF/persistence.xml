@@ -7,8 +7,8 @@
 
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
-        <class>consumer.ExecutionRequest</class>
-        <class>ent.HttpNotifierRequestEntity</class>
+        <class>com.loopitis.consumer.ExecutionRequest</class>
+        <class>com.loopitis.ent.HttpNotifierRequestEntity</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
